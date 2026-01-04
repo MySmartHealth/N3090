@@ -1,0 +1,37 @@
+[
+  {
+    "agent": "Chat",
+    "success": true,
+    "latency_ms": 1670.6805229187012,
+    "tokens": 10,
+    "model": "tiny-llama-1.1b-chat-medical.fp16.gguf"
+  },
+  {
+    "agent": "MedicalQA",
+    "success": true,
+    "latency_ms": 1355.8223247528076,
+    "tokens": 160,
+    "model": "BiMediX2-8B-hf.i1-Q6_K.gguf"
+  },
+  {
+    "agent": "Billing",
+    "success": true,
+    "latency_ms": 2737.07914352417,
+    "tokens": 1,
+    "model": "openinsurancellm-llama3-8b.Q5_K_M.gguf"
+  },
+  {
+    "agent": "Claims",
+    "success": true,
+    "latency_ms": 6346.459865570068,
+    "tokens": 6,
+    "model": "openinsurancellm-llama3-8b.Q5_K_M.gguf"
+  },
+  {
+    "agent": "Clinical",
+    "success": true,
+    "latency_ms": 13803.646087646484,
+    "tokens": 1297,
+    "model": "BioMistral-Clinical-7B.Q8_0.gguf"
+  }
+]

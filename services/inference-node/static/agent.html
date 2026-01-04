@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic AI Platform - Multi-Agent Workflows</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .header h1 {
+            color: #1e3c72;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-box h2 {
+            color: #1e3c72;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .main-content {
+            display: none;
+            gap: 20px;
+        }
+
+        .main-content.active {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+        }
+
+        .sidebar {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar h3 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .mode-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .mode-btn {
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .mode-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .mode-btn.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .workflow-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .workflow-item {
+            padding: 12px;
+            border-radius: 8px;
+            background: #f5f5f5;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .workflow-item:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .content-area {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            min-height: 600px;
+        }
+
+        .workflow-executor {
+            display: none;
+        }
+
+        .workflow-executor.active {
+            display: block;
+        }
+
+        .input-section {
+            margin-bottom: 25px;
+        }
+
+        .input-section h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+        }
+
+        .input-section textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .input-section textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .execute-btn {
+            padding: 14px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .execute-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .execute-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .results-area {
+            margin-top: 30px;
+        }
+
+        .agent-result {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .agent-result h4 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .agent-result .meta {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .agent-result .content {
+            color: #333;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .aggregated-result {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .aggregated-result h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+        }
+
+        .training-section {
+            display: none;
+        }
+
+        .training-section.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-running {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .custom-task-builder {
+            margin-top: 20px;
+        }
+
+        .task-item {
+            background: #f8f9ff;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .task-item select,
+        .task-item input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .add-task-btn {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .add-task-btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="logout-btn" id="logoutBtn" style="display: none;">Logout</button>
+            <h1>🤖 Agentic AI Platform</h1>
+            <p>Multi-Agent Workflows • Self-Learning • Knowledge Integration</p>
+        </div>
+
+        <!-- Login Screen -->
+        <div class="login-container" id="loginContainer">
+            <div class="login-box">
+                <h2>🔐 Sign In</h2>
+                <div id="loginError"></div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" required autocomplete="username" value="admin">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="login-btn">Sign In</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <div class="sidebar">
+                <h3>Mode</h3>
+                <div class="mode-selector">
+                    <button class="mode-btn active" data-mode="chat">💬 Agent Chat</button>
+                    <button class="mode-btn" data-mode="workflows">🔄 Multi-Agent Workflows</button>
+                    <button class="mode-btn" data-mode="training">🧠 Training & Learning</button>
+                    <button class="mode-btn" data-mode="custom">⚙️ Custom Tasks</button>
+                </div>
+
+                <div id="workflowsMenu" class="workflows-menu">
+                    <h3 style="margin-top: 20px;">Workflows</h3>
+                    <div class="workflow-list">
+                        <div class="workflow-item" data-workflow="discharge_summary">📋 Discharge Summary</div>
+                        <div class="workflow-item" data-workflow="pharmacy_documentation">💊 Pharmacy Documentation</div>
+                        <div class="workflow-item" data-workflow="insurance_claim">🏥 Insurance Claim</div>
+                        <div class="workflow-item" data-workflow="lab_report">🔬 Lab Report Analysis</div>
+                        <div class="workflow-item" data-workflow="comprehensive_assessment">📊 Comprehensive Assessment</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <!-- Chat Interface -->
+                <div class="workflow-executor active" id="chatInterface">
+                    <div class="info-box">
+                        💬 <strong>Agent Chat</strong> - Direct conversation with specialized AI agents. 
+                        Select an agent type and start chatting. Your conversations are saved for self-learning.
+                    </div>
+
+                    <div class="input-section">
+                        <h3>Select Agent</h3>
+                        <select id="chatAgentSelect" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 15px; margin-bottom: 20px;">
+                            <option value="MedicalQA">🏥 MedicalQA - Medical questions and diagnosis</option>
+                            <option value="Clinical">👨‍⚕️ Clinical - Clinical decisions and analysis</option>
+                            <option value="Billing">💰 Billing - Medical billing and coding</option>
+                            <option value="Claims">📋 Claims - Insurance claims processing</option>
+                            <option value="Documentation">📄 Documentation - Medical documentation</option>
+                        </select>
+                    </div>
+
+                    <div id="chatMessages" style="background: #f8f9ff; border-radius: 10px; padding: 20px; min-height: 400px; max-height: 500px; overflow-y: auto; margin-bottom: 20px;">
+                        <div style="text-align: center; color: #666; padding: 40px;">
+                            Select an agent and start chatting...
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <textarea id="chatMessageInput" placeholder="Type your message here..." style="flex: 1; padding: 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 15px; resize: vertical; min-height: 80px;"></textarea>
+                        <button class="execute-btn" id="sendChatBtn" style="align-self: flex-end; padding: 15px 30px;">
+                            Send
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Workflow Executor -->
+                <div class="workflow-executor" id="workflowExecutor">
+                    <div class="info-box">
+                        🚀 <strong>Multi-Agent Workflows</strong> automatically coordinate multiple specialized AI agents to complete complex medical tasks. 
+                        Each workflow uses the optimal combination of MedicalQA, Clinical, Billing, Claims, and Documentation agents working in parallel or sequentially.
+                    </div>
+
+                    <div class="input-section">
+                        <h3 id="workflowTitle">Select a Workflow</h3>
+                        <p id="workflowDescription" style="color: #666; margin-bottom: 15px;"></p>
+                        <textarea id="contextInput" placeholder='Enter patient data, medical context, or specific requirements in JSON format...
+
+Example:
+{
+  "patient_data": {
+    "name": "John Doe",
+    "age": 45,
+    "diagnosis": "Type 2 Diabetes"
+  },
+  "admission_date": "2026-01-01",
+  "discharge_date": "2026-01-04",
+  "procedures": ["Blood glucose monitoring", "Insulin therapy"]
+}'></textarea>
+                    </div>
+
+                    <button class="execute-btn" id="executeBtn">
+                        <span id="executeBtnText">Execute Workflow</span>
+                    </button>
+
+                    <div class="results-area" id="resultsArea"></div>
+                </div>
+
+                <!-- Training Section -->
+                <div class="training-section" id="trainingSection">
+                    <div class="info-box">
+                        🧠 <strong>Self-Learning System</strong> continuously improves models by collecting high-quality interactions,
+                        generating training datasets, and fine-tuning with LoRA/QLoRA. Monitor training progress and export datasets below.
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="value" id="totalInteractions">-</div>
+                            <div class="label">Total Interactions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="trainingExamples">-</div>
+                            <div class="label">Training Examples</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="avgRating">-</div>
+                            <div class="label">Avg Quality Rating</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="lastTraining">-</div>
+                            <div class="label">Last Training</div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 15px 0;">Training Actions</h3>
+                    <div style="display: flex; gap: 15px; margin-bottom: 30px;">
+                        <button class="execute-btn" onclick="collectTrainingData()">📊 Collect Training Data</button>
+                        <button class="execute-btn" onclick="exportDataset()">💾 Export Dataset</button>
+                        <button class="execute-btn" onclick="viewTrainingStats()">📈 View Statistics</button>
+                    </div>
+
+                    <div id="trainingResults"></div>
+                </div>
+
+                <!-- Custom Tasks Builder -->
+                <div class="training-section" id="customSection">
+                    <div class="info-box">
+                        ⚙️ <strong>Custom Task Builder</strong> allows you to create custom multi-agent workflows by specifying
+                        which agents to use, their tasks, and execution dependencies. Build complex orchestrations tailored to your needs.
+                    </div>
+
+                    <div id="customTasks">
+                        <div class="task-item">
+                            <label><strong>Agent Type</strong></label>
+                            <select class="agent-select">
+                                <option value="MedicalQA">MedicalQA</option>
+                                <option value="Clinical">Clinical</option>
+                                <option value="Billing">Billing</option>
+                                <option value="Claims">Claims</option>
+                                <option value="Documentation">Documentation</option>
+                            </select>
+                            <label><strong>Task Prompt</strong></label>
+                            <textarea class="task-prompt" rows="3" placeholder="Enter the task for this agent..."></textarea>
+                            <label><strong>Max Tokens</strong></label>
+                            <input type="number" class="task-tokens" value="512" min="50" max="2048">
+                        </div>
+                    </div>
+
+                    <button class="add-task-btn" onclick="addCustomTask()">➕ Add Task</button>
+                    <button class="execute-btn" style="margin-left: 15px;" onclick="executeCustomTasks()">🚀 Execute Custom Workflow</button>
+
+                    <div class="results-area" id="customResults"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let authToken = localStorage.getItem('auth_token');
+        let currentMode = 'chat';
+        let currentWorkflow = null;
+
+        // DOM Elements
+        const loginContainer = document.getElementById('loginContainer');
+        const mainContent = document.getElementById('mainContent');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const executeBtn = document.getElementById('executeBtn');
+        const executeBtnText = document.getElementById('executeBtnText');
+        const resultsArea = document.getElementById('resultsArea');
+
+        // Workflow descriptions
+        const workflowDescriptions = {
+            discharge_summary: {
+                title: '📋 Discharge Summary Workflow',
+                description: 'Generates comprehensive discharge summary using Clinical agent for medical content and Billing agent for codes (parallel execution)',
+                agents: ['Clinical', 'Billing']
+            },
+            pharmacy_documentation: {
+                title: '💊 Pharmacy Documentation Workflow',
+                description: 'Creates pharmacy documentation with drug analysis and billing codes (sequential execution)',
+                agents: ['Clinical', 'Billing']
+            },
+            insurance_claim: {
+                title: '🏥 Insurance Claim Workflow',
+                description: 'Processes insurance claims with medical necessity justification using MedicalQA and Claims agents',
+                agents: ['MedicalQA', 'Claims']
+            },
+            lab_report: {
+                title: '🔬 Lab Report Analysis Workflow',
+                description: 'Analyzes lab results with clinical interpretation',
+                agents: ['Clinical', 'MedicalQA']
+            },
+            comprehensive_assessment: {
+                title: '📊 Comprehensive Assessment Workflow',
+                description: 'Multi-agent comprehensive patient assessment covering all aspects',
+                agents: ['Clinical', 'MedicalQA', 'Documentation']
+            }
+        };
+
+        // Check if already logged in
+        if (authToken) {
+            showMainContent();
+        }
+
+        // Login handler
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/v1/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Invalid credentials');
+                }
+
+                const data = await response.json();
+                authToken = data.access_token;
+                localStorage.setItem('auth_token', authToken);
+                showMainContent();
+            } catch (error) {
+                loginError.innerHTML = `<div class="error">Login failed: ${error.message}</div>`;
+            }
+        });
+
+        // Logout handler
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('auth_token');
+            authToken = null;
+            mainContent.classList.remove('active');
+            loginContainer.style.display = 'flex';
+            logoutBtn.style.display = 'none';
+        });
+
+        // Mode switching
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const mode = btn.dataset.mode;
+                currentMode = mode;
+
+                document.getElementById('chatInterface').classList.remove('active');
+                document.getElementById('workflowExecutor').classList.remove('active');
+                document.getElementById('trainingSection').classList.remove('active');
+                document.getElementById('customSection').classList.remove('active');
+
+                if (mode === 'chat') {
+                    document.getElementById('chatInterface').classList.add('active');
+                } else if (mode === 'workflows') {
+                    document.getElementById('workflowExecutor').classList.add('active');
+                } else if (mode === 'training') {
+                    document.getElementById('trainingSection').classList.add('active');
+                    loadTrainingStats();
+                } else if (mode === 'custom') {
+                    document.getElementById('customSection').classList.add('active');
+                }
+            });
+        });
+
+        // Workflow selection
+        document.querySelectorAll('.workflow-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const workflow = item.dataset.workflow;
+                selectWorkflow(workflow);
+            });
+        });
+
+        function selectWorkflow(workflow) {
+            currentWorkflow = workflow;
+            const info = workflowDescriptions[workflow];
+            
+            document.getElementById('workflowTitle').textContent = info.title;
+            document.getElementById('workflowDescription').textContent = info.description + ' | Agents: ' + info.agents.join(', ');
+            resultsArea.innerHTML = '';
+        }
+
+        // Execute workflow
+        executeBtn.addEventListener('click', async () => {
+            if (!currentWorkflow) {
+                alert('Please select a workflow first');
+                return;
+            }
+
+            const contextInput = document.getElementById('contextInput').value.trim();
+            if (!contextInput) {
+                alert('Please enter context data');
+                return;
+            }
+
+            let context;
+            try {
+                context = JSON.parse(contextInput);
+            } catch (e) {
+                alert('Invalid JSON format. Please check your input.');
+                return;
+            }
+
+            executeBtn.disabled = true;
+            executeBtnText.innerHTML = '<span class="loading-spinner"></span> Executing...';
+            resultsArea.innerHTML = '<div class="info-box">🔄 Workflow execution in progress... This may take up to 60 seconds for complex workflows.</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/v1/workflows/execute`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        workflow_type: currentWorkflow,
+                        context: context
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Workflow execution failed');
+                }
+
+                const result = await response.json();
+                displayWorkflowResults(result);
+            } catch (error) {
+                resultsArea.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            } finally {
+                executeBtn.disabled = false;
+                executeBtnText.textContent = 'Execute Workflow';
+            }
+        });
+
+        function displayWorkflowResults(result) {
+            let html = '<h3 style="margin-bottom: 20px;">Workflow Results</h3>';
+
+            // Summary stats
+            html += `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="value">${result.results.length}</div>
+                        <div class="label">Agents Used</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value">${(result.total_latency_ms / 1000).toFixed(1)}s</div>
+                        <div class="label">Total Time</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value">${(result.parallel_efficiency * 100).toFixed(0)}%</div>
+                        <div class="label">Parallel Efficiency</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value">
+                            <span class="status-badge ${result.success ? 'status-success' : 'status-error'}">
+                                ${result.success ? '✓ Success' : '✗ Failed'}
+                            </span>
+                        </div>
+                        <div class="label">Status</div>
+                    </div>
+                </div>
+            `;
+
+            // Individual agent results
+            result.results.forEach(agentResult => {
+                html += `
+                    <div class="agent-result">
+                        <h4>
+                            ${agentResult.agent_type} Agent
+                            <span class="status-badge ${agentResult.success ? 'status-success' : 'status-error'}">
+                                ${agentResult.success ? '✓' : '✗'}
+                            </span>
+                        </h4>
+                        <div class="meta">
+                            Model: ${agentResult.model} | 
+                            Latency: ${(agentResult.latency_ms / 1000).toFixed(2)}s | 
+                            Tokens: ${agentResult.tokens}
+                        </div>
+                        <div class="content">${agentResult.content}</div>
+                    </div>
+                `;
+            });
+
+            // Aggregated result
+            if (result.aggregated_content) {
+                html += `
+                    <div class="aggregated-result">
+                        <h3>📄 Final Aggregated Output</h3>
+                        <div class="content">${result.aggregated_content}</div>
+                    </div>
+                `;
+            }
+
+            resultsArea.innerHTML = html;
+        }
+
+        function showMainContent() {
+         
+
+        // Chat functionality
+        const chatMessages = document.getElementById('chatMessages');
+        const chatMessageInput = document.getElementById('chatMessageInput');
+        const sendChatBtn = document.getElementById('sendChatBtn');
+        const chatAgentSelect = document.getElementById('chatAgentSelect');
+
+        sendChatBtn.addEventListener('click', sendChatMessage);
+        chatMessageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                sendChatMessage();
+            }
+        });
+
+        async function sendChatMessage() {
+            const message = chatMessageInput.value.trim();
+            if (!message) return;
+
+            const agentType = chatAgentSelect.value;
+
+            // Add user message
+            addChatMessage('user', message);
+            chatMessageInput.value = '';
+            sendChatBtn.disabled = true;
+            sendChatBtn.textContent = 'Sending...';
+
+            // Add typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator';
+            typingDiv.style.cssText = 'text-align: left; padding: 15px; color: #666;';
+            typingDiv.innerHTML = '💭 Agent is thinking...';
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const response = await fetch(`${API_BASE}/v1/chat/completions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        messages: [{ role: 'user', content: message }],
+                        agent_type: agentType,
+                        temperature: 0.7,
+                        max_tokens: 1024
+                    })
+                });
+
+                typingDiv.remove();
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                const assistantMessage = data.choices?.[0]?.message?.content || data.message || 'No response';
+                addChatMessage('assistant', assistantMessage, agentType);
+            } catch (error) {
+                typingDiv.remove();
+                addChatMessage('error', `Error: ${error.message}`);
+            } finally {
+                sendChatBtn.disabled = false;
+                sendChatBtn.textContent = 'Send';
+                chatMessageInput.focus();
+            }
+        }
+
+        function addChatMessage(role, content, agentType = '') {
+            const messageDiv = document.createElement('div');
+            messageDiv.style.cssText = 'margin-bottom: 15px; padding: 15px; border-radius: 10px;';
+            
+            if (role === 'user') {
+                messageDiv.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                messageDiv.style.color = 'white';
+                messageDiv.style.marginLeft = '20%';
+                messageDiv.innerHTML = `<strong>You:</strong><br>${content.replace(/\n/g, '<br>')}`;
+            } else if (role === 'assistant') {
+                messageDiv.style.background = '#ffffff';
+                messageDiv.style.border = '2px solid #e0e0e0';
+                messageDiv.style.marginRight = '20%';
+                messageDiv.innerHTML = `<strong>🤖 ${agentType} Agent:</strong><br>${content.replace(/\n/g, '<br>')}`;
+            } else {
+                messageDiv.style.background = '#fee';
+                messageDiv.style.border = '2px solid #fcc';
+                messageDiv.style.color = '#c33';
+                messageDiv.innerHTML = content;
+            }
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Clear initial message if exists
+            const initialMsg = chatMessages.querySelector('[style*="text-align: center"]');
+            if (initialMsg) initialMsg.remove();
+        }   loginContainer.style.display = 'none';
+            mainContent.classList.add('active');
+            logoutBtn.style.display = 'block';
+        }
+
+        // Training functions
+        async function loadTrainingStats() {
+            try {
+                const response = await fetch(`${API_BASE}/v1/training/stats`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                if (response.ok) {
+                    const stats = await response.json();
+                    document.getElementById('totalInteractions').textContent = stats.total_interactions || '0';
+                    document.getElementById('trainingExamples').textContent = stats.training_examples || '0';
+                    document.getElementById('avgRating').textContent = (stats.avg_rating || 0).toFixed(2);
+                    document.getElementById('lastTraining').textContent = stats.last_training || 'Never';
+                }
+            } catch (error) {
+                console.error('Failed to load training stats:', error);
+            }
+        }
+
+        async function collectTrainingData() {
+            const resultsDiv = document.getElementById('trainingResults');
+            resultsDiv.innerHTML = '<div class="info-box">🔄 Collecting training data from chat history...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/v1/training/collect`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ min_rating: 4.0, limit: 1000 })
+                });
+
+                if (!response.ok) throw new Error('Collection failed');
+
+                const result = await response.json();
+                resultsDiv.innerHTML = `
+                    <div class="agent-result">
+                        <h4>✅ Training Data Collected</h4>
+                        <div class="content">
+                            Collected ${result.count} high-quality examples<br>
+                            Agent types: ${result.agent_types.join(', ')}<br>
+                            Ready for fine-tuning
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function exportDataset() {
+            try {
+                const response = await fetch(`${API_BASE}/v1/training/export`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (!response.ok) throw new Error('Export failed');
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `training_dataset_${new Date().toISOString().split('T')[0]}.jsonl`;
+                a.click();
+            } catch (error) {
+                alert('Export failed: ' + error.message);
+            }
+        }
+
+        async function viewTrainingStats() {
+            const resultsDiv = document.getElementById('trainingResults');
+            resultsDiv.innerHTML = '<div class="info-box">📊 Loading statistics...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/v1/training/stats`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                const stats = await response.json();
+                
+                let html = '<div class="agent-result"><h4>📈 Training Statistics</h4><div class="content">';
+                html += `Total Interactions: ${stats.total_interactions}<br>`;
+                html += `Training Examples: ${stats.training_examples}<br>`;
+                html += `Average Rating: ${(stats.avg_rating || 0).toFixed(2)}<br>`;
+                html += `Agent Distribution:<br>`;
+                
+                for (const [agent, count] of Object.entries(stats.agent_distribution || {})) {
+                    html += `  - ${agent}: ${count}<br>`;
+                }
+                
+                html += '</div></div>';
+                resultsDiv.innerHTML = html;
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+
+        // Custom tasks
+        function addCustomTask() {
+            const tasksDiv = document.getElementById('customTasks');
+            const taskHtml = `
+                <div class="task-item">
+                    <label><strong>Agent Type</strong></label>
+                    <select class="agent-select">
+                        <option value="MedicalQA">MedicalQA</option>
+                        <option value="Clinical">Clinical</option>
+                        <option value="Billing">Billing</option>
+                        <option value="Claims">Claims</option>
+                        <option value="Documentation">Documentation</option>
+                    </select>
+                    <label><strong>Task Prompt</strong></label>
+                    <textarea class="task-prompt" rows="3" placeholder="Enter the task for this agent..."></textarea>
+                    <label><strong>Max Tokens</strong></label>
+                    <input type="number" class="task-tokens" value="512" min="50" max="2048">
+                </div>
+            `;
+            tasksDiv.insertAdjacentHTML('beforeend', taskHtml);
+        }
+
+        async function executeCustomTasks() {
+            const tasks = [];
+            document.querySelectorAll('.task-item').forEach(item => {
+                const agentType = item.querySelector('.agent-select').value;
+                const prompt = item.querySelector('.task-prompt').value.trim();
+                const maxTokens = parseInt(item.querySelector('.task-tokens').value);
+
+                if (prompt) {
+                    tasks.push({
+                        agent_type: agentType,
+                        prompt: prompt,
+                        max_tokens: maxTokens,
+                        temperature: 0.7
+                    });
+                }
+            });
+
+            if (tasks.length === 0) {
+                alert('Please add at least one task');
+                return;
+            }
+
+            const resultsDiv = document.getElementById('customResults');
+            resultsDiv.innerHTML = '<div class="info-box">🔄 Executing custom workflow...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/v1/workflows/execute`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        workflow_type: 'parallel_qa',
+                        context: {},
+                        custom_tasks: tasks
+                    })
+                });
+
+                if (!response.ok) throw new Error('Execution failed');
+
+                const result = await response.json();
+                
+                let html = '<h3 style="margin-top: 20px;">Custom Workflow Results</h3>';
+                result.results.forEach(r => {
+                    html += `
+                        <div class="agent-result">
+                            <h4>${r.agent_type} <span class="status-badge ${r.success ? 'status-success' : 'status-error'}">${r.success ? '✓' : '✗'}</span></h4>
+                            <div class="meta">Latency: ${(r.latency_ms/1000).toFixed(2)}s | Tokens: ${r.tokens}</div>
+                            <div class="content">${r.content}</div>
+                        </div>
+                    `;
+                });
+                
+                resultsDiv.innerHTML = html;
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

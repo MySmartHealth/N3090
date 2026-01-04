@@ -1,0 +1,37 @@
+fastapi==0.115.5
+uvicorn[standard]==0.32.0
+pydantic==2.9.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+prometheus-fastapi-instrumentator==7.0.0
+loguru==0.7.2
+orjson==3.10.7
+httpx==0.27.2
+
+# Database (PostgreSQL + pgvector for RAG)
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.30.0
+pgvector==0.3.6
+psycopg2-binary==2.9.10
+
+# Embeddings & Vector Search
+sentence-transformers==3.3.1
+# Note: Install faiss-gpu separately via conda if needed for GPU acceleration
+# conda install -c pytorch faiss-gpu
+
+# Knowledge Base & Document Processing
+pypdf==5.1.0
+beautifulsoup4==4.12.3
+requests==2.32.3
+python-multipart==0.0.18  # For file uploads
+aiohttp==3.11.11  # For async web scraping
+PyPDF2==3.0.1  # PDF parsing for web scraping
+
+# Fine-tuning & Training (optional)
+# Uncomment to enable model fine-tuning capabilities:
+# transformers>=4.41.0
+# peft>=0.11.0
+# datasets>=2.18.0
+# bitsandbytes>=0.43.0
+# accelerate>=0.29.0
+# trl>=0.8.0

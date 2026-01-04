@@ -1,0 +1,61 @@
+# Prometheus Configuration for Medical AI Inference System
+# Location: /etc/prometheus/prometheus.yml
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'medical-ai-prod'
+    service: 'inference-api'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - 'localhost:9093'
+
+# Load alert rules
+rule_files:
+  - '/etc/prometheus/alert_rules.yml'
+
+# Scrape configurations
+scrape_configs:
+  # Medical AI API metrics
+  - job_name: 'medical-ai-api'
+    static_configs:
+      - targets: ['localhost:8000']
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    metrics_path: '/metrics'
+    scheme: 'http'
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+      
+  # Node exporter (system metrics)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['localhost:9100']
+    scrape_interval: 15s
+    
+  # GPU metrics exporter (if installed)
+  - job_name: 'gpu-metrics'
+    static_configs:
+      - targets: ['localhost:9445']
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    
+  # PostgreSQL exporter
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['localhost:9187']
+    scrape_interval: 15s
+
+# Service discovery (optional - for dynamic environments)
+# Uncomment if using Consul, Kubernetes, etc.
+#
+# consul_sd_configs:
+#   - server: 'localhost:8500'
+#     datacenter: 'dc1'

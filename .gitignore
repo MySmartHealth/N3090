@@ -1,0 +1,94 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Large Files & Models (Don't commit LLMs to git)
+# Exclude all model files and directories except README and scripts
+services/inference-node/models/*
+!services/inference-node/models/README.md
+!services/inference-node/models/*/README.md
+!services/inference-node/models/**/*.py
+!services/inference-node/models/**/*.sh
+
+# Logs
+*.log
+logs/
+/tmp/api.log
+/tmp/llama-*.log
+
+# Cache
+.cache/
+*.cache
+.pytest_cache/
+.coverage
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+local.db
+
+# Secrets (Environment files)
+.env
+.env.production
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets/
+
+# Testing
+.tox/
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Temp files
+*.tmp
+*.temp
+*_backup*

@@ -1,0 +1,56 @@
+{
+  "tiny-llama-1b": {
+    "model": "tiny-llama-1b",
+    "tasks_completed": 3,
+    "avg_time": 9.84,
+    "avg_relevance": 0.08,
+    "total_time": 29.51,
+    "details": [
+      {
+        "task": "ICD-10 Coding",
+        "time": 2.76,
+        "relevance": 0.0,
+        "length": 67
+      },
+      {
+        "task": "Prescription",
+        "time": 15.84,
+        "relevance": 0.0,
+        "length": 592
+      },
+      {
+        "task": "Patient Triage",
+        "time": 10.9,
+        "relevance": 0.25,
+        "length": 414
+      }
+    ]
+  },
+  "bi-medix2": {
+    "model": "bi-medix2",
+    "tasks_completed": 3,
+    "avg_time": 1.25,
+    "avg_relevance": 0.58,
+    "total_time": 3.76,
+    "details": [
+      {
+        "task": "Medical QA",
+        "time": 1.52,
+        "relevance": 1.0,
+        "length": 691
+      },
+      {
+        "task": "Prescription",
+        "time": 1.48,
+        "relevance": 0.0,
+        "length": 788
+      },
+      {
+        "task": "Patient Triage",
+        "time": 0.76,
+        "relevance": 0.75,
+        "length": 381
+      }
+    ]
+  }
+}

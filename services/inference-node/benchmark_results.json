@@ -1,0 +1,234 @@
+{
+  "qwen-0.6b-medical": [
+    {
+      "task": "medical_qa",
+      "category": "Medical Knowledge",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "diagnosis_codes",
+      "category": "Medical Coding",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "prescription",
+      "category": "Clinical Decision",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "claims_analysis",
+      "category": "Claims Processing",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "drug_interaction",
+      "category": "Pharmacology",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "patient_triage",
+      "category": "Triage",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "lab_interpretation",
+      "category": "Lab Results",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "simple_chat",
+      "category": "Patient Education",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    }
+  ],
+  "tiny-llama-1b": [
+    {
+      "task": "medical_qa",
+      "category": "Medical Knowledge",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "diagnosis_codes",
+      "category": "Medical Coding",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "prescription",
+      "category": "Clinical Decision",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "claims_analysis",
+      "category": "Claims Processing",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "drug_interaction",
+      "category": "Pharmacology",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "patient_triage",
+      "category": "Triage",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "lab_interpretation",
+      "category": "Lab Results",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "simple_chat",
+      "category": "Patient Education",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    }
+  ],
+  "bi-medix2": [
+    {
+      "task": "medical_qa",
+      "category": "Medical Knowledge",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "diagnosis_codes",
+      "category": "Medical Coding",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "prescription",
+      "category": "Clinical Decision",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "claims_analysis",
+      "category": "Claims Processing",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "drug_interaction",
+      "category": "Pharmacology",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "patient_triage",
+      "category": "Triage",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "lab_interpretation",
+      "category": "Lab Results",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "simple_chat",
+      "category": "Patient Education",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    }
+  ],
+  "bio-mistral-7b": [
+    {
+      "task": "medical_qa",
+      "category": "Medical Knowledge",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "diagnosis_codes",
+      "category": "Medical Coding",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "prescription",
+      "category": "Clinical Decision",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "claims_analysis",
+      "category": "Claims Processing",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "drug_interaction",
+      "category": "Pharmacology",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "patient_triage",
+      "category": "Triage",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "lab_interpretation",
+      "category": "Lab Results",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    },
+    {
+      "task": "simple_chat",
+      "category": "Patient Education",
+      "error": "'ModelRouter' object has no attribute 'route_to_model'",
+      "inference_time": 0,
+      "relevance_score": 0
+    }
+  ]
+}

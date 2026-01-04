@@ -1,0 +1,285 @@
+# Prometheus Alert Rules for Medical AI Inference System
+# Location: /etc/prometheus/alert_rules.yml
+
+groups:
+  - name: 'medical-ai-api'
+    interval: 30s
+    rules:
+      
+      # ====================================================================
+      # API Health Alerts
+      # ====================================================================
+      
+      - alert: APIDown
+        expr: up{job="medical-ai-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "Medical AI API is down"
+          description: "API has been unreachable for 1 minute. Immediate action required."
+          action: "Check API logs: tail -f /tmp/api.log"
+      
+      - alert: HighAPIErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{job="medical-ai-api", status=~"5.."}[5m]))
+            /
+            sum(rate(http_requests_total{job="medical-ai-api"}[5m]))
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High API error rate (>5%)"
+          description: "API error rate is {{ $value | humanizePercentage }}"
+          action: "Check logs for error patterns"
+      
+      - alert: HighAPILatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 5
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "API response time is high (p95 > 5s)"
+          description: "95th percentile latency: {{ $value | humanizeDuration }}"
+          action: "Check queue depth and GPU utilization"
+      
+      # ====================================================================
+      # Task Queue Alerts
+      # ====================================================================
+      
+      - alert: QueueDepthHigh
+        expr: task_queue_depth > 500
+        for: 10m
+        labels:
+          severity: warning
+          component: queue
+        annotations:
+          summary: "Task queue backing up ({{ $value }} tasks)"
+          description: "Queue depth exceeds 500 tasks for 10 minutes"
+          action: |
+            1. Check processing throughput: curl http://localhost:8000/v1/async/stats
+            2. Verify model servers: ps aux | grep llama-server
+            3. Consider scaling up workers or models
+      
+      - alert: QueueDepthCritical
+        expr: task_queue_depth > 1000
+        for: 5m
+        labels:
+          severity: critical
+          component: queue
+        annotations:
+          summary: "Task queue critically backed up ({{ $value }} tasks)"
+          description: "Queue depth exceeds 1000 tasks"
+          action: |
+            1. Pause submissions: curl -X POST http://localhost:8000/v1/admin/pause-queue
+            2. Check why processing is slow
+            3. Scale up or restart services
+      
+      - alert: HighTaskFailureRate
+        expr: |
+          (
+            sum(rate(tasks_failed_total[5m]))
+            /
+            (sum(rate(tasks_completed_total[5m])) + sum(rate(tasks_failed_total[5m])))
+          ) > 0.05
+        for: 10m
+        labels:
+          severity: warning
+          component: queue
+        annotations:
+          summary: "Task failure rate is high ({{ $value | humanizePercentage }})"
+          description: "More than 5% of tasks are failing"
+          action: "Check error logs and model health"
+      
+      - alert: TaskProcessingStalled
+        expr: increase(tasks_completed_total[5m]) == 0 and task_queue_depth > 0
+        for: 5m
+        labels:
+          severity: critical
+          component: queue
+        annotations:
+          summary: "No tasks completed in last 5 minutes but queue not empty"
+          description: "Task processing appears to be stalled"
+          action: |
+            1. Check task processor logs
+            2. Verify model servers are running
+            3. Check GPU status: nvidia-smi
+      
+      # ====================================================================
+      # GPU Alerts
+      # ====================================================================
+      
+      - alert: HighGPUTemperature
+        expr: gpu_temperature_celsius > 80
+        for: 2m
+        labels:
+          severity: warning
+          component: gpu
+        annotations:
+          summary: "GPU temperature is high ({{ $value }}°C)"
+          description: "GPU temperature exceeded 80°C"
+          action: |
+            1. Reduce load by pausing inference
+            2. Let GPU cool: kill model servers
+            3. Monitor: watch -n 2 nvidia-smi
+      
+      - alert: CriticalGPUTemperature
+        expr: gpu_temperature_celsius > 85
+        for: 1m
+        labels:
+          severity: critical
+          component: gpu
+        annotations:
+          summary: "GPU temperature is critical ({{ $value }}°C)"
+          description: "GPU temperature exceeded 85°C - risk of thermal throttling"
+          action: |
+            1. IMMEDIATELY stop inference: pkill -f llama-server
+            2. Wait for GPU to cool below 70°C
+            3. Gradually restart services
+      
+      - alert: HighGPUMemoryUsage
+        expr: gpu_memory_used_percent > 90
+        for: 5m
+        labels:
+          severity: warning
+          component: gpu
+        annotations:
+          summary: "GPU memory usage is high ({{ $value }}%)"
+          description: "GPU memory utilization exceeded 90%"
+          action: |
+            1. Check running models: curl http://localhost:8000/v1/gpu/status
+            2. Consider killing largest models
+            3. Reduce batch size if needed
+      
+      - alert: GPUMemoryFull
+        expr: gpu_memory_used_percent > 95
+        for: 2m
+        labels:
+          severity: critical
+          component: gpu
+        annotations:
+          summary: "GPU memory is nearly full ({{ $value }}%)"
+          description: "GPU memory utilization exceeded 95% - out of memory risk"
+          action: |
+            1. Kill some model servers: pkill -f llama-server
+            2. Monitor recovery: watch -n 1 nvidia-smi
+            3. Restart with fewer models
+      
+      # ====================================================================
+      # Database Alerts
+      # ====================================================================
+      
+      - alert: DatabaseConnectionError
+        expr: pg_up == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "Cannot connect to PostgreSQL database"
+          description: "Database connection check failed for 2 minutes"
+          action: |
+            1. Check PostgreSQL status: systemctl status postgresql
+            2. Test connection: psql -c "SELECT 1;"
+            3. Check logs: tail -f /var/log/postgresql/postgresql.log
+      
+      - alert: HighDatabaseConnections
+        expr: pg_stat_activity_count > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "High number of database connections ({{ $value }})"
+          description: "Active database connections exceed 80"
+          action: "Check for connection leaks, consider pooling"
+      
+      # ====================================================================
+      # System Resource Alerts
+      # ====================================================================
+      
+      - alert: HighCPUUsage
+        expr: (100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 80
+        for: 10m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "CPU usage is high ({{ $value | humanize }}%)"
+          description: "CPU utilization exceeded 80% for 10 minutes"
+          action: "Check running processes: top"
+      
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 10m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "System memory usage is high ({{ $value | humanize }}%)"
+          description: "Available memory less than 15%"
+          action: "Check memory usage: free -h"
+      
+      - alert: LowDiskSpace
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) < 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "Low disk space ({{ $value | humanizePercentage }})"
+          description: "Less than 10% disk space available on root partition"
+          action: "Check disk usage: df -h && du -sh /*"
+      
+      # ====================================================================
+      # Application Performance Alerts
+      # ====================================================================
+      
+      - alert: SlowInferenceLatency
+        expr: histogram_quantile(0.95, rate(inference_duration_seconds_bucket[5m])) > 3
+        for: 5m
+        labels:
+          severity: warning
+          component: inference
+        annotations:
+          summary: "Inference latency is slow (p95 > 3s)"
+          description: "Model inference 95th percentile: {{ $value | humanizeDuration }}"
+          action: "Check queue depth and GPU memory"
+      
+      - alert: LowThroughput
+        expr: sum(rate(tasks_completed_total[5m])) < 5
+        for: 10m
+        labels:
+          severity: warning
+          component: inference
+        annotations:
+          summary: "Low task throughput (< 5 tasks/sec)"
+          description: "System processing fewer than 5 tasks per second"
+          action: "Check queue depth and model performance"
+
+# Recording rules for faster queries
+  - name: 'medical-ai-recording'
+    interval: 30s
+    rules:
+      - record: 'api:request_rate:5m'
+        expr: sum(rate(http_requests_total[5m])) by (method, path)
+      
+      - record: 'api:error_rate:5m'
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[5m])) by (path)
+          /
+          sum(rate(http_requests_total[5m])) by (path)
+      
+      - record: 'queue:processing_rate:5m'
+        expr: sum(rate(tasks_completed_total[5m])) by (agent_type)
+      
+      - record: 'gpu:memory_percent:instant'
+        expr: (gpu_memory_used_gb / 24) * 100
+      
+      - record: 'inference:latency:p95:5m'
+        expr: histogram_quantile(0.95, rate(inference_duration_seconds_bucket[5m]))
