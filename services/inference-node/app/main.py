@@ -8,6 +8,7 @@ from datetime import timedelta
 from fastapi import FastAPI, Header, HTTPException, status, Request, Depends
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from jose import jwt, JWTError
 from loguru import logger
