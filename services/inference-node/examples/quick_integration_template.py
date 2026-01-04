@@ -146,75 +146,85 @@ def telemedicine_chat_streaming(user_message, conversation_history=None):
 # Example for FastAPI:
 # --------------------
 
-from fastapi import FastAPI, WebSocket
-from fastapi.responses import StreamingResponse
-import asyncio
-
-app = FastAPI()
-
-@app.post("/api/chat")
-async def chat_endpoint(message: str):
-    """Non-streaming chat endpoint"""
-    response = telemedicine_chat(message)
-    return {"response": response}
-
-
-@app.websocket("/ws/chat")
-async def websocket_endpoint(websocket: WebSocket):
-    """WebSocket endpoint for real-time streaming chat"""
-    await websocket.accept()
+try:
+    from fastapi import FastAPI, WebSocket
+    from fastapi.responses import StreamingResponse
+    import asyncio
     
-    try:
-        while True:
-            # Receive message from client
-            user_message = await websocket.receive_text()
-            
-            # Get streaming response
-            response_generator = telemedicine_chat_streaming(user_message)
-            
-            # Send chunks back to client
-            for chunk in response_generator:
-                await websocket.send_text(chunk)
-            
-            # Send completion signal
-            await websocket.send_text("[DONE]")
+    app = FastAPI()
     
-    except Exception as e:
-        await websocket.send_text(f"Error: {e}")
-    finally:
-        await websocket.close()
+    @app.post("/api/chat")
+    async def chat_endpoint(message: str):
+        """Non-streaming chat endpoint"""
+        response = telemedicine_chat(message)
+        return {"response": response}
+    
+    
+    @app.websocket("/ws/chat")
+    async def websocket_endpoint(websocket: WebSocket):
+        """WebSocket endpoint for real-time streaming chat"""
+        await websocket.accept()
+        
+        try:
+            while True:
+                # Receive message from client
+                user_message = await websocket.receive_text()
+                
+                # Get streaming response
+                response_generator = telemedicine_chat_streaming(user_message)
+                
+                # Send chunks back to client
+                for chunk in response_generator:
+                    await websocket.send_text(chunk)
+                
+                # Send completion signal
+                await websocket.send_text("[DONE]")
+        
+        except Exception as e:
+            await websocket.send_text(f"Error: {e}")
+        finally:
+            await websocket.close()
+    
+    FASTAPI_AVAILABLE = True
+except ImportError:
+    FASTAPI_AVAILABLE = False
 
 
 # Example for Flask:
 # ------------------
 
-from flask import Flask, request, jsonify, Response
-
-app = Flask(__name__)
-
-@app.route('/api/chat', methods=['POST'])
-def flask_chat():
-    """Flask chat endpoint"""
-    data = request.json
-    user_message = data.get('message', '')
-    conversation = data.get('history', [])
+try:
+    from flask import Flask, request, jsonify, Response
     
-    response = telemedicine_chat(user_message, conversation)
-    return jsonify({"response": response})
-
-
-@app.route('/api/chat/stream', methods=['POST'])
-def flask_chat_stream():
-    """Flask streaming endpoint"""
-    data = request.json
-    user_message = data.get('message', '')
-    conversation = data.get('history', [])
+    app_flask = Flask(__name__)
     
-    def generate():
-        for chunk in telemedicine_chat_streaming(user_message, conversation):
-            yield chunk
+    @app_flask.route('/api/chat', methods=['POST'])
+    def flask_chat():
+        """Flask chat endpoint"""
+        data = request.json
+        user_message = data.get('message', '')
+        conversation = data.get('history', [])
+        
+        response = telemedicine_chat(user_message, conversation)
+        return jsonify({"response": response})
     
-    return Response(generate(), mimetype='text/plain')
+    
+    @app_flask.route('/api/chat/stream', methods=['POST'])
+    def flask_chat_stream():
+        """Flask streaming endpoint"""
+        data = request.json
+        user_message = data.get('message', '')
+        conversation = data.get('history', [])
+        
+        def generate():
+            for chunk in telemedicine_chat_streaming(user_message, conversation):
+                yield chunk
+        
+        return Response(generate(), mimetype='text/plain')
+    
+    FLASK_AVAILABLE = True
+except ImportError:
+    FLASK_AVAILABLE = False
 
 
 # ============================================================================
