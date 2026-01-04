@@ -99,6 +99,14 @@ except ImportError:
     ASYNC_ROUTES_AVAILABLE = False
     logger.warning("Async task queue routes not available")
 
+# Import Advanced AI routes (VLP, XAI, Gen AI, Quantum ML, SSL)
+try:
+    from .advanced_ai_routes import router as advanced_ai_routes
+    ADVANCED_AI_ROUTES_AVAILABLE = True
+except ImportError:
+    ADVANCED_AI_ROUTES_AVAILABLE = False
+    logger.warning("Advanced AI routes not available")
+
 # Configure logging: avoid PHI; only metadata
 logger.remove()
 logger.add(lambda msg: print(msg, end=""), level="INFO")
@@ -165,6 +173,11 @@ if GPU_ROUTES_AVAILABLE:
 if ASYNC_ROUTES_AVAILABLE:
     app.include_router(async_routes)
     logger.info("Async task queue routes enabled")
+
+# Include Advanced AI routes (VLP, XAI, Gen AI, Quantum ML, SSL)
+if ADVANCED_AI_ROUTES_AVAILABLE:
+    app.include_router(advanced_ai_routes)
+    logger.info("Advanced AI routes enabled (VLP, XAI, Gen AI, Quantum ML, SSL)")
 
 # Mount static files for web UI
 static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")

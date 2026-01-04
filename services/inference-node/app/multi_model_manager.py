@@ -53,11 +53,11 @@ class MultiModelManager:
             gpu_layers=99,
         ),
         "documentation": ModelInstance(
-            model_key="medicine-llm",
-            model_path=os.path.join(MODEL_BASE, "medicine-llm-13b.Q6_K.gguf"),
+            model_key="qwen-medical",
+            model_path=os.path.join(MODEL_BASE, "qwen-0.6b-medicaldataset-f16.gguf"),
             port=8082,
             gpu_id=0,
-            context_size=8192,
+            context_size=4096,
             gpu_layers=99,
         ),
         
