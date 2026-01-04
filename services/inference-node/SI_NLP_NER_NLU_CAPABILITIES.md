@@ -42,8 +42,6 @@ The N3090 Inference Node implements a comprehensive **Synthetic Intelligence (SI
 #### Components:
 - **Embedding Model**: BAAI/bge-large-en-v1.5 (1024-dim vectors)
 - **Vector Storage**: PostgreSQL + pgvector extension
-- **Optional Acceleration**: FAISS-GPU for large-scale search
-- **Hybrid Search**: Combined pgvector + FAISS capability
 
 #### Features:
 ```python

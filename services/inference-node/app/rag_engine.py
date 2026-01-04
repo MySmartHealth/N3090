@@ -1,7 +1,6 @@
 """
-RAG Engine with PostgreSQL pgvector + Optional FAISS-GPU
+RAG Engine with PostgreSQL pgvector
 Handles embeddings, vector storage, and evidence retrieval for medical AI.
-Supports hybrid approach: pgvector for persistence, FAISS-GPU for heavy searches.
 """
 import os
 import hashlib
@@ -9,16 +8,6 @@ import asyncio
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 from loguru import logger
-
-# Try importing FAISS-GPU (optional, requires conda install)
-try:
-    import faiss
-    FAISS_AVAILABLE = hasattr(faiss, 'StandardGpuResources')
-    if FAISS_AVAILABLE:
-        logger.info("FAISS-GPU available for accelerated vector search")
-except ImportError:
-    FAISS_AVAILABLE = False
-    logger.info("FAISS-GPU not available, using pgvector only")
 
 # Import sentence transformers for embeddings
 try:
@@ -200,18 +189,12 @@ class VectorStore:
 class RAGEngine:
     """
     Retrieval-Augmented Generation engine with PostgreSQL pgvector backend.
-    Supports optional FAISS-GPU for accelerated searches on large document sets.
     """
     
     def __init__(self):
         """Initialize RAG engine with embedding model and database connection."""
         self.embeddings_engine = EmbeddingEngine()
         self.dimension = self.embeddings_engine.dimension
-        
-        # Optional: FAISS-GPU index for accelerated search
-        self.faiss_index = None
-        if FAISS_AVAILABLE and os.getenv("USE_FAISS_GPU", "false").lower() == "true":
-            self._init_faiss_gpu()
         
         # Legacy in-memory stores for backward compatibility
         self.stores: Dict[str, VectorStore] = {
@@ -221,26 +204,7 @@ class RAGEngine:
         }
         self._load_sample_documents()
         
-        logger.info(f"RAG engine initialized (dim={self.dimension}, faiss={'enabled' if self.faiss_index else 'disabled'})")
-    
-    def _init_faiss_gpu(self):
-        """Initialize FAISS-GPU index for accelerated vector search."""
-        try:
-            # Create GPU resources
-            res = faiss.StandardGpuResources()
-            
-            # Create HNSW index (hierarchical navigable small world)
-            # Similar to pgvector's HNSW but GPU-accelerated
-            cpu_index = faiss.IndexHNSWFlat(self.dimension, 32)  # M=32 links per node
-            cpu_index.hnsw.efConstruction = 64  # Build-time search depth
-            cpu_index.hnsw.efSearch = 32  # Query-time search depth
-            
-            # Move to GPU
-            self.faiss_index = faiss.index_cpu_to_gpu(res, 0, cpu_index)
-            logger.info("FAISS-GPU index initialized (HNSW, M=32)")
-        except Exception as e:
-            logger.error(f"Failed to initialize FAISS-GPU: {e}")
-            self.faiss_index = None
+        logger.info(f"RAG engine initialized (dim={self.dimension})")
     
     async def search_medical_knowledge(
         self,

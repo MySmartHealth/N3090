@@ -5,7 +5,6 @@ PostgreSQL chosen for:
 - pgvector extension: Native vector similarity search for RAG
 - HNSW indexing: Fast approximate nearest neighbor search
 - Hybrid storage: Users, sessions, chat history + embeddings
-- FAISS integration: Can offload heavy vector ops to GPU
 - Battle-tested: Industry standard for AI/ML applications
 """
 import os

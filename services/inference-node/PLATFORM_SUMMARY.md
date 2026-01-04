@@ -85,7 +85,6 @@ python scripts/init_database.py
 **Features:**
 - GPU-accelerated embeddings (BGE-large-en-v1.5, 1024-dim)
 - Persistent vector storage with pgvector
-- Optional FAISS-GPU for massive-scale searches
 - Evidence-based response generation
 - Source attribution and citations
 
@@ -387,7 +386,6 @@ services/inference-node/
 2. **RAG System**
    - GPU-accelerated embeddings (sentence-transformers)
    - pgvector for persistent vector search
-   - Optional FAISS-GPU support
    - Evidence-based retrieval
 
 3. **Knowledge Base**

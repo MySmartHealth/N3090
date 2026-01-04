@@ -16,8 +16,6 @@ psycopg2-binary==2.9.10
 
 # Embeddings & Vector Search
 sentence-transformers==3.3.1
-# Note: Install faiss-gpu separately via conda if needed for GPU acceleration
-# conda install -c pytorch faiss-gpu
 
 # Knowledge Base & Document Processing
 pypdf==5.1.0
