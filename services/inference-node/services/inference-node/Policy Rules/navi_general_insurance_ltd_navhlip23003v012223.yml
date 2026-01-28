@@ -1,0 +1,37 @@
+company: Navi General Insurance Ltd.
+product: NAVHLIP23003V012223
+version: scraped
+effective_from: null
+meta:
+  uin: null
+  type: Individual
+  year: 2022-2023
+  pdf_url: null
+admissibility:
+  min_hospitalization_hours: 24
+  daycare_procedures_allowed: true
+  pre_hospitalization_days: 30
+  post_hospitalization_days: 60
+  pre_existing_waiting_years: 4
+exclusions:
+  diseases:
+  - cosmetic surgery
+  - fertility treatment
+  - congenital external diseases
+  items:
+  - diapers
+  - toiletries
+  - sanitary napkins
+  - registration charges
+limits:
+  room_rent_limit_per_day:
+    GENERAL_WARD: 1500
+    TWIN_SHARING: 3000
+    SINGLE_PRIVATE: 5000
+    ICU: 8000
+  sub_limits:
+    cataract_per_eye: 25000
+    ambulance_charges: 2000
+payables_rules:
+  co_payment_percent: 0
+  deductible_amount: 0

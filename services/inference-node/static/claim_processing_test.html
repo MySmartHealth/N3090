@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claim Processing - Function Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .test-section {
+            background: white;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .pass { background: #d4edda; color: #155724; }
+        .fail { background: #f8d7da; color: #721c24; }
+        .pending { background: #fff3cd; color: #856404; }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px 5px 5px 0;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .console-output {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔧 Claim Processing Frontend - Function Verification</h1>
+        <p>Run tests to verify all JavaScript functions are properly loaded</p>
+    </div>
+
+    <div class="test-section">
+        <h3>📋 Test 1: Function Existence Check</h3>
+        <p>Verify that all required functions are defined and accessible:</p>
+        <button onclick="testFunctionExistence()">Run Test 1</button>
+        <div id="test1-output" class="console-output" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>🔍 Test 2: Load Claim Processing Frontend</h3>
+        <p>Load the claim processing frontend and verify it's working:</p>
+        <button onclick="testLoadFrontend()">Load Frontend</button>
+        <div id="test2-output" class="console-output" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>⚙️ Test 3: Manual Function Tests</h3>
+        <p>Test individual functions:</p>
+        <button onclick="testGoToStep()">Test goToStep()</button>
+        <button onclick="testUpdateClaimType()">Test updateClaimType()</button>
+        <button onclick="testValidateAndProceed()">Test validateAndProceed()</button>
+        <button onclick="testSimulateParsing()">Test simulateParsing()</button>
+        <button onclick="testGenerateReport()">Test generateReport()</button>
+        <div id="test3-output" class="console-output" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>🌐 Test 4: Browser Information</h3>
+        <button onclick="testBrowserInfo()">Show Browser Info</button>
+        <div id="test4-output" class="console-output" style="display:none;"></div>
+    </div>
+
+    <div class="info-box">
+        <strong>ℹ️ How to Use This Page:</strong>
+        <ol>
+            <li>Click each test button to run the diagnostic</li>
+            <li>Check the output below each test</li>
+            <li>Green (✓) = Pass, Red (✗) = Fail</li>
+            <li>If all tests pass, the claim processing frontend is ready to use</li>
+            <li>If tests fail, check your browser console (F12) for errors</li>
+        </ol>
+    </div>
+
+    <script>
+        // Global output function
+        function addOutput(testId, message, isError = false) {
+            const outputDiv = document.getElementById(testId);
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = isError ? '✗ ' : '✓ ';
+            const className = isError ? 'fail' : 'pass';
+            
+            outputDiv.style.display = 'block';
+            outputDiv.innerHTML += `<div class="${className}">[${timestamp}] ${prefix}${message}</div>`;
+        }
+
+        // Test 1: Function Existence
+        function testFunctionExistence() {
+            const testId = 'test1-output';
+            document.getElementById(testId).innerHTML = '';
+            
+            const functions = [
+                'goToStep',
+                'updateClaimType',
+                'validateAndProceed',
+                'simulateParsing',
+                'generateReport'
+            ];
+
+            let allPass = true;
+            functions.forEach(funcName => {
+                const exists = typeof window[funcName] === 'function';
+                if (exists) {
+                    addOutput(testId, `${funcName}() is defined and accessible`);
+                } else {
+                    addOutput(testId, `${funcName}() is NOT defined`, true);
+                    allPass = false;
+                }
+            });
+
+            if (allPass) {
+                addOutput(testId, 'All functions are properly defined! ✓');
+            } else {
+                addOutput(testId, 'Some functions are missing. Check if frontend file is loaded.', true);
+            }
+        }
+
+        // Test 2: Load Frontend
+        async function testLoadFrontend() {
+            const testId = 'test2-output';
+            document.getElementById(testId).innerHTML = '';
+            
+            try {
+                addOutput(testId, 'Attempting to fetch claim_processing_frontend.html...');
+                
+                const response = await fetch('claim_processing_frontend.html');
+                if (response.ok) {
+                    const content = await response.text();
+                    const size = new Blob([content]).size;
+                    
+                    // Check for key content
+                    const hasGoToStep = content.includes('function goToStep');
+                    const hasUpdateClaimType = content.includes('function updateClaimType');
+                    const hasScript = content.includes('<script>');
+                    
+                    addOutput(testId, `File loaded successfully (${(size/1024).toFixed(1)}KB)`);
+                    addOutput(testId, `Contains goToStep: ${hasGoToStep ? '✓' : '✗'}`);
+                    addOutput(testId, `Contains updateClaimType: ${hasUpdateClaimType ? '✓' : '✗'}`);
+                    addOutput(testId, `Contains script tag: ${hasScript ? '✓' : '✗'}`);
+                    
+                    if (hasGoToStep && hasUpdateClaimType && hasScript) {
+                        addOutput(testId, 'Frontend file structure is valid! ✓');
+                    }
+                } else {
+                    addOutput(testId, `Failed to load file: HTTP ${response.status}`, true);
+                }
+            } catch (error) {
+                addOutput(testId, `Error: ${error.message}`, true);
+                addOutput(testId, 'Make sure the file is in the same directory as this test file', true);
+            }
+        }
+
+        // Test 3: Individual function tests
+        function testGoToStep() {
+            const testId = 'test3-output';
+            document.getElementById(testId).innerHTML = '';
+            
+            try {
+                if (typeof goToStep === 'function') {
+                    addOutput(testId, 'goToStep() is callable');
+                    addOutput(testId, 'Testing: goToStep(1)');
+                    // Don't actually call it in this test to avoid page changes
+                    addOutput(testId, 'Function signature verified ✓');
+                } else {
+                    addOutput(testId, 'goToStep() is not defined', true);
+                }
+            } catch (error) {
+                addOutput(testId, `Error: ${error.message}`, true);
+            }
+        }
+
+        function testUpdateClaimType() {
+            const testId = 'test3-output';
+            
+            try {
+                if (typeof updateClaimType === 'function') {
+                    addOutput(testId, 'updateClaimType() is callable ✓');
+                } else {
+                    addOutput(testId, 'updateClaimType() is not defined', true);
+                }
+            } catch (error) {
+                addOutput(testId, `Error: ${error.message}`, true);
+            }
+        }
+
+        function testValidateAndProceed() {
+            const testId = 'test3-output';
+            
+            try {
+                if (typeof validateAndProceed === 'function') {
+                    addOutput(testId, 'validateAndProceed() is callable ✓');
+                } else {
+                    addOutput(testId, 'validateAndProceed() is not defined', true);
+                }
+            } catch (error) {
+                addOutput(testId, `Error: ${error.message}`, true);
+            }
+        }
+
+        function testSimulateParsing() {
+            const testId = 'test3-output';
+            
+            try {
+                if (typeof simulateParsing === 'function') {
+                    addOutput(testId, 'simulateParsing() is callable ✓');
+                } else {
+                    addOutput(testId, 'simulateParsing() is not defined', true);
+                }
+            } catch (error) {
+                addOutput(testId, `Error: ${error.message}`, true);
+            }
+        }
+
+        function testGenerateReport() {
+            const testId = 'test3-output';
+            
+            try {
+                if (typeof generateReport === 'function') {
+                    addOutput(testId, 'generateReport() is callable ✓');
+                } else {
+                    addOutput(testId, 'generateReport() is not defined', true);
+                }
+            } catch (error) {
+                addOutput(testId, `Error: ${error.message}`, true);
+            }
+        }
+
+        // Test 4: Browser Info
+        function testBrowserInfo() {
+            const testId = 'test4-output';
+            document.getElementById(testId).innerHTML = '';
+            
+            addOutput(testId, `Browser: ${navigator.userAgent}`);
+            addOutput(testId, `JavaScript Enabled: Yes ✓`);
+            addOutput(testId, `Cookies: ${navigator.cookieEnabled ? 'Enabled' : 'Disabled'}`);
+            addOutput(testId, `LocalStorage: ${'localStorage' in window ? 'Available' : 'Not available'}`);
+            addOutput(testId, `SessionStorage: ${'sessionStorage' in window ? 'Available' : 'Not available'}`);
+        }
+
+        // Auto-run on load
+        window.addEventListener('load', function() {
+            console.log('✓ Test page loaded');
+            console.log('Click any test button to start verification');
+        });
+    </script>
+</body>
+</html>

@@ -17,6 +17,11 @@ sudo apt install -y nodejs npm
 # PM2 globally
 sudo npm install -g pm2
 
+# Install Python dependencies for inference-node (scraper and backend)
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+python3 -m pip install --upgrade pip
+python3 -m pip install -r "$REPO_ROOT/services/inference-node/requirements.txt"
+
 INSTALL_CUDA=${INSTALL_CUDA:-false}
 CUDA_TOOLKIT_VERSION=${CUDA_TOOLKIT_VERSION:-12-4}
 

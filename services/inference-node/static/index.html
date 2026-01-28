@@ -499,22 +499,20 @@
             <div class="model-selector">
                 <label for="modelSelect">Select Agent:</label>
                 <select id="modelSelect">
-                    <option value="MedicalQA" data-model="TinyLlama Medical">🏥 MedicalQA Agent (TinyLlama 1.1B Medical)</option>
-                    <option value="MedicalQA" data-model="BiMediX2-8B" selected>🏥 MedicalQA Agent (BiMediX2 8B)</option>
-                    <option value="Documentation" data-model="TinyLlama General">📚 Documentation Agent (TinyLlama 1.1B)</option>
-                    <option value="Claims" data-model="OpenInsurance">📋 Claims Agent (OpenInsurance Llama3 8B)</option>
-                    <option value="Research" data-model="BioMistral-7B">🔬 Research Agent (BioMistral Clinical 7B)</option>
-                    <option value="Scribe" data-model="BioMistral-7B">📝 AI Scribe Agent (Clinical Documentation)</option>
-                    <option value="ClaimsOCR" data-model="BiMediX2-8B + OpenInsurance">🔍 Claims OCR Agent (Dual-Model Processing)</option>
+                    <option value="Scribe" data-model="Qwen-0.6B">📝 Scribe - Clinical Dictation</option>
+                    <option value="Chat" data-model="MedPalm2-8B">💬 Chat - Quick Assistance</option>
+                    <option value="MedicalQA" data-model="MedPalm2-8B" selected>🏥 Medical Q&A</option>
+                    <option value="Claims" data-model="OpenInsurance-8B">📋 Claims & Billing</option>
+                    <option value="Clinical" data-model="BiMediX2-8B">🩺 Clinical - Deep Analysis</option>
+                    <option value="AIDoctor" data-model="BiMediX2-8B">👨‍⚕️ AI Doctor - Diagnosis</option>
                 </select>
                 <span class="model-info" id="modelInfo"></span>
             </div>
 
             <div class="messages" id="messages">
                 <div class="info-message">
-                    🏥 Welcome to Medical AI Platform! Select an agent to start chatting.<br>
-                    Your messages are routed to specialized agents with automatic RAG knowledge base integration.<br>
-                    💡 Each agent is optimized for specific tasks: MedicalQA, Documentation, Claims, or Research.
+                    🏥 Welcome to Dr. iSHA - Medical AI Platform!<br>
+                    Select an agent above to begin your consultation.
                 </div>
             </div>
 
@@ -677,6 +675,9 @@
             messages.scrollTop = messages.scrollHeight;
 
             try {
+                // Dr. iSHA system prompt
+                const systemPrompt = `You are Dr. iSHA, a 26-year-old female physician (MBBS, MD, MS, MCh) - smart, witty, kind, and professional. You blend traditional South Indian values with modern medical expertise. Keep responses concise and helpful. Always maintain a warm, caring tone while being medically accurate.`;
+                
                 // Call the API gateway endpoint
                 const response = await fetch(`${API_BASE}/v1/chat/completions`, {
                     method: 'POST',
@@ -686,11 +687,12 @@
                     },
                     body: JSON.stringify({
                         messages: [
+                            { role: 'system', content: systemPrompt },
                             { role: 'user', content: fullMessage }
                         ],
                         agent_type: currentModel,
                         temperature: 0.7,
-                        max_tokens: 1024
+                        max_tokens: 256
                     }),
                 });
 

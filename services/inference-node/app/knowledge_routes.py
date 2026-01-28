@@ -23,7 +23,7 @@ from app.knowledge_base import (
     Citation
 )
 from app.database import get_db, AsyncSession
-from app.auth import get_current_user, User
+from app.auth import get_current_user, get_optional_user, User
 
 
 router = APIRouter(prefix="/v1/knowledge", tags=["knowledge"])
@@ -231,7 +231,7 @@ async def ingest_from_pdf(
 @router.post("/search")
 async def search_knowledge_base(
     request: SearchRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_optional_user),
     db: AsyncSession = Depends(get_db)
 ):
     """Search knowledge base."""
@@ -354,7 +354,7 @@ async def identify_knowledge_gaps(
 
 @router.get("/stats")
 async def get_knowledge_stats(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_optional_user),
     db: AsyncSession = Depends(get_db)
 ):
     """Get knowledge base statistics."""

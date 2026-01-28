@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Claim Processing System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: #0f172a;
+            color: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+            transition: width 0.2s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 72px;
+        }
+
+        .sidebar-header {
+            padding: 22px 20px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f8fafc;
+        }
+
+        .sidebar-subtitle {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+
+        .sidebar-menu {
+            padding: 14px 10px;
+            flex: 1;
+        }
+
+        .sidebar-section-title {
+            font-size: 11px;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            color: #94a3b8;
+            padding: 10px 10px 6px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 12px;
+            margin: 4px 0;
+            border-radius: 10px;
+            color: #e2e8f0;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+
+        .sidebar-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+            color: #fff;
+        }
+
+        .sidebar-icon {
+            font-size: 18px;
+        }
+
+        .sidebar-text {
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar.collapsed .sidebar-text,
+        .sidebar.collapsed .sidebar-badge,
+        .sidebar.collapsed .sidebar-subtitle,
+        .sidebar.collapsed .sidebar-section-title {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            padding: 22px 16px 18px;
+        }
+
+        .sidebar.collapsed .sidebar-item {
+            justify-content: center;
+        }
+
+        .sidebar-badge {
+            margin-left: auto;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            padding: 16px 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 12px;
+            color: #cbd5e1;
+        }
+
+        .sidebar-status {
+            display: inline-block;
+            padding: 4px 8px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 11px;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: #f5f7fa;
+        }
+
+        .navbar-left .collapse-btn {
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border-radius: 8px;
+            padding: 8px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .navbar-left .collapse-btn:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar-left h1 {
+            font-size: 24px;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: white;
+            color: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .btn-logout {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-title {
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            font-size: 32px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .stat-change {
+            font-size: 13px;
+            color: #28a745;
+        }
+
+        .stat-change.negative {
+            color: #dc3545;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .panel-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .panel-action {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .panel-action:hover {
+            background: #5568d3;
+        }
+
+        .claim-item {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .claim-item:last-child {
+            border-bottom: none;
+        }
+
+        .claim-info {
+            flex: 1;
+        }
+
+        .claim-id {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .claim-details {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .claim-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-query {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .activity-item {
+            padding: 15px;
+            border-left: 3px solid #667eea;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .activity-text {
+            color: #333;
+            font-size: 14px;
+        }
+
+        /* Progress Bar Styles */
+        .progress-container {
+            margin-top: 8px;
+            background: #e9ecef;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 3px;
+            animation: progress-animation 3s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        @keyframes progress-animation {
+            0% {
+                width: 0%;
+            }
+            50% {
+                width: 90%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        .processing-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #667eea;
+            color: white;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 8px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .processing-badge.bimedix::before {
+            content: "🤖 BiMediX";
+        }
+
+        .processing-badge.insurance::before {
+            content: "📋 Insurance";
+        }
+
+        .processing-badge.complete::before {
+            content: "✅ Complete";
+            background: #28a745;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .activity-processing {
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+            border-radius: 5px;
+        }
+
+        .processing-steps {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ddd;
+        }
+
+        .step-dot.active {
+            background: #667eea;
+            animation: pulse-dot 1s ease-in-out infinite;
+        }
+
+        .step-dot.completed {
+            background: #28a745;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 15px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .action-btn-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .action-btn-text {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        @media (max-width: 968px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">⚡ <span class="sidebar-text">Claims Control</span></div>
+                <div class="sidebar-subtitle">Real-time adjudication cockpit</div>
+            </div>
+            <div class="sidebar-menu">
+                <div class="sidebar-section-title">Main</div>
+                <button class="sidebar-item active" onclick="goSection('dashboard')">
+                    <span class="sidebar-icon">📊</span>
+                    <span class="sidebar-text">Dashboard</span>
+                    <span class="sidebar-badge">Live</span>
+                </button>
+                <button class="sidebar-item" onclick="goSection('newclaim')">
+                    <span class="sidebar-icon">➕</span>
+                    <span class="sidebar-text">New Claim</span>
+                </button>
+                <button class="sidebar-item" onclick="goSection('queue')">
+                    <span class="sidebar-icon">🗂️</span>
+                    <span class="sidebar-text">Claims queue</span>
+                    <span class="sidebar-badge">12</span>
+                </button>
+                <button class="sidebar-item" onclick="goSection('batch')">
+                    <span class="sidebar-icon">🌀</span>
+                    <span class="sidebar-text">Batch processing</span>
+                    <span class="sidebar-badge">5</span>
+                </button>
+                <button class="sidebar-item" onclick="goSection('processed')">
+                    <span class="sidebar-icon">✅</span>
+                    <span class="sidebar-text">Processed</span>
+                    <span class="sidebar-badge">148</span>
+                </button>
+
+                <div class="sidebar-section-title">Insights</div>
+                <button class="sidebar-item" onclick="goSection('reports')">
+                    <span class="sidebar-icon">📈</span>
+                    <span class="sidebar-text">Reports & Analytics</span>
+                </button>
+                <button class="sidebar-item" onclick="goSection('settings')">
+                    <span class="sidebar-icon">⚙️</span>
+                    <span class="sidebar-text">System settings</span>
+                </button>
+            </div>
+            <div class="sidebar-footer">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="sidebar-status">Systems green</span>
+                    <span style="color: #94a3b8;">LLMs ready</span>
+                </div>
+                <div style="margin-top: 6px; color: #94a3b8;">BiMediX • Insurance LLM • OCR</div>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <div class="navbar">
+                <div class="navbar-left">
+                    <button class="collapse-btn" onclick="toggleSidebar()">☰ <span class="sidebar-text">Collapse</span></button>
+                    <h1>🏥 Admin Dashboard</h1>
+                </div>
+                <div class="navbar-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div>
+                            <div style="font-weight: 600;" id="userName">Admin User</div>
+                            <div style="font-size: 12px; opacity: 0.9;" id="userRole">Administrator</div>
+                        </div>
+                    </div>
+                    <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+                </div>
+            </div>
+
+            <div class="container" id="dashboardTop">
+        <!-- Stats Grid -->
+        <div class="stats-grid" id="statsSection">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Total Claims Today</span>
+                    <span class="stat-icon">📋</span>
+                </div>
+                <div class="stat-value" id="totalClaims">247</div>
+                <div class="stat-change">↗ +12% from yesterday</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Approved</span>
+                    <span class="stat-icon">✅</span>
+                </div>
+                <div class="stat-value" id="approvedClaims">189</div>
+                <div class="stat-change">76.5% approval rate</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Pending Review</span>
+                    <span class="stat-icon">⏳</span>
+                </div>
+                <div class="stat-value" id="pendingClaims">34</div>
+                <div class="stat-change negative">↘ -5% from yesterday</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Total Amount</span>
+                    <span class="stat-icon">💰</span>
+                </div>
+                <div class="stat-value" id="totalAmount">₹12.4M</div>
+                <div class="stat-change">↗ +8.2% this week</div>
+            </div>
+        </div>
+
+        <!-- NEW CLAIM SECTION -->
+        <div id="newClaimSection" style="display: none;">
+            <div class="panel" style="max-width: 1200px; margin: 0 auto;">
+                <div class="panel-header">
+                    <h2 class="panel-title">📋 Process New Claim</h2>
+                    <button class="panel-action" onclick="goSection('dashboard')">← Back to Dashboard</button>
+                </div>
+
+                <div style="padding: 20px;">
+                    <!-- Step 1: Upload Documents -->
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 15px; color: #2c3e50;">Step 1: Upload Claim Documents</h3>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Select Documents (PDF/JPG/PNG - Multiple files)</label>
+                            <input type="file" id="documentFiles" accept=".pdf,.jpg,.jpeg,.png" multiple style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;">
+                            <small style="color: #666;">Hold Ctrl/Cmd to select multiple files</small>
+                        </div>
+                        <div id="uploadStatus" style="display: none; padding: 10px; border-radius: 4px; margin: 10px 0;"></div>
+                        <button onclick="uploadDocuments()" style="padding: 12px 24px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Upload & Classify Documents</button>
+                        
+                        <!-- Document Checklist -->
+                        <div id="documentChecklist" style="display: none; margin-top: 20px;">
+                            <h4>📋 Documents Uploaded:</h4>
+                            <div id="uploadedDocsList"></div>
+                            <h4 style="margin-top: 15px; color: #d35400;">⚠️ Missing Mandatory Documents:</h4>
+                            <div id="missingDocsList"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Member Search -->
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 15px; color: #2c3e50;">Step 2: Member Lookup (Heritage TPA)</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Policy Number</label>
+                                <input type="text" id="searchPolicy" placeholder="Enter policy number" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">E-Card / Member ID</label>
+                                <input type="text" id="searchMember" placeholder="Enter member ID" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;">
+                            </div>
+                        </div>
+                        <div id="memberStatus" style="display: none; padding: 10px; border-radius: 4px; margin: 10px 0;"></div>
+                        <button onclick="searchMember()" style="padding: 12px 24px; background: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Search Member</button>
+                    </div>
+
+                    <!-- Step 3: Claim Details -->
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 15px; color: #2c3e50;">Step 3: Claim Details</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Policy Number *</label>
+                                <input type="text" id="policyNumber" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Member ID *</label>
+                                <input type="text" id="memberId" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Patient Name *</label>
+                                <input type="text" id="patientName" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Patient Age</label>
+                                <input type="text" id="patientAge" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Hospital Name *</label>
+                                <input type="text" id="hospitalName" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Total Bill Amount (₹) *</label>
+                                <input type="text" id="totalBill" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;">
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Diagnosis *</label>
+                            <textarea id="diagnosis" rows="3" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;"></textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Doctor Name</label>
+                            <input type="text" id="doctorName" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;">
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Submit -->
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 15px; color: #2c3e50;">Step 4: Submit for Adjudication</h3>
+                        <button onclick="submitClaim()" style="padding: 12px 24px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 16px;">Process Claim</button>
+                        <div id="adjudicationStatus" style="display: none; padding: 10px; border-radius: 4px; margin: 10px 0;"></div>
+                    </div>
+
+                    <!-- Step 5: Results -->
+                    <div id="results" style="display: none;">
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                            <h3 style="margin-bottom: 15px; color: #2c3e50;">Step 5: Adjudication Results</h3>
+                            <div id="resultContent"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid" id="dashboardGrid">
+            <!-- Recent Claims -->
+            <div class="panel" id="recentClaimsSection">
+                <div class="panel-header">
+                    <h2 class="panel-title">Recent Claims</h2>
+                    <button class="panel-action" onclick="window.location.href='/static/claim_processing_frontend.html'">+ New Claim</button>
+                </div>
+                
+                <div id="recentClaims">
+                    <div class="claim-item">
+                        <div class="claim-info">
+                            <div class="claim-id">CLM-2026-001234</div>
+                            <div class="claim-details">Apollo Hospital • Diabetes Treatment • ₹55,500</div>
+                        </div>
+                        <span class="claim-status status-approved">APPROVED</span>
+                    </div>
+                    <div class="claim-item">
+                        <div class="claim-info">
+                            <div class="claim-id">CLM-2026-001233</div>
+                            <div class="claim-details">Fortis Hospital • Cardiac Surgery • ₹2,45,000</div>
+                        </div>
+                        <span class="claim-status status-query">QUERY RAISED</span>
+                    </div>
+                    <div class="claim-item">
+                        <div class="claim-info">
+                            <div class="claim-id">CLM-2026-001232</div>
+                            <div class="claim-details">Max Hospital • Orthopedic Surgery • ₹1,25,000</div>
+                        </div>
+                        <span class="claim-status status-approved">APPROVED</span>
+                    </div>
+                    <div class="claim-item">
+                        <div class="claim-info">
+                            <div class="claim-id">CLM-2026-001231</div>
+                            <div class="claim-details">AIIMS • Cosmetic Procedure • ₹75,000</div>
+                        </div>
+                        <span class="claim-status status-rejected">REJECTED</span>
+                    </div>
+                    <div class="claim-item">
+                        <div class="claim-info">
+                            <div class="claim-id">CLM-2026-001230</div>
+                            <div class="claim-details">Medanta • Cancer Treatment • ₹4,50,000</div>
+                        </div>
+                        <span class="claim-status status-pending">PENDING</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Log & Quick Actions -->
+            <div id="activitySection">
+                <div class="panel" style="margin-bottom: 25px;">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Recent Activity</h2>
+                    </div>
+                    
+                    <div id="activityLog">
+                        <div style="display: grid; gap: 14px; margin-bottom: 14px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+                                <div style="background: #f5f7ff; border: 1px solid #e0e7ff; border-radius: 8px; padding: 10px 12px;">
+                                    <div style="font-size: 12px; color: #555;">Batch processing</div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <strong style="font-size: 20px; color: #4c51bf;">12</strong>
+                                        <span style="color: #667eea; font-weight: 600;">claims in queue</span>
+                                    </div>
+                                </div>
+                                <div style="background: #f0fff4; border: 1px solid #c6f6d5; border-radius: 8px; padding: 10px 12px;">
+                                    <div style="font-size: 12px; color: #2f855a;">Processed</div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <strong style="font-size: 20px; color: #2f855a;">148</strong>
+                                        <span style="color: #276749; font-weight: 600;">completed today</span>
+                                    </div>
+                                </div>
+                                <div style="background: #fffaf0; border: 1px solid #fbd38d; border-radius: 8px; padding: 10px 12px;">
+                                    <div style="font-size: 12px; color: #b7791f;">Under process</div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <strong style="font-size: 20px; color: #b7791f;">5</strong>
+                                        <span style="color: #975a16; font-weight: 600;">running now</span>
+                                    </div>
+                                </div>
+                                <div style="background: #fff5f5; border: 1px solid #fed7d7; border-radius: 8px; padding: 10px 12px;">
+                                    <div style="font-size: 12px; color: #c53030;">Yet to start</div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <strong style="font-size: 20px; color: #c53030;">7</strong>
+                                        <span style="color: #9b2c2c; font-weight: 600;">awaiting pick-up</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <ul style="list-style: none; padding: 0; margin: 0; display: grid; gap: 10px;">
+                                <li style="border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 14px; background: #fff; display: grid; gap: 6px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="font-weight: 700; color: #111827;">Batch Q1 • 4 claims</div>
+                                        <span class="claim-status status-pending" style="text-transform: uppercase;">In queue</span>
+                                    </div>
+                                    <div style="font-size: 13px; color: #4b5563;">CLM-2026-001260, CLM-2026-001259, CLM-2026-001258, CLM-2026-001257</div>
+                                    <div style="font-size: 12px; color: #6b7280;">ETA: 6 minutes • Priority: High</div>
+                                </li>
+
+                                <li style="border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 14px; background: #fff; display: grid; gap: 6px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="font-weight: 700; color: #111827;">Batch Q2 • 3 claims</div>
+                                        <span class="claim-status status-approved" style="text-transform: uppercase;">Processed</span>
+                                    </div>
+                                    <div style="font-size: 13px; color: #4b5563;">CLM-2026-001254, CLM-2026-001253, CLM-2026-001252</div>
+                                    <div style="font-size: 12px; color: #6b7280;">Completed 5 minutes ago • Avg TAT: 2m 10s</div>
+                                </li>
+
+                                <li style="border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 14px; background: #fff; display: grid; gap: 6px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="font-weight: 700; color: #111827;">Live • CLM-2026-001250</div>
+                                        <span class="claim-status status-pending" style="text-transform: uppercase;">Under process</span>
+                                    </div>
+                                    <div style="font-size: 13px; color: #4b5563;">Max Hospital • Cardiac Surgery • ₹2,45,000</div>
+                                    <div class="processing-steps" style="margin-top: 4px;">
+                                        <div class="step-indicator">
+                                            <div class="step-dot completed"></div>
+                                            <span>Uploaded</span>
+                                        </div>
+                                        <div class="step-indicator">
+                                            <div class="step-dot active" id="bimedixDot"></div>
+                                            <span>Medical Review</span>
+                                        </div>
+                                        <div class="step-indicator">
+                                            <div class="step-dot" id="insuranceDot"></div>
+                                            <span>Policy Check</span>
+                                        </div>
+                                        <div class="step-indicator">
+                                            <div class="step-dot" id="completeDot"></div>
+                                            <span>Decision</span>
+                                        </div>
+                                    </div>
+                                    <div class="progress-container" style="margin-top: 8px;">
+                                        <div class="progress-bar" id="liveProgress"></div>
+                                    </div>
+                                </li>
+
+                                <li style="border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 14px; background: #fff; display: grid; gap: 6px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="font-weight: 700; color: #111827;">Batch Q3 • 2 claims</div>
+                                        <span class="claim-status status-pending" style="text-transform: uppercase;">Yet to start</span>
+                                    </div>
+                                    <div style="font-size: 13px; color: #4b5563;">CLM-2026-001251, CLM-2026-001249</div>
+                                    <div style="font-size: 12px; color: #6b7280;">Queued • SLA: 12 minutes • Assigning resources</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel" id="quickActionsSection">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Quick Actions</h2>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <button class="action-btn" onclick="window.location.href='/static/claim_processing_frontend.html'">
+                            <div class="action-btn-icon">📝</div>
+                            <div class="action-btn-text">New Claim</div>
+                        </button>
+                        <button class="action-btn" onclick="viewReports()">
+                            <div class="action-btn-icon">📊</div>
+                            <div class="action-btn-text">View Reports</div>
+                        </button>
+                        <button class="action-btn" onclick="manageUsers()">
+                            <div class="action-btn-icon">👥</div>
+                            <div class="action-btn-text">Manage Users</div>
+                        </button>
+                        <button class="action-btn" onclick="systemSettings()">
+                            <div class="action-btn-icon">⚙️</div>
+                            <div class="action-btn-text">Settings</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+    <script>
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+            
+            if (!token) {
+                window.location.href = '/static/login.html';
+                return null;
+            }
+            
+            return user;
+        }
+
+        // Load user info
+        function loadUserInfo() {
+            const user = checkAuth();
+            if (user) {
+                document.getElementById('userName').textContent = user.name || user.username;
+                document.getElementById('userRole').textContent = user.role || 'User';
+                document.getElementById('userAvatar').textContent = (user.name || user.username).charAt(0).toUpperCase();
+            }
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                sessionStorage.removeItem('token');
+                sessionStorage.removeItem('user');
+                window.location.href = '/static/login.html';
+            }
+        }
+
+        // Quick action functions
+        function viewReports() {
+            alert('📊 Reports feature coming soon!\n\nWill include:\n• Daily/Weekly/Monthly reports\n• Claim statistics\n• LLM performance metrics\n• Export to PDF/Excel');
+        }
+
+        function manageUsers() {
+            alert('👥 User Management feature coming soon!\n\nWill include:\n• Add/Edit/Delete users\n• Assign roles\n• View activity logs\n• Password management');
+        }
+
+        function systemSettings() {
+            alert('⚙️ System Settings feature coming soon!\n\nWill include:\n• LLM configuration\n• API key management\n• Email notifications\n• System preferences');
+        }
+
+        // Simulate real-time updates
+        function updateStats() {
+            setInterval(() => {
+                const totalClaims = document.getElementById('totalClaims');
+                const currentValue = parseInt(totalClaims.textContent);
+                if (Math.random() > 0.7) {
+                    totalClaims.textContent = currentValue + 1;
+                }
+            }, 30000); // Update every 30 seconds
+        }
+
+        // Live Processing Animation
+        function startLiveProcessing() {
+            let step = 0;
+            const steps = [
+                { dot: 'bimedixDot', duration: 3000, label: 'Medical Review' },
+                { dot: 'insuranceDot', duration: 3000, label: 'Policy Check' },
+                { dot: 'completeDot', duration: 2000, label: 'Decision' }
+            ];
+
+            function runStep(index) {
+                if (index < steps.length) {
+                    const stepDot = document.getElementById(steps[index].dot);
+                    if (stepDot) {
+                        // Mark previous as completed
+                        if (index > 0) {
+                            const prevDot = document.getElementById(steps[index - 1].dot);
+                            prevDot.classList.remove('active');
+                            prevDot.classList.add('completed');
+                        }
+                        
+                        // Activate current
+                        stepDot.classList.add('active');
+                        
+                        // Schedule next step
+                        setTimeout(() => {
+                            runStep(index + 1);
+                        }, steps[index].duration);
+                    }
+                } else {
+                    // All steps complete - restart after 2 seconds
+                    setTimeout(() => {
+                        document.getElementById('bimedixDot').classList.remove('completed', 'active');
+                        document.getElementById('insuranceDot').classList.remove('completed', 'active');
+                        document.getElementById('completeDot').classList.remove('completed', 'active');
+                        document.getElementById('bimedixDot').classList.add('active');
+                        runStep(1);
+                    }, 2000);
+                }
+            }
+
+            // Start the animation
+            runStep(0);
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            loadUserInfo();
+            updateStats();
+            startLiveProcessing();
+        });
+
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('collapsed');
+            const textEls = document.querySelectorAll('.collapse-btn .sidebar-text');
+            textEls.forEach(el => {
+                el.textContent = sidebar.classList.contains('collapsed') ? 'Expand' : 'Collapse';
+            });
+        }
+
+        function goSection(target) {
+            // Hide all sections
+            document.getElementById('dashboardTop').style.display = 'block';
+            document.getElementById('newClaimSection').style.display = 'none';
+            
+            // Update active menu item
+            document.querySelectorAll('.sidebar-item').forEach(btn => btn.classList.remove('active'));
+            
+            if (target === 'newclaim') {
+                document.getElementById('dashboardTop').style.display = 'none';
+                document.getElementById('newClaimSection').style.display = 'block';
+                document.querySelector('[onclick="goSection(\'newclaim\')"]').classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+            
+            const map = {
+                dashboard: document.getElementById('dashboardTop'),
+                queue: document.getElementById('activitySection'),
+                batch: document.getElementById('activitySection'),
+                processed: document.getElementById('recentClaimsSection'),
+                reports: null,
+                settings: null
+            };
+
+            // Activate menu item
+            const menuBtn = document.querySelector(`[onclick="goSection('${target}')"]`);
+            if (menuBtn) menuBtn.classList.add('active');
+
+            if (map[target]) {
+                map[target].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else if (target === 'reports') {
+                viewReports();
+            } else if (target === 'settings') {
+                systemSettings();
+            }
+        }
+
+        // ==================== CLAIM PROCESSING FUNCTIONS ====================
+        let uploadedDocuments = [];
+        let memberData = null;
+
+        const MANDATORY_DOCS = [
+            { type: 'discharge_summary', label: 'Discharge Summary', mandatory: true },
+            { type: 'main_bill', label: 'Hospital Main Bill', mandatory: true },
+            { type: 'breakup_bill', label: 'Hospital Break-up Bill', mandatory: true },
+            { type: 'id_proof', label: 'Photo ID Card', mandatory: true },
+            { type: 'claim_form', label: 'Claim Form', mandatory: false },
+            { type: 'pre_auth', label: 'Pre-authorization Letter', mandatory: false },
+            { type: 'ot_notes', label: 'Operation Theatre Notes', mandatory: false },
+            { type: 'investigation', label: 'Investigation Reports', mandatory: false },
+            { type: 'pharmacy_bill', label: 'Pharmacy Bills', mandatory: false }
+        ];
+
+        async function uploadDocuments() {
+            const fileInput = document.getElementById('documentFiles');
+            const files = fileInput.files;
+            
+            if (!files || files.length === 0) {
+                showClaimStatus('uploadStatus', 'Please select at least one document', 'error');
+                return;
+            }
+
+            showClaimStatus('uploadStatus', `Uploading ${files.length} file(s)...`, 'info');
+            uploadedDocuments = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const response = await fetch('/upload/claim-document', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        console.error(`Failed to upload ${file.name}`);
+                        continue;
+                    }
+
+                    const result = await response.json();
+                    const docType = classifyDocument(file.name, result.data.raw_text || '');
+                    
+                    uploadedDocuments.push({
+                        filename: file.name,
+                        type: docType,
+                        size: file.size,
+                        extracted_fields: result.data.extracted_fields || {},
+                        raw_text: result.data.raw_text || ''
+                    });
+
+                    // Log extraction results for debugging
+                    console.log(`File: ${file.name}`);
+                    console.log(`Extracted fields:`, result.data.extracted_fields);
+                    console.log(`Raw text length: ${(result.data.raw_text || '').length}`);
+                    console.log(`Raw text preview:`, (result.data.raw_text || '').substring(0, 500));
+
+                    if (docType === 'discharge_summary' || docType === 'main_bill') {
+                        autoFillFields(result.data.extracted_fields || {});
+                    }
+                } catch (error) {
+                    console.error(`Error uploading ${file.name}:`, error);
+                }
+            }
+
+            showClaimStatus('uploadStatus', `✓ ${uploadedDocuments.length} of ${files.length} documents uploaded and classified`, 'success');
+            displayDocumentChecklist();
+            
+            // Show extraction summary
+            const totalFields = uploadedDocuments.reduce((sum, doc) => sum + Object.keys(doc.extracted_fields).length, 0);
+            const totalTextChars = uploadedDocuments.reduce((sum, doc) => sum + (doc.raw_text || '').length, 0);
+            
+            if (totalFields > 0) {
+                showClaimStatus('uploadStatus', `✓ Uploaded ${uploadedDocuments.length} documents. Extracted ${totalFields} fields from ${totalTextChars.toLocaleString()} characters of text.`, 'success');
+            } else if (totalTextChars > 0) {
+                showClaimStatus('uploadStatus', `⚠ Uploaded ${uploadedDocuments.length} documents. Extracted ${totalTextChars.toLocaleString()} characters but no fields matched. Check console for raw text.`, 'warning');
+            } else {
+                showClaimStatus('uploadStatus', `⚠ Uploaded ${uploadedDocuments.length} documents but could not extract text. PDFs may be image-based (OCR needed).`, 'warning');
+            }
+        }
+
+        function classifyDocument(filename, text) {
+            const lower = (filename + ' ' + text).toLowerCase();
+            
+            if (lower.includes('discharge') || lower.includes('discharge summary')) return 'discharge_summary';
+            if (lower.includes('main bill') || lower.includes('hospital bill') || (lower.includes('bill') && !lower.includes('pharmacy'))) return 'main_bill';
+            if (lower.includes('breakup') || lower.includes('break-up') || lower.includes('itemized')) return 'breakup_bill';
+            if (lower.includes('id') || lower.includes('identity') || lower.includes('aadhar') || lower.includes('card')) return 'id_proof';
+            if (lower.includes('claim form') || lower.includes('claimform')) return 'claim_form';
+            if (lower.includes('pre-auth') || lower.includes('authorization') || lower.includes('approval')) return 'pre_auth';
+            if (lower.includes('operation') || lower.includes('ot notes') || lower.includes('surgery')) return 'ot_notes';
+            if (lower.includes('lab') || lower.includes('test') || lower.includes('investigation') || lower.includes('report')) return 'investigation';
+            if (lower.includes('pharmacy') || lower.includes('medicine') || lower.includes('drug')) return 'pharmacy_bill';
+            
+            return 'other';
+        }
+
+        function displayDocumentChecklist() {
+            const checklistDiv = document.getElementById('documentChecklist');
+            const uploadedList = document.getElementById('uploadedDocsList');
+            const missingList = document.getElementById('missingDocsList');
+            
+            checklistDiv.style.display = 'block';
+
+            const uploadedTypes = uploadedDocuments.map(d => d.type);
+            uploadedList.innerHTML = uploadedDocuments.map(doc => {
+                const docDef = MANDATORY_DOCS.find(d => d.type === doc.type);
+                const label = docDef ? docDef.label : doc.type;
+                
+                return `
+                    <div style="padding: 10px; background: white; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid ${docDef?.mandatory ? '#27ae60' : '#95a5a6'};">
+                        <div>
+                            <span style="padding: 4px 8px; border-radius: 3px; font-size: 12px; font-weight: 600; background: #3498db; color: white;">${label}</span>
+                            <span style="margin-left: 10px; color: #666;">${doc.filename}</span>
+                        </div>
+                        <span style="color: #27ae60; font-size: 20px;">✓</span>
+                    </div>
+                `;
+            }).join('');
+
+            const missing = MANDATORY_DOCS.filter(d => d.mandatory && !uploadedTypes.includes(d.type));
+            if (missing.length > 0) {
+                missingList.innerHTML = missing.map(doc => `
+                    <div style="padding: 10px; background: white; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 8px; display: flex; justify-content: space-between; border-left: 4px solid #e74c3c;">
+                        <span style="padding: 4px 8px; border-radius: 3px; font-size: 12px; font-weight: 600; background: #e74c3c; color: white;">${doc.label}</span>
+                        <span style="color: #e74c3c; font-weight: 600;">✗ Required</span>
+                    </div>
+                `).join('');
+            } else {
+                missingList.innerHTML = '<p style="color: #27ae60; font-weight: 600;">✓ All mandatory documents uploaded</p>';
+            }
+        }
+
+        function autoFillFields(fields) {
+            if (fields.patient_name && !document.getElementById('patientName').value) document.getElementById('patientName').value = fields.patient_name;
+            if (fields.age && !document.getElementById('patientAge').value) document.getElementById('patientAge').value = fields.age;
+            if (fields.hospital && !document.getElementById('hospitalName').value) document.getElementById('hospitalName').value = fields.hospital;
+            if (fields.total_amount && !document.getElementById('totalBill').value) document.getElementById('totalBill').value = fields.total_amount;
+            if (fields.diagnosis && !document.getElementById('diagnosis').value) document.getElementById('diagnosis').value = fields.diagnosis;
+            if (fields.doctor && !document.getElementById('doctorName').value) document.getElementById('doctorName').value = fields.doctor;
+        }
+
+        async function searchMember() {
+            const policy = document.getElementById('searchPolicy').value.trim();
+            const member = document.getElementById('searchMember').value.trim();
+
+            if (!policy && !member) {
+                showClaimStatus('memberStatus', 'Enter policy or member ID to search', 'error');
+                return;
+            }
+
+            showClaimStatus('memberStatus', 'Searching Heritage TPA...', 'info');
+
+            try {
+                const response = await fetch('/tpa/member-search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tpa_provider: 'heritage',
+                        policy_number: policy || undefined,
+                        ecard_number: member || undefined,
+                        member_id: member || undefined
+                    })
+                });
+
+                if (!response.ok) throw new Error(`Search failed: ${response.status}`);
+
+                const result = await response.json();
+
+                if (result.success && result.members && result.members.length > 0) {
+                    memberData = result.members[0];
+                    
+                    if (memberData.policy_number) document.getElementById('policyNumber').value = memberData.policy_number;
+                    if (memberData.member_id) document.getElementById('memberId').value = memberData.member_id;
+                    if (memberData.name) document.getElementById('patientName').value = memberData.name;
+                    if (memberData.age) document.getElementById('patientAge').value = memberData.age;
+
+                    showClaimStatus('memberStatus', `✓ Member found: ${memberData.name}. Details filled below.`, 'success');
+                } else {
+                    showClaimStatus('memberStatus', 'No member found. Check policy/member ID.', 'warning');
+                }
+            } catch (error) {
+                showClaimStatus('memberStatus', `✗ Search failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function submitClaim() {
+            const uploadedTypes = uploadedDocuments.map(d => d.type);
+            const missingMandatory = MANDATORY_DOCS.filter(d => d.mandatory && !uploadedTypes.includes(d.type)).map(d => d.label);
+
+            if (missingMandatory.length > 0) {
+                showClaimStatus('adjudicationStatus', `Missing mandatory documents: ${missingMandatory.join(', ')}`, 'error');
+                return;
+            }
+
+            const required = ['policyNumber', 'memberId', 'patientName', 'hospitalName', 'totalBill', 'diagnosis'];
+            const missing = required.filter(id => !document.getElementById(id).value.trim());
+
+            if (missing.length > 0) {
+                showClaimStatus('adjudicationStatus', `Missing required fields: ${missing.join(', ')}`, 'error');
+                return;
+            }
+
+            showClaimStatus('adjudicationStatus', 'Processing claim adjudication...', 'info');
+
+            const claimData = {
+                claim_id: 'CLM-' + Date.now(),
+                policy_number: document.getElementById('policyNumber').value,
+                member_id: document.getElementById('memberId').value,
+                hospital_name: document.getElementById('hospitalName').value,
+                diagnosis: document.getElementById('diagnosis').value,
+                total_bill: parseFloat(document.getElementById('totalBill').value.replace(/,/g, '') || 0),
+                deductible: 2500,
+                patient_name: document.getElementById('patientName').value,
+                patient_age: document.getElementById('patientAge').value,
+                doctor_name: document.getElementById('doctorName').value,
+                tpa_provider: 'heritage',
+                member_details: memberData,
+                documents: uploadedDocuments
+            };
+
+            try {
+                const response = await fetch('/adjudicate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(claimData)
+                });
+
+                if (!response.ok) throw new Error(`Adjudication failed: ${response.status}`);
+
+                const result = await response.json();
+
+                showClaimStatus('adjudicationStatus', '✓ Claim processed successfully', 'success');
+                displayClaimResults(result);
+            } catch (error) {
+                showClaimStatus('adjudicationStatus', `✗ Processing failed: ${error.message}`, 'error');
+            }
+        }
+
+        function displayClaimResults(result) {
+            const resultsDiv = document.getElementById('results');
+            const contentDiv = document.getElementById('resultContent');
+            
+            resultsDiv.style.display = 'block';
+
+            const decision = result.final_decision || 'PENDING';
+            const bgColor = decision === 'APPROVED' ? '#d4edda' : '#f8d7da';
+            const borderColor = decision === 'APPROVED' ? '#28a745' : '#dc3545';
+
+            contentDiv.innerHTML = `
+                <div style="padding: 20px; border: 2px solid ${borderColor}; border-radius: 5px; background: ${bgColor};">
+                    <h3 style="margin-bottom: 10px;">Decision: ${decision}</h3>
+                    <p><strong>Claim ID:</strong> ${result.claim_id}</p>
+                    ${result.approval_amount ? `<p><strong>Approved Amount:</strong> ₹${result.approval_amount.toLocaleString()}</p>` : ''}
+                    ${result.rejection_reason ? `<p><strong>Reason:</strong> ${result.rejection_reason}</p>` : ''}
+                    
+                    <hr style="margin: 15px 0;">
+                    
+                    <h4>Medical Analysis:</h4>
+                    <p>${result.bimedix_analysis || 'Not available'}</p>
+                    
+                    <h4>Policy Analysis:</h4>
+                    <p>${result.insurance_analysis || 'Not available'}</p>
+                </div>
+            `;
+
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showClaimStatus(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            const colors = {
+                info: { bg: '#d1ecf1', color: '#0c5460' },
+                success: { bg: '#d4edda', color: '#155724' },
+                error: { bg: '#f8d7da', color: '#721c24' },
+                warning: { bg: '#fff3cd', color: '#856404' }
+            };
+            const c = colors[type] || colors.info;
+            el.style.background = c.bg;
+            el.style.color = c.color;
+            el.style.padding = '10px';
+            el.style.borderRadius = '4px';
+            el.textContent = message;
+            el.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

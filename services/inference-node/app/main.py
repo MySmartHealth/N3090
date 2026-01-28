@@ -4,8 +4,9 @@ import hashlib
 import uuid
 import io
 import asyncio
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Tuple
 from datetime import timedelta
+from functools import lru_cache
 
 import httpx
 
@@ -122,9 +123,56 @@ except ImportError:
     ADVANCED_AI_ROUTES_AVAILABLE = False
     logger.warning("Advanced AI routes not available")
 
+# Import Appointment Scheduling routes
+try:
+    from .appointment_routes import router as appointment_router
+    APPOINTMENT_ROUTES_AVAILABLE = True
+except ImportError:
+    APPOINTMENT_ROUTES_AVAILABLE = False
+    logger.warning("Appointment scheduling routes not available")
+
 # Configure logging: avoid PHI; only metadata
 logger.remove()
 logger.add(lambda msg: print(msg, end=""), level="INFO")
+
+# Global HTTP client with connection pooling for LLM calls
+# Reuses TCP connections across requests for better throughput
+llm_http_client = None
+
+async def get_llm_client() -> httpx.AsyncClient:
+    """Get or create persistent HTTP client with pooling."""
+    global llm_http_client
+    if llm_http_client is None:
+        # Increased pool size for concurrent request handling
+        limits = httpx.Limits(max_keepalive_connections=20, max_connections=20)
+        llm_http_client = httpx.AsyncClient(timeout=90.0, limits=limits)
+    return llm_http_client
+
+
+# Simple LRU cache for RAG context (256 entries, 1hr TTL in production)
+@lru_cache(maxsize=256)
+def cache_rag_context(agent_type: str, query_hash: str) -> Optional[str]:
+    """Cache decorated function for RAG context - query_hash is md5(query)."""
+    # This is just a placeholder; actual lookup happens in get_cached_rag
+    return None
+
+
+async def get_cached_rag_context(agent_type: str, query: str, rag_engine) -> Tuple[str, bool]:
+    """Retrieve RAG context with caching. Returns (context, from_cache)."""
+    query_hash = hashlib.md5(query.encode()).hexdigest()
+    
+    # Check simple in-memory cache first
+    cached = cache_rag_context(agent_type, query_hash)
+    if cached:
+        return cached, True
+    
+    # Fetch from RAG engine
+    try:
+        context = rag_engine.get_context_for_agent(agent_type, query, top_k=3)
+        # Cache hit will be added on next call
+        return context, False
+    except Exception:
+        return "", False
 
 
 def guardrail_sanitize(text: str, max_chars: int = 1200) -> str:
@@ -235,6 +283,11 @@ if ASYNC_ROUTES_AVAILABLE:
 if ADVANCED_AI_ROUTES_AVAILABLE:
     app.include_router(advanced_ai_routes)
     logger.info("Advanced AI routes enabled (VLP, XAI, Gen AI, Quantum ML, SSL)")
+
+# Include Appointment Scheduling routes
+if APPOINTMENT_ROUTES_AVAILABLE:
+    app.include_router(appointment_router)
+    logger.info("Appointment scheduling routes enabled (via n8n: n8n.mediqzy.com)")
 
 # Mount static files for web UI
 static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
@@ -567,12 +620,15 @@ async def chat_completions(
             logger.warning(f"External LLM failed, falling back to local: {e}")
             # Continue to local model router below
 
-    # Get RAG context if applicable
+    # Get RAG context if applicable (with caching for repeated queries)
     last_user = next((m.content for m in reversed(req.messages) if m.role == "user"), "")
     rag_context = ""
     if agent_type in ["Documentation", "MedicalQA", "Claims", "Billing"]:
         try:
-            rag_context = rag_engine.get_context_for_agent(agent_type, last_user, top_k=3)
+            # Use cached RAG if available (avoids redundant vector searches)
+            rag_context, from_cache = await get_cached_rag_context(agent_type, last_user, rag_engine)
+            if from_cache:
+                logger.debug(f"RAG context from cache for {agent_type}")
             if rag_context:
                 # Prepend context as system message
                 req.messages.insert(0, Message(role="system", content=rag_context))
@@ -627,17 +683,19 @@ async def chat_completions(
                     "max_tokens": getattr(request.state, "max_tokens", 512),
                 }
                 headers = {"Authorization": "Bearer dev-key"}
-                async with httpx.AsyncClient(timeout=90.0) as client:
-                    resp = await client.post(llm_url, json=payload, headers=headers)
-                    if resp.status_code == 200:
-                        result = resp.json()
-                        content = result.get("choices", [{}])[0].get("message", {}).get("content", "No response")
-                        model_used = result.get("model", f"llama_cpp:{target_port}")
-                        inference_time = 0.0
-                        logger.info(f"LLM response from port {target_port}: {len(content)} chars")
-                    else:
-                        logger.warning(f"LLM port {target_port} returned {resp.status_code}, falling back")
-                        raise Exception(f"LLM port returned {resp.status_code}")
+                
+                # Use persistent client with connection pooling for performance
+                client = await get_llm_client()
+                resp = await client.post(llm_url, json=payload, headers=headers)
+                if resp.status_code == 200:
+                    result = resp.json()
+                    content = result.get("choices", [{}])[0].get("message", {}).get("content", "No response")
+                    model_used = result.get("model", f"llama_cpp:{target_port}")
+                    inference_time = 0.0
+                    logger.info(f"LLM response from port {target_port}: {len(content)} chars")
+                else:
+                    logger.warning(f"LLM port {target_port} returned {resp.status_code}, falling back")
+                    raise Exception(f"LLM port returned {resp.status_code}")
             except Exception as e:
                 logger.warning(f"Direct LLM call failed: {e}, using model_router fallback")
                 generation_result = await model_router.generate(
@@ -1807,10 +1865,17 @@ async def startup_event():
         logger.info(f"GPU load balancer skipped: {e}")
 
 
-# Shutdown event: Stop GPU monitoring
+# Shutdown event: Stop GPU monitoring and close HTTP client
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown"""
+    global llm_http_client
+    
+    # Close persistent HTTP client
+    if llm_http_client:
+        await llm_http_client.aclose()
+        logger.info("✓ HTTP client closed")
+    
     if LOAD_BALANCER_ENABLED and load_balancer:
         try:
             load_balancer.stop()

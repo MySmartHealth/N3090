@@ -99,6 +99,18 @@ class ModelRegistry:
             vram_gb=9.0,
             gpu_ids=[1],  # RTX 3060
         ),
+        "medpalm2-8b": ModelConfig(
+            name="MedPalm2-imitate 8B (Q6_K gguf)",
+            path=os.getenv(
+                "MEDPALM2_PATH",
+                os.path.join(MODEL_BASE, "Llama-3.1-MedPalm2-imitate-8B-Instruct.Q6_K.gguf"),
+            ),
+            backend=ModelBackend.LLAMA_CPP,
+            quantization="Q6_K",
+            max_context=4096,
+            vram_gb=7.0,
+            gpu_ids=[0],  # RTX 3090
+        ),
         "tiny-llama-1b": ModelConfig(
             name="Tiny-LLaMA 1.1B Chat Medical (fp16 gguf)",
             path=os.getenv(
@@ -198,25 +210,79 @@ class ModelRegistry:
     }
     
     # Agent to model mapping - using GGUF models for llama.cpp
-    # SPEED TIERS (from benchmark):
-    #   Tier 0 (Instant, <1s):     Chat, FastChat, Scribe - for interactive/real-time tasks
-    #   Tier 1 (Real-Time, <2s):   Appointment, Documentation, Billing, Claims, Monitoring, MedicalQA - for interactive/urgent tasks
-    #   Tier 2 (High-Quality, 33s): Clinical, AIDoctor - for accuracy-critical tasks
-    #   Tier 3 (Translation):       Translate - multilingual support (no LLM inference required)
+    # ═══════════════════════════════════════════════════════════════════════════
+    # 4-MODEL TANDEM CONFIGURATION (fits in 24GB RTX 3090):
+    #
+    # PRIMARY TIER - BiMediX2-8B (Port 8080)
+    #   - Main model for ALL medical tasks
+    #   - Best quality + speed balance (~65 tok/s, ~99 tok/s peak)
+    #   - VRAM: 6.9GB
+    #
+    # TANDEM TIER - Work alongside BiMediX2
+    #   - OpenInsurance-8B (Port 8084): Insurance/Claims specialist
+    #   - Qwen-0.6B (Port 8082): Lightweight quick responses, triage
+    #
+    # BACKUP TIER - MedPalm2-8B (Port 8081)
+    #   - Fallback ONLY when BiMediX2 fails
+    #   - Good quality but slower (~55 tok/s)
+    #   - VRAM: 6.9GB
+    # ═══════════════════════════════════════════════════════════════════════════
+    
+    # Primary model for fallback logic
+    PRIMARY_MODEL = "bi-medix2"
+    BACKUP_MODEL = "medpalm2-8b"
+    
     AGENT_MODEL_MAP = {
-        "Chat": "tiny-llama-1b",              # TIER 1: 1.2s avg - Patient chat/triage (lightweight, fast)
-        "FastChat": "qwen-0.6b-med",            # TIER 0: <1s avg - Ultra-lightweight chat (smallest, fastest)
-        "Appointment": "tiny-llama-1b",         # TIER 1: 1.2s avg - Patient interactions (fast response)
-        "Documentation": "bi-medix2",          # TIER 1: 1.4s avg - Documentation/medical records (using BiMediX2)
-        "Billing": "openins-llama3-8b",         # TIER 1: 1.2s avg - Insurance/billing queries (domain-specialized)
-        "Claims": "openins-llama3-8b",          # TIER 1: 1.2s avg - Claims processing (domain-specialized)
-        "Monitoring": "tiny-llama-1b",          # TIER 1: 1.2s avg - Lightweight monitoring
-        "MedicalQA": "bi-medix2",                # TIER 1: 1.4s avg - Medical Q&A (primary, specialized)
-        "Clinical": "bio-mistral-7b",           # TIER 2: 33s avg, 72 tok/s - Clinical decisions (comprehensive, highest quality)
-        "AIDoctor": "bio-mistral-7b",           # TIER 2: 35s avg, 70 tok/s - Comprehensive diagnosis (BioMistral + Medicine-LLM dual-model)
-        "Scribe": "qwen-0.6b-med",              # TIER 0: <1s avg - Real-time clinical dictation → structured notes (ultra-fast)
-        "ClaimsOCR": "bi-medix2",              # TIER 1: 1.4s avg - NOTE: Uses BOTH BiMediX + OpenInsurance (dual-model in ClaimsAdjudicator)
-        "Translate": "indictrans2",             # TIER 3: 100-500ms - Multilingual translation (22+ Indian languages) - no LLM inference
+        # ═══════════════════════════════════════════════════════════════════════
+        # PRIMARY: BiMediX2-8B - All core medical tasks (Port 8080)
+        # ═══════════════════════════════════════════════════════════════════════
+        "Chat": "bi-medix2",
+        "Scribe": "bi-medix2",
+        "FastChat": "bi-medix2",
+        "MedicalQA": "bi-medix2",
+        "Clinical": "bi-medix2",
+        "AIDoctor": "bi-medix2",
+        "Research": "bi-medix2",
+        "Documentation": "bi-medix2",
+        "Appointment": "bi-medix2",
+        "Monitoring": "bi-medix2",
+        "ImageAnalysis": "bi-medix2",
+        "Radiology": "bi-medix2",
+        "DischargeSummary": "bi-medix2",
+        "LabReport": "bi-medix2",
+        "PatientHistory": "bi-medix2",
+        "Diagnosis": "bi-medix2",
+        "Treatment": "bi-medix2",
+        "Prescription": "bi-medix2",
+        
+        # ═══════════════════════════════════════════════════════════════════════
+        # TANDEM: OpenInsurance-8B - Insurance domain specialist (Port 8084)
+        # ═══════════════════════════════════════════════════════════════════════
+        "Billing": "openins-llama3-8b",
+        "Claims": "openins-llama3-8b",
+        "ClaimsOCR": "openins-llama3-8b",
+        "Insurance": "openins-llama3-8b",
+        "Coverage": "openins-llama3-8b",
+        "PreAuth": "openins-llama3-8b",
+        "Reimbursement": "openins-llama3-8b",
+        
+        # ═══════════════════════════════════════════════════════════════════════
+        # TANDEM: Qwen-0.6B - Lightweight quick tasks (Port 8082)
+        # ═══════════════════════════════════════════════════════════════════════
+        "Triage": "qwen-0.6b-med",
+        "QuickResponse": "qwen-0.6b-med",
+        "Greeting": "qwen-0.6b-med",
+        "SimpleQA": "qwen-0.6b-med",
+        "StatusCheck": "qwen-0.6b-med",
+        
+        # ═══════════════════════════════════════════════════════════════════════
+        # BACKUP: MedPalm2-8B - Fallback only (Port 8081)
+        # ═══════════════════════════════════════════════════════════════════════
+        "Backup": "medpalm2-8b",
+        "Fallback": "medpalm2-8b",
+        
+        # ─── TRANSLATION ────────────────────────────────────────────────────────
+        "Translate": "indictrans2",
     }
     
     @classmethod
@@ -235,21 +301,27 @@ class ModelRouter:
     LLAMA_CPP_TIMEOUT = int(os.getenv("LLAMA_CPP_TIMEOUT", "120"))
     MAX_RETRIES = int(os.getenv("MODEL_MAX_RETRIES", "3"))
     
-    # Port mapping for multi-model instances
+    # Port mapping for 4 models - BiMediX2 PRIMARY on port 8080
     MODEL_PORTS = {
-        "bi-medix2": 8081,
-        "tiny-llama-1b": 8083,
-        "openins-llama3-8b": 8084,
-        "bio-mistral-7b": 8085,
+        "bi-medix2": 8080,            # PRIMARY: BiMediX2 8B (best quality + speed)
+        "medpalm2-8b": 8081,          # BACKUP: MedPalm2 8B (fallback only)
+        "qwen-0.6b-med": 8082,        # TANDEM: Qwen 0.6B (lightweight quick tasks)
+        "openins-llama3-8b": 8084,    # TANDEM: OpenInsurance 8B (insurance domain)
     }
     
-    # API keys for each model instance (loaded from environment for production)
-    # In production, source .api_keys.env before starting the application
+    # Fallback chain: if primary fails, try these in order
+    FALLBACK_CHAIN = [
+        "bi-medix2",       # Try primary first
+        "medpalm2-8b",     # Backup with similar capabilities
+        "qwen-0.6b-med",   # Last resort lightweight
+    ]
+    
+    # API keys for each model instance
     MODEL_API_KEYS = {
-        "bi-medix2": os.getenv("API_KEY_BIMEDIX2_8081"),
-        "tiny-llama-1b": os.getenv("API_KEY_TINY_LLAMA_1B_8083"),
-        "openins-llama3-8b": os.getenv("API_KEY_OPENINSURANCE_8084"),
-        "bio-mistral-7b": os.getenv("API_KEY_BIOMISTRAL_8085"),
+        "bi-medix2": os.getenv("API_KEY_BIMEDIX2_8080", "dev-key"),
+        "medpalm2-8b": os.getenv("API_KEY_MEDPALM2_8081", "dev-key"),
+        "qwen-0.6b-med": os.getenv("API_KEY_QWEN_8082", "dev-key"),
+        "openins-llama3-8b": os.getenv("API_KEY_OPENINSURANCE_8084", "dev-key"),
     }
 
     def __init__(self):
@@ -290,7 +362,11 @@ class ModelRouter:
         # Get model config
         model_config = self.registry.get_model_for_agent(agent_type)
         if not model_config:
-            raise ValueError(f"No model available for agent: {agent_type}")
+            # Default to primary model (BiMediX2) if no mapping exists
+            logger.warning(f"No model mapping for {agent_type}, using PRIMARY (bi-medix2)")
+            model_config = self.registry.MODELS.get("bi-medix2")
+            if not model_config:
+                raise ValueError(f"No model available for agent: {agent_type}")
         
         logger.info(
             f"Routing {agent_type} → {model_config.name} "
@@ -300,9 +376,11 @@ class ModelRouter:
         backend_used = model_config.backend
         response_text: Optional[str] = None
         model_name = model_config.name
+        fallback_used = False
 
-        # llama.cpp HTTP server path
+        # llama.cpp HTTP server path with fallback chain
         if model_config.backend == ModelBackend.LLAMA_CPP:
+            # Try primary model first
             try:
                 response_text, model_name = self._llama_cpp_generate(
                     messages=messages,
@@ -311,13 +389,38 @@ class ModelRouter:
                     temperature=temperature,
                 )
             except Exception as e:
-                logger.warning(f"llama.cpp generation failed, falling back to stub: {e}")
-                response_text = None
+                logger.warning(f"Primary model ({model_config.name}) failed: {e}")
+                
+                # Try fallback chain
+                for fallback_key in self.FALLBACK_CHAIN:
+                    if fallback_key == self._get_model_key(model_config):
+                        continue  # Skip the model that just failed
+                    
+                    fallback_config = self.registry.MODELS.get(fallback_key)
+                    if not fallback_config:
+                        continue
+                    
+                    logger.info(f"Attempting fallback to {fallback_config.name}")
+                    try:
+                        response_text, model_name = self._llama_cpp_generate(
+                            messages=messages,
+                            model_config=fallback_config,
+                            max_tokens=max_tokens,
+                            temperature=temperature,
+                        )
+                        fallback_used = True
+                        backend_used = fallback_config.backend
+                        logger.info(f"Fallback to {fallback_config.name} successful")
+                        break
+                    except Exception as fallback_error:
+                        logger.warning(f"Fallback {fallback_config.name} also failed: {fallback_error}")
+                        continue
 
         # TODO: wire vLLM path when engines are initialized
 
-        # Fallback stub if backend unavailable
+        # Fallback stub if all backends unavailable
         if response_text is None:
+            logger.error("All models failed, using stub response")
             response_text = self._stub_generate(agent_type, messages, model_config)
 
         elapsed = time.time() - start_time
@@ -330,7 +433,15 @@ class ModelRouter:
             "gpu_ids": model_config.gpu_ids,
             "tokens_generated": token_estimate,
             "inference_time_s": elapsed,
+            "fallback_used": fallback_used,
         }
+    
+    def _get_model_key(self, model_config: ModelConfig) -> Optional[str]:
+        """Get the model key from config."""
+        for key, config in self.registry.MODELS.items():
+            if config == model_config:
+                return key
+        return None
     
     def _stub_generate(
         self,
@@ -381,9 +492,17 @@ class ModelRouter:
             "temperature": temperature,
             "max_tokens": max_tokens,
             "stream": False,
-            "top_p": 0.95,
-            "frequency_penalty": 0.0,
-            "presence_penalty": 0.0,
+            "top_p": 0.9,                 # Tighter nucleus sampling
+            "frequency_penalty": 0.3,     # Penalize repeated tokens
+            "presence_penalty": 0.3,      # Encourage topic diversity
+            "repeat_penalty": 1.3,        # Stronger repetition penalty
+            "stop": [                     # Comprehensive stop tokens for all models
+                "</s>", "<|end|>", "<|eot_id|>", "<|endoftext|>",
+                "<|im_end|>",             # Qwen/ChatML format
+                "<|assistant|>",          # Prevent role leakage
+                "Human:", "User:",        # Prevent conversation continuation
+                "\n\n\n",                 # Triple newline = stop
+            ],
         }
 
         last_error = None
@@ -405,6 +524,9 @@ class ModelRouter:
 
                 model_name = data.get("model", model_config.name)
                 logger.info(f"llama.cpp generation successful (attempt {attempt + 1})")
+                
+                # Post-process to remove repetitive content
+                content = self._clean_response(content)
                 return content, model_name
                 
             except httpx.TimeoutException as e:
@@ -419,6 +541,74 @@ class ModelRouter:
                     time.sleep(0.5)
         
         raise RuntimeError(f"llama.cpp server call failed after {self.MAX_RETRIES} attempts: {last_error}")
+    
+    def _clean_response(self, content: str) -> str:
+        """
+        Post-process model output to remove repetitive/garbage content.
+        Some models (like MedPalm2-imitate) have training artifacts.
+        """
+        import re
+        
+        # Remove social media handles and promotional content
+        patterns_to_remove = [
+            r'Follow me on Twitter.*?(?=\n|$)',
+            r'@\w+',                               # Twitter handles
+            r'#\w+',                               # Hashtags
+            r'Contact Email:.*?(?=\n|$)',
+            r'Website\s*:.*?(?=\n|$)',
+            r'Address\s*:.*?(?=\n|$)',
+            r'Phone:.*?(?=\n|$)',
+            r'Instagram\s*@.*?(?=\n|$)',
+            r'DM or message me.*?(?=\n|$)',
+            r'www\.\S+',                           # URLs
+            r'\S+@\S+\.\S+',                       # Emails
+        ]
+        
+        for pattern in patterns_to_remove:
+            content = re.sub(pattern, '', content, flags=re.IGNORECASE)
+        
+        # Detect and truncate at first repetition
+        lines = content.split('\n')
+        seen_lines = set()
+        clean_lines = []
+        repeat_count = 0
+        
+        for line in lines:
+            stripped = line.strip()
+            # Skip empty lines
+            if not stripped:
+                clean_lines.append(line)
+                continue
+                
+            # Check for repeating lines (allow some duplicates)
+            if stripped in seen_lines:
+                repeat_count += 1
+                if repeat_count > 2:  # Stop after 2 repeats
+                    break
+            else:
+                seen_lines.add(stripped)
+                repeat_count = 0
+                clean_lines.append(line)
+        
+        content = '\n'.join(clean_lines)
+        
+        # Remove excessive whitespace
+        content = re.sub(r'\n{3,}', '\n\n', content)
+        content = content.strip()
+        
+        # If response is still too long or empty, truncate/provide fallback
+        if len(content) > 1500:
+            # Find a good break point
+            sentences = content[:1500].rsplit('.', 1)
+            if len(sentences) > 1:
+                content = sentences[0] + '.'
+            else:
+                content = content[:1500] + '...'
+        
+        if not content:
+            content = "Hello! How can I assist you today?"
+            
+        return content
     
     def get_model_info(self) -> Dict[str, Any]:
         """Return model registry and GPU assignments."""

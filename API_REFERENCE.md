@@ -299,6 +299,112 @@ Response: {"status": "ok"}
 
 ### Example
 
+---
+
+## Claims Tabulation PDFs
+
+Endpoints to retrieve and generate Medical Officer Review (tabulation) PDFs for processed claims.
+
+### Get latest tabulation by policy
+
+```
+GET /api/claim/tabulation?policy=<policyNumber>
+```
+
+- Returns the most recently generated tabulation PDF for the policy.
+- Content-Type: application/pdf
+
+Example:
+
+```bash
+curl -X GET "http://localhost:8000/api/claim/tabulation?policy=500411501910001218" -o tabulation.pdf
+```
+
+### List available tabulations
+
+```
+GET /api/claim/tabulation/list?policy=<optionalPolicy>
+```
+
+- Lists tabulation PDFs (filtered by `policy` if provided).
+- Response:
+
+```json
+{
+  "files": [
+    {
+      "filename": "tabulation_500411501910001218_20260109_171607.pdf",
+      "path": "/abs/path/output/tabulations/tabulation_...pdf",
+      "size": 3729,
+      "mtime": 1736433367.0
+    }
+  ]
+}
+```
+
+### Get tabulation by filename
+
+```
+GET /api/claim/tabulation/by-file?name=<filename>
+```
+
+- Returns the specified PDF by exact filename (must be in output/tabulations).
+
+### Generate tabulation from a result JSON
+
+```
+POST /api/claim/tabulation/generate
+Content-Type: application/json
+```
+
+Payload: the full claim processing result JSON (as returned by `/api/claim/process-complete`).
+
+Response:
+
+```json
+{
+  "tabulation_sheet": "/abs/path/output/tabulations/tabulation_<policy>_<timestamp>.pdf"
+}
+```
+
+### Download multiple tabulations as ZIP
+
+```
+GET /api/claim/tabulation/zip?policy=<optionalPolicy>&names=<optionalCsvFilenames>
+```
+
+- If `names` is provided (comma-separated), only those files are included.
+- Else if `policy` is provided, includes all tabulations for that policy.
+- Else includes all available tabulations.
+
+Examples:
+
+```bash
+# All tabulations for a policy
+curl -L "http://localhost:8000/api/claim/tabulation/zip?policy=500411501910001218" -o tabulations.zip
+
+# Explicit filenames
+curl -L "http://localhost:8000/api/claim/tabulation/zip?names=tabulation_500411501910001218_20260109_171607.pdf,tabulation_POL123456789_20260109_171402.pdf" -o selected_tabulations.zip
+```
+
+### View tabulation with download button
+
+```
+GET /api/claim/tabulation/view?policy=<policyNumber>&filename=<optionalExactFilename>
+```
+
+- Returns an HTML page with an embedded PDF viewer and a **Download PDF** button.
+- If `filename` is omitted, fetches the latest tabulation for the policy.
+
+Example:
+
+```bash
+# Open in browser (latest for policy)
+# http://localhost:8000/api/claim/tabulation/view?policy=500411501910001218
+```
+
+The page displays the PDF inline with a prominent download button in the header.
+
 ```bash
 curl http://localhost:8000/health
 ```

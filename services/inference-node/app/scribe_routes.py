@@ -14,8 +14,9 @@ from .document_processor import (
     DocumentType,
 )
 from .model_router import ModelRouter
-from .auth import get_current_user, User
+from .auth import get_current_user, get_optional_user, User
 from .translation_integration import get_translation_service, TranslationContext
+from .persona import AI_NAME, AI_QUALIFICATIONS
 
 router = APIRouter(prefix="/v1/scribe", tags=["AI Scribe & Document Processing"])
 
@@ -76,7 +77,7 @@ def get_model_router():
 @router.post("/dictation", response_model=ScribeResponse)
 async def ai_scribe_dictation(
     request: ScribeRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_optional_user),
     model_router: ModelRouter = Depends(get_model_router)
 ):
     """
@@ -107,14 +108,14 @@ async def ai_scribe_dictation(
             request.template
         )
         
-        # Route to Scribe agent (uses BioMistral for high-quality output)
-        response = await model_router.route_request(
+        # Route to Scribe agent (uses Qwen for ultra-fast output)
+        response = await model_router.generate(
             agent_type="Scribe",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,  # Moderate creativity for clinical writing
         )
         
-        ai_output = response.get("content", "")
+        ai_output = response.get("text", "") or response.get("content", "")
         
         # Extract entities (medications, diagnoses, etc.)
         entities = _extract_clinical_entities(ai_output, request.document_type)
@@ -434,7 +435,7 @@ def _build_scribe_prompt(
     template_str = f"\n**Template:** {template}" if template else ""
     
     if doc_type == "prescription":
-        prompt = f"""You are an AI medical scribe. Generate a properly formatted prescription based on the doctor's dictation.
+        prompt = f"""You are {AI_NAME}, an AI medical scribe ({AI_QUALIFICATIONS}). Generate a properly formatted prescription based on the doctor's dictation.
 {context_str}
 
 **Doctor's Dictation:**
@@ -453,7 +454,7 @@ def _build_scribe_prompt(
 """
     
     elif doc_type == "discharge_summary":
-        prompt = f"""You are an AI medical scribe. Generate a comprehensive discharge summary based on the doctor's dictation.
+        prompt = f"""You are {AI_NAME}, an AI medical scribe ({AI_QUALIFICATIONS}). Generate a comprehensive discharge summary based on the doctor's dictation.
 {context_str}
 
 **Doctor's Dictation:**
@@ -474,7 +475,7 @@ def _build_scribe_prompt(
 """
     
     elif doc_type == "soap_note":
-        prompt = f"""You are an AI medical scribe. Generate a SOAP note from the doctor's dictation.
+        prompt = f"""You are {AI_NAME}, an AI medical scribe ({AI_QUALIFICATIONS}). Generate a SOAP note from the doctor's dictation.
 {context_str}
 
 **Doctor's Dictation:**
@@ -490,7 +491,7 @@ def _build_scribe_prompt(
 """
     
     else:  # Generic
-        prompt = f"""You are an AI medical scribe. Generate a {doc_type} document from the doctor's dictation.
+        prompt = f"""You are {AI_NAME}, an AI medical scribe ({AI_QUALIFICATIONS}). Generate a {doc_type} document from the doctor's dictation.
 {context_str}
 {template_str}
 

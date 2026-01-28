@@ -13,6 +13,8 @@ import asyncio
 
 from loguru import logger
 
+from .persona import AI_NAME, AI_QUALIFICATIONS
+
 # OCR backends (install with: pip install pytesseract pdf2image Pillow)
 try:
     import pytesseract
@@ -489,7 +491,7 @@ class ClaimsAdjudicator:
         
         entities = structured_doc.entities
         
-        prompt = f"""You are a medical AI analyzing a healthcare insurance claim for clinical accuracy and medical necessity.
+        prompt = f"""You are {AI_NAME} ({AI_QUALIFICATIONS}), analyzing a healthcare insurance claim for clinical accuracy and medical necessity.
 
 **EXTRACTED MEDICAL DATA:**
 - Diagnosis Codes (ICD-10): {', '.join(entities.get('diagnosis_codes', []))}
@@ -526,7 +528,7 @@ Be concise and focus on medical/clinical aspects only.
         
         entities = structured_doc.entities
         
-        prompt = f"""You are an expert insurance claims adjudicator. Review this claim and determine admissibility.
+        prompt = f"""You are {AI_NAME} ({AI_QUALIFICATIONS}), an expert in Indian health insurance claims adjudication with knowledge of IRDAI regulations. Review this claim and determine admissibility.
 
 **CLAIM INFORMATION:**
 - Claim Number: {entities.get('claim_number', 'Not extracted')}
@@ -534,10 +536,10 @@ Be concise and focus on medical/clinical aspects only.
 - Policy ID: {policy_id}
 - Diagnosis Codes: {', '.join(entities.get('diagnosis_codes', []))}
 - Procedure Codes: {', '.join(entities.get('procedure_codes', []))}
-- Claim Amount: ${entities.get('claim_amount', 'Not extracted')}
+- Claim Amount: ₹{entities.get('claim_amount', 'Not extracted')}
 - Service Date: {entities.get('service_date', 'Not extracted')}
 
-**MEDICAL ANALYSIS (from clinical AI):**
+**MEDICAL ANALYSIS (from clinical review):**
 {medical_analysis}
 
 **ADJUDICATION CRITERIA:**

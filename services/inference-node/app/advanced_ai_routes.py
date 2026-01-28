@@ -2,7 +2,7 @@
 Advanced AI Routes - API endpoints for VLP, XAI, Gen AI, Quantum ML, Self-Supervised Learning
 """
 
-from fastapi import APIRouter, File, UploadFile, HTTPException, Query, Body
+from fastapi import APIRouter, File, UploadFile, HTTPException, Query, Body, Form
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 import logging
@@ -82,7 +82,9 @@ class ComprehensiveAnalysisRequest(BaseModel):
 @router.post("/vlp/analyze-image")
 async def analyze_medical_image(
     file: UploadFile = File(...),
-    request: MedicalImageRequest = Body(...)
+    context: str = Form(default="medical diagnosis"),
+    include_xai: bool = Form(default=True),
+    generate_report: bool = Form(default=False)
 ):
     """
     Analyze medical image using Vision-Language Processing (BLIP2)
@@ -103,7 +105,7 @@ async def analyze_medical_image(
         # Analyze image
         result = await orchestrator.vlp.analyze_medical_image(
             image_data,
-            context=request.context
+            context=context
         )
         
         response = {
@@ -120,7 +122,7 @@ async def analyze_medical_image(
         }
         
         # Generate clinical report if requested
-        if request.generate_report:
+        if generate_report:
             report = await orchestrator.gen_ai.generate_medical_report({
                 "findings": result.findings,
                 "symptoms": "From medical image analysis"
@@ -327,21 +329,35 @@ async def quantum_pattern_recognition(request: QuantumMLRequest):
 @router.get("/quantum/capabilities")
 async def quantum_capabilities():
     """Get available quantum computing capabilities"""
+    quantum_ready = orchestrator.quantum.quantum_ready
+    
     return {
-        "quantum_available": orchestrator.quantum.quantum_ready,
-        "max_qubits": 10,
+        "quantum_available": quantum_ready,
+        "status": "operational" if quantum_ready else "simulation_mode",
+        "backend": "PennyLane default.qubit" if quantum_ready else "Classical simulation",
+        "max_qubits": 10 if quantum_ready else 4,
         "algorithms": [
             "VQE (Variational Quantum Eigensolver)",
             "QAOA (Quantum Approximate Optimization)",
             "Quantum Pattern Recognition",
-            "Quantum Feature Mapping"
+            "Quantum Feature Mapping",
+            "Variational Quantum Classifier" if quantum_ready else None,
+            "Quantum Neural Networks" if quantum_ready else None
         ],
         "use_cases": [
             "Drug discovery acceleration",
-            "Protein folding simulation",
+            "Protein folding simulation", 
             "Medical image enhancement",
-            "Complex pattern recognition in genomics"
-        ]
+            "Complex pattern recognition in genomics",
+            "Anomaly detection in patient vitals",
+            "Molecular structure optimization"
+        ],
+        "hardware": {
+            "type": "Quantum Simulator",
+            "provider": "PennyLane" if quantum_ready else "NumPy",
+            "gpu_accelerated": False,
+            "noise_model": "ideal" if quantum_ready else "N/A"
+        }
     }
 
 
@@ -360,15 +376,30 @@ async def create_embeddings(request: SelfSupervisedRequest):
             request.texts
         )
         
+        # Convert numpy arrays to lists for JSON serialization
+        embedding_vectors = {}
+        for text, emb in embeddings.items():
+            if hasattr(emb, 'tolist'):
+                embedding_vectors[text] = emb.tolist()
+            else:
+                embedding_vectors[text] = list(emb) if emb is not None else []
+        
+        # Get embedding dimension from first vector
+        dimension = 0
+        if embedding_vectors:
+            first_emb = next(iter(embedding_vectors.values()))
+            dimension = len(first_emb) if first_emb else 0
+        
         return {
             "status": "success",
             "timestamp": datetime.now().isoformat(),
-            "embeddings": {
-                "count": len(embeddings),
-                "dimension": 384,
-                "texts_processed": request.texts,
-                "embedding_type": request.embedding_type
-            }
+            "embedding": embedding_vectors.get(request.texts[0], []) if request.texts else [],
+            "embeddings": embedding_vectors,
+            "count": len(embeddings),
+            "dimension": dimension,
+            "model_used": "sentence-transformers/all-MiniLM-L6-v2",
+            "texts_processed": request.texts,
+            "embedding_type": request.embedding_type
         }
         
     except Exception as e:

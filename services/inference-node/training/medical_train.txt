@@ -1,0 +1,1313 @@
+### Instruction:
+Analyze this medical document excerpt:
+
+K = | HERITAGE HEALTH INSURANCE TPA PVT. LTD.
+
+CLAIM HISTORY SHEET
+HERITAGE HEALTH ®
+
+nN
+Name of Insured Ps fait Ov~ Executive Name : Vaddan
+Policy No. :
+Front Desk
+[_Front Desk] eat Gdle aes
+
+Checklist Verification : Signature ; Dy
+
+Executive Name Qo BENING “ihe 12.2020 20
+ies 3
+28/o| farm
+
+Sign Policy Details
+
+Main Claim / Partial Claim / Pre & Post
+Doctor Name
+
+Medical Officer Remarks
+Medical D
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+tled
+Claim Settlement Details SAY)
+Date:
+Issued To :
+
+Special Remarks : a) ce,
+
+Ab AVAN\ e253
+
+Date : . Authorised Signatory
+Name
+
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+CLAIM FORM - PART A
+TOBE FILLEDIN BY THE INSURED
+The sof he fom snob then 2 aden of ably
+(To be fied in block ates)
+
+vee (Ol 2lolalolz e121 IPL 1' 11 216IA1F1g14) wsrwicetexr — | |
+CLITTT |
+
+Bg
+
+3
+
+I
+new (Blob Ieizi6) — HPI ire alekelg, ol Sra jan 29 WG onal tons
+
+saoal eerie
+1 Gedy some yy sigracia a tmeee Pel k eT pa LI
+—— as opie alab44ekt ares lLT I
+commen’ [Tip oleleloks | Okie ubenhataladnbe
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+i soooe[7} cria[_] rate oer orer[_] Pens sec ]
+ae = = as pute] of] paneer
+
+4) Ades tl fo I I I I
+
+ete I Phan No i I Emaao|
+DETALS OF HOSPITALZATION
+
+2) are ot Heal ere Ad AlpPle Tk lel Isp leitch lel Ir iy IelalvielEleT Talo CT Ale] LI
+
+=
+‘ityes, Company Name.
+DETARS OF INSURED PERSON HOSPITALIZED
+
+i
+
+2) Rm eategery cccupet owcae[_] ‘Sra occupancy Twn shang 3ot mate bes pe room
+
+ce Hesptataaten eu
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+4 Chaqn' DO Paya deta
+By THE SURED
+
+‘arty decree arisen can erm tru & correct tothe bet o my oye and bbe. have made
+‘ham, igh o ei reerburserert shal be foi, lo consert 8 aurerze TPA asuance campy, 0 ek necssary merical
+
+NeRAnganpyaes, VakarARATAN|
+
+‘rade hare declare rat have chided lhe sect forte prpcoe oh cham & Pat Il not be Taking any supperenary cam excep he prefpost-haspalzaion i, ay,
+
+orco
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+is ca is
+
+ET Ty
+
+y. Rew gansageh?
+
+mm >
+
+ove (T ] owe (CH EN WA Sarat of he mud
+TRDANCE FOR FILLING CLAIM FORM PART A Tbe ite ny he our)
+TANT DESCRIPTION FORMAT
+ZECTION A DETAILS OF PRIMARY MSURED
+Pay [rior the poley nurber loted bythe insurance company
+
+Wo
+
+fo io corte
+
+[Enter te social insurance number oF the certificate number of social health
+|nsurance scheme
+
+allotted by the organization
+
+Com
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+rorounionccen aes
+
+song ore ug
+Hospital gal grenionzation requ om tou PART A
+
+CLAIM FORM-PARTB.
+TO BEFILLEDIN BY THE HOSPTAL
+Tessie ef at rms neo be ake as aren of ay
+
+No.320, Anna Sala, Nandi,
+
+DeTALs oF HOSP.
+‘Manet ga Ltnenna -eo0pee] 1.1 1rtilo Tritt io Loi
+teeta COCLLLLEL 1... atyeavon vets] _ nent —]
+
+nan tg dete I LCLIELLELLLLI LLLLLM
+scoot a Fare im
+cts of paren sowren
+
+2 nana ae ee I I | 
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+TALS OF ALMENT DIAGNOSED PRIMARY
+
+» 10%
+1 Priory Dare
+
+Ico 19 Pcs Deveson
+
+f —Desreten »)
+[ Procedue1
+
+sieemonet ITE] sews
+a 7
+os CI wginlfomd
+
+Pre aston cbtanw
+
+| Hautorcaton ty tne ont
+
+| no obted,
+
+6 Preatoneaton number |__|
+
+LF
+
+a
+
+() Hogptnzabon du uy
+
+a
+
+jes [re (tyes. ge case ood Tae Ace
+
+Substance abuse aoa consumption
+
+nj ein ac a [ole [ole tiene acrieneage [hee hs somone Ths
+i ‘etmek eve
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+latiqeoH ytilsiosq2 ollogA
+‘Aanabrell cle? enna OSE of
+8£0 008 - isnnsidD
+
+Se eee
+
+‘NOM 3H Aa NOMEN Za~ 4 NOWDAS
+
+Teac oo UPON HOUT Teva or ne CONE
+
+Ta ea DTT eee ———
+
+Lio al ds aie ds sow joan
+RTA va wT ar DTT oa en
+Ta ONIN AT PO at WE BDTE PR TETAEA
+
+560 aS wm ON von (9
+
+RT NGF IR APTS PEA
+
+TROL AUN WOT
+
+5 Ta pu TD ss PA
+
+eae RTT A
+
+“TW1ldGON MOMLN NON 40 36¥2 Ni SW130~ ANOUIS
+
+omen ew siumuroon
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+OE Anju, 01 an vaniuzymiiean ()
+a aR TR aE OATES FO] A ea Pm ON NON a EBON NC
+arpa Ee cooing
+REO FR ORT I A Fane vonerupe-a (
+7 Tre Ba PHT RA enpecoig 6 ed
+Fai vodD pa IO RTA BA BP AAG BOE S00 0} Go Pw cinema
+Fea pa RUT PI pad PRE a ORTENOT PE SOOT OPT patio
+Tar velo par IN PT Trpanj aap woaToAOH poe Soa GOI Pa S| ‘anpeo
+s9401 00168
+Foal pa wp Taig wa PEED Pe HOT CHOU Trnava
+at ued pur WU | PIEPUR
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+1120
+
+UNITED INDIA INSURANCE COMPANY LIMITED
+
+48, CHANDAR PLAZA, ARCOT ROAD, SALIGRAMAM CHENNAT, CHENNAI, TAMIL NADU ,
+CHENNAI - 600026 TAMIL NADU
+
+PH: (044) 23764387 FAX: EMAIL:
+
+SUPER TOP UP MEDICARE POLICY
+
+VIN, UITHLIP21230V022021,
+POLICY NO.: 0126002821P111
+
+269946
+
+PERIOD OF INSURANCE
+FROM 00:00hrs af 05/03/2022
+To MIDNIGHT on 04/03/2023
+
+Insured
+MrS. VARATHARAJAN
+NO 3D GOWRI CHITRA GARDEN 8
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+Mobile/Landline Number/Ematl nian
+sdlifecarcézmailcem
+
+‘The genuineness of the policy can be verified through "Verify Your Policy” link at wwwulic.co.in,
+
+‘ewaloed Customer App(aru.sic.con)-260. 8 HEAD OFFICE. 24, WATTES ROAD, CHENWAL- 620034,
+Website: Ditp://wore. wie 50.0
+
+Printed By : SUR27177 © 03/02/2022 10:48:37 AM
+
+‘This document is digitally,
+
+1 N MOHAN
+Date: Thu, Feb 3, 2022 1
+Location: U
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+DEFRILS OF Dot nn,
+uch vi 331567 Cn
+
+BtHtZ
+
+nat D-
+__ Fes
+
+QD chrirq For] 42K
+cSprAc /!
+@ fee HeSbr A 1: ea has, Dr verh ge se 2,
+GY ie ena Ze U3 _
+@D vospele! reir RNS pod.
+CAM 23 Fao)
+G D) Ache 5% Surwre_z 2a ports
+Aalcd C29/0/22, 09/12, 2e//e2_,21h 2Jee
+CA 2.3 Feah) 12/4/22 ]
+@ Diagn o8'3 Scamnace & paseo lohan
+ekeel(C 28 Pec 22, AT o/ 22, Rholrr,feler
+2b/rof 2, Ar hof/ 22 sfe/or hehe
+2 of. Pod
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+enm ufos S
+par) x6err Cfe> Li Rael Vi Abs
+PRE! Trbieahen Mei kent
+
+f~ Pat gt nF = + Ka pe —
+
+a Dyelrenr sve“ 4-7 Ben
+
+Y OQ@BY% ) QD
+
+24
+
+(S
+
+a,
+FR
+
+16.
+
+25
+
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+h% Gmail Seshan varatharajan <tsrajan29@gmail.com>
+
+claim intimation
+
+Seshan varatharajan <tsrajan29@gmail.com> Sat, Jan 7, 2023 at 10:35 AM
+To: Heritage Health <heritage_health@bajoria.in>
+
+Ce: Seshan varatharajan <tsrajan29@gmail.com>, RANGANAYAKI VARATHARAJAN <rangi64@gmail.com>,
+customercare@uiic.co.in
+
+Dear Team,
+
+Sub Claim Intimation
+super top up policy -0126002821P111269946
+
+As my wife Mrs,
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+mount spent claim is
+under process from our end.
+
+ase treat the above our intimation of treatment of my undergoing in Apollo hospital and claim details are being prepared
+and submitted soon to you.
+
+Request your support as usual from United India Insurance co for my wife treatment.
+Thanks & Regards,
+
+S.Varatharajan
+Patient Ranganayaki
+
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+SapsuapEme—
+SSienatannaa= =~
+engongen Co
+Varatharajan S
+\Gpjigs rret/DOB: 29/05/1956
+ayant] MALE s
+
+4283 0180 6607
+
+STE! APB, ctoorgy) \iswi_uirentd
+
+a=
+“NN.
+Ee
+Speoe'l px, Quest: Cooney, 3o, Geer
+rin cn 88/4 aban Cpr, che rr all
+edrencn,
+sublip or - 600026
+
+Address:
+
+$/0: Seshan, 3D Gowri Chitra Garden, 88/4
+Arcot Road, Vadapalani, Chennai,
+
+Tamil Nadu - 600026
+
+4283 0180 6607
+
+Wid - 9192 1482 49
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+| BSW. siTEMIE
+
+Government of india
+
+raid eu
+rp
+Ranganayaki V
+Spe jorer/DOB: 01/06/1963
+Qusis/ FEMALE
+
+4973 9973 3154
+291775344 5990 4099
+
+joo Witten
+TSO! LBM. CTO! 1
+
+By CCR.
+au Unique tentification Au
+
+St Oi amps 3 amt yy
+Sh 88/4 yen tng an
+serene,
+
+Sid\p 7 - 600026
+
+Address:
+
+WO; Varatharajan, 30 Gown Chitra
+Gard
+
+en. 88/4 Arcot Road, Vadapaloni,
+Chennai,
+
+Tamil Nadu - 600026
+
+73 9973 3154
+
+817
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+_ Dischaegé Sorteiney
+
+Pe Px ls CoPested)
+
+Detlef 4
+“Diz che-ge Bu macs ef" - 2a)oloo O
+
+Y
+@ - 7 - o9/ij {228
+(y i] " ~ elu /22.8
+DL _ atji2/ 22
+
+— 12 Jer [22 a
+
+@
+| @ / /
+
+Tole| Peges (Ft
+——— 7
+
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+4ndian Overseas Bank = fee"iiascoisas
+
+| r%) sfogee shereeiigt Ge5 vaya tiospirat, CHENNAI (1685) Branch om from the “ of aoe
+
+Pay
+
+4
+
+| AicNo.| 168501
+
+‘SESHAASA! (C) CTS-2010
+
+moe | S820 | PINK /24/Dec/2020
+
+RANGANAYAKIV. = VARATHARAJAN S
+Prease sign atove
+
+inches of 1OB in India
+
+Payable at par at
+
+"8290 28" BOOO eo0dkk 10
+
+
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+~
+
+A
+Pp
+
+Apollo
+
+SPECIALITY HOSPITALS
+
+DISCHARGE SUMMARY
+
+29.10.2022
+
+PATIENT’S NAME:Ms. RANGANAYAKI  V.
+
+HOSP NO: ASH1.0000430165
+
+AGE/SEX: 59/F
+
+RT NO: 1475/2022
+
+CONSULTANT NAME DR.RATHNA DEVI
+DR.SUBATHIRA
+
+SENIOR CONSULTANT
+
+RADIATION ONCOLOGIST
+
+DIAGNOSIS:CARCINOMA BREAST WITH BRAIN METASTASES
+
+HISTORY OF PRESENT ILLNESS: This 59 year old lady is a known case of carcinoma
+right breast with pu
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+2020. S/p 48 cycles of Maintenance
+therapy .PET CT (05.10.2022) showed in comparison with prior PET-CT study dated 24th
+November 2020 done elsewhere. there is 1. Increase in size and metabolic activity of
+spiculated nodular lesion in right breast with appearance of satellite nodules. 2. Appearance
+of FDG avid rim enhancing nodular lesion in left frontal region with diffuse perilesional
+edema, subt
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+UHID: ASH1.0000430165 Br ASH-QRF-NS-19
+
+Aol
+
+‘ SPECIALITY HOSPITALS
+
+Discharge Summary
+Dept. of MEDICAL ONCOLOGY
+
+GENERAL INFORMATION
+
+UHID ASH1,0000430165
+
+Patient Identifier CSNIP131247
+
+Ward/Bed No FIFTH FLOOR , 5th A WARD,Bed no:1504A
+
+Name Ms. RANGANAYAKI. V
+
+Age 59Yr 5Mth 8Days
+
+Sex Female
+
+Address NO.3D, GOWRI CHITRA GARDEN 88/4, ARCOT ROAD,
+
+VADAPALANI,Chennai, Tamil Nadu
+
+Primary Consulta
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+RCINOMA GRADE III
+
+ER, PR, HER2NEU - POSITIVE
+
+S/P RADIOTHERAPY TO SPINE
+
+$/P CHEMOTHERAPY + ANTIBODY THERAPY
+S/P MAINTENANCE ANTIBODY THERAPY
+DISEASE PROGRESSION(BRAIN METASTASES)
+S/P RADIOTHERAPY
+
+ON 2ND LINE TDM1 THERAPY
+
+History of Present Illness
+
+Chief Complaints This 57 year old female evaluated for low back pain since 4 months and complaints of sudden
+onset of lower limb weakness x 2 days.
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+wa
+UHID: ASH1.0000430165 Bx
+
+Kpollo
+
+PECIALITY HOSPITALS.
+
+PET CT whole body done (outside) on 12.12.2019 showed a 5x4x5.2cm metabolically active
+malignant mass in the central right breast involving the nipple areolar complex and no
+demonstrable infiltration of the underlying chest wall. Another similar appearing malignant mass
+measuring ~3.4x2.8x2.9cm in upper outer quadrant of right breast with 
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+
+metabolically active skeletal metastases.
+
+Core biopsy of right breast lump done (outside) on 13.12.2019 showed features suggestive of
+invasive ductal carcinoma grade III (modified bloom and Richardson's classification).
+
+MRI spine done on 14.12.2019 showed Marrow metastases in D6 and D7 vertebrae involving
+body and posterior elements with wedge compression collapse of D6 vertebra, associated
+par
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+UHID: ASH1.0000430165 Bi ASH-QRF-NS-19
+
+PECIALITY HOSPITALS
+
+Dr.A.C,Somasundaram, Consultant Neurologist was consulted for skeletal metastasis with cord
+compression, complaints of lower limb weakness and his orders were followed.
+
+Dr.M.Balamurugan, Consultant Neuro Surgeon consulted for skeletal metastasis with cord
+compression, complaints of lower limb weakness and his orders were followed. Patie
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+otion abnormality. Diastolic dysfunction (grade |). Sclerosed aortic valve mild
+concentric left ventricular hypertrophy mild mitral regurgitation mild tricuspid regurgitation RA /
+RV normal in size normal RV function no clot /PAH / pericardial effusion / vegetation.
+
+Biopsy blocks reviewed on 18.12.2019 showed invasive ductal carcinoma no special type
+(DUCTAL, NOS) grade Il. (Nottingham modificati
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+UHID: ASH1.0000430165 Bs ASH-QRF-NS-19
+
+Y
+4) il EMERGENCY
+
+‘ne ; xaitan igh Road,
+
+rami Nadu
+
+00034, Tamil!
+
+1, Cher
+
+2D ECHO with colour doppler done on 16.03.2020 showed normal left ventricular systolic
+function (LVEF-60%). No regional wall motion abnormality. Diastolic dysfunction (Grade |).
+Mild mitral regurgitation. Mild tricuspid regurgitation with mild pulmonary. Artery
+hypertension(crvsp- 
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+ildly FDG avid spiculated soft
+tissue nodule in the lower outer quadrant of the right breast with thickened nipple areolar
+complex. No chest wall or skin infiltration. Low grade FDG avid prominent right axillary nodes.
+FDG avid skeletal metastases in bilateral iliac bones, D6, D7, L5 vertebrae and right 6th to 8th
+posterior ribs with narrowing of the spinal canal at D6-D7 levels. FDG avid consolid
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+UHID: ASH1.0000430165 Bs ASH-QRF-NS-19
+
+Apollo
+
+PECIALITY HOSPITALS
+
+EMERGENCY
+
+4. \alluvar Kottam High Road
+-600034, Tamil Nadu
+
+overlying nipple areolar complex with minimal metabolic activity. Few subcentimetric right
+axillary lymphnodes with focal calcification and no significant metabolic activity. Few
+subcentimeter mediastinal lymphnodes with prominent fatty hilium and minimal metabolic
+acti
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+n showing minimal metabolic activity. Subpleural plaque / tiny nodule in the
+posterior segment of right upper lobe. Expansible lytic lesions with sclerotic margins in few ribs,
+few vertebra and bilateral iliac bones showing minimal metabolic activity. Anterior wedging of
+D6 vertebra. No evidence of metabolically active disease anywhere else in the body. On
+comparison with previous PET CT dated 17t
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+UHID: ASH1.0000430165 + ¥ ASH-QRF-NS-19
+
+PECIALITY HOSPITALS
+
+ Kottam Hig
+034, Tamil Nadt
+
+features are suggestive of overall progressive disease.
+
+MRI whole body screening done on 07.10.2022 showed Since 14.12.2019, interval resolution of
+altered marrow signal intensity lesions in vertebral body of D6 and D7 vertebrae, regression of
+lesion involving posterior elements, with resolution of large ep
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+ra with fluid
+signal intensity in vertebral body and no reduction in height of retropulsion, spinal canal
+narrowing or cord compression. Interval regression of marrow lesions in right Sth to 8th ribs and
+soft tissue component along the intercostal spaces. Few discrete marrow deposits in antero-
+lateral aspects of right upper ribs. No cortical break or associated soft tissue component.
+Interval reg
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+UHID: ASH1.0000430165
+
+GENERAL EXAMINATION
+
+Pulse 88/min.
+
+B.P 120/70 mm of Hg.
+CVS $1S2 (+)
+
+RS NVBS+
+
+Abdomen Soft
+
+CNS NFND
+
+Bx ASH-QRF-NS-19
+
+“fi i @ ewercencr
+Polic HOSPITALS
+
+veral Insur
+
+no:4, Valluvar Ko (
+m, Chennai-600034, Tamil
+
+Course In The Hospital & Discussion
+
+Course in the Hospital:
+
+ADVICE ON DISCHARGE
+Diet
+
+Physical Activity
+
+Routine blood investigations were within normal limit
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+1(Kadcyla) 200mg IV in 250mI NS over 2 hours (D1 only)
+(cycle once in 21 days)
+
+Patient tolerated chemotherapy well and was discharged in a stable
+condition with the following advice.
+
+Normal diet.
+
+As tolerated.
+
+Tab. Pregabid 75mg 0-0-1 after food to continue
+
+Tab. Shelcal 500 mg 1-1-1 after food to continue
+
+Tab. Catchinil 1-0-1 after food to continue
+
+Tab. Pan 40mg 1-0-0 before food to continu
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+UHID: ASH1 (0000430165 : Bx ASH-QRF-NS-19
+b , @ were NCY
+KBollo
+
+PECIALITY HOSPITALS
+
+Tab. Ultracet 1-0-1 after food(if needed for pain) |
+Tab. Dolo 650 mg 1 tab SOS (if needed pain/fever)
+
+Cap. Redotil 100mg 1 cap 1-0-0 SOS (if needed for loose stools)
+
+Syp. Duphalac 10 ml thrice daily (if needed for constipation)
+
+Metrogyl DG gel for local application(SOS if needed for oral ulcers)
+
+Thrombophobe
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+195).
+Email ID - drtrajaopd_ash@apollohospitals.com
+
+2nd dose of TDM1 therapy is due on 30.11.2022.
+
+To do oncology pack (CBC, urea, creatinine, SGPT, bilirubin, Alkaline
+phosphatase) + Serum Sodium, Potassium and COVID 19 RT PCR on
+29.11.2022.
+
+To decide about restarting hormonal therapy as outpatient - after review with
+Dr.T.Raja.
+
+Please Call Emergency 044 - 24351111/044-61151159/ 044-61151111 
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+UHID: ASH1,0000430165 ~~ ASH-QRF-NS-19
+
+a es
+. Apollo
+
+PECIALITY HOSPITALS
+
+Discharge Summary
+Dept. of MEDICAL ONCOLOGY
+
+GENERAL INFORMATION
+
+UHID ASH1.0000430165
+
+Patient Identifier CSNIP132219
+
+Ward/Bed No FOURTH FLOOR , 4th GENERAL WARD,Bed no:1425C
+Name Ms. RANGANAYAKI. V
+
+Age 59Yr SMth 29Days
+
+Sex Female
+
+Address NO.3D, GOWRI CHITRA GARDEN 88/4, ARCOT ROAD,
+
+VADAPALANI,Chennai,Tamil Nadu
+
+Pri
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+IVE DUCTAL CARCINOMA GRADE III
+
+ER, PR, HER2NEU - POSITIVE
+
+S/P RADIOTHERAPY TO SPINE
+
+S/P CHEMOTHERAPY + ANTIBODY THERAPY
+S/P MAINTENANCE ANTIBODY THERAPY
+DISEASE PROGRESSION(BRAIN METASTASES)
+S/P RADIOTHERAPY
+
+ON 2ND LINE TDM1 THERAPY
+
+Cycle of Chemotherapy 2nd cycle TDM1 therapy
+
+Drug Dosage / Infusion / Duration
+Inj. TDM1(Kadcyla) 200mg IV in 250m NS over 2 hours (D1 only)
+(cycle once in 21 da
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+4 ‘ UHID: ASH1.0000430165 Br
+Se
+Apollo
+SPECIALITY HOSPITALS
+
+ASH-QRF-NS-19
+
+ADVICE ON DISCHARGE
+
+Tab. Pregabid 75mg 0-0-1 after food to continue
+
+Tab. Shelcal 500 mg 1-1-1 after food to continue
+
+Tab. Catchinil 1-0-1 after food to continue
+
+Tab. Pan 40mg 1-0-0 before food to continue 4 \Vall K "y
+Tab. Emeset 8 mg 1-1-1 before food to continue
+
+Tab. Oncolife 0-1-0 to continue
+
+Tab. Ultracet 1-0-1 a
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+ipation)
+
+Metrogyl DG gel for local application(SOS if needed for oral ulcers)
+Thrombophobe ointment for local application (if needed for thrombophlebitis)
+
+Follow Up To review with Dr.T.Raja on 07.12.2022 with CBC and RP II reports in OPD
+with prior appointment (044-61151273).
+Email ID - drtrajaopd_ash@apollohospitals.com
+
+3rd dose of TDM1 therapy is due on 21.12.2022.
+
+To do oncology pack (CBC, 
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+UHID: ASH1.0000430165 — ASH-QRF-NS-19
+
+Pho
+
+SPECIALITY HOSPITALS
+
+ADVICE ON DISCHARGE
+
+Tab. Pregabid 75mg 0-0-1 after food to continue
+
+Tab. Shelcal 500 mg 1-1-1 after food to continue
+
+Tab. Catchinil 1-0-1 after food to continue
+
+Tab. Pan 40mg 1-0-0 before food to continue
+
+Tab. Emeset 8 mg 1-1-1 before food to continue
+
+Tab. Oncolife 0-1-0 to continue
+
+Tab. Ultracet 1-0-1 after food(if needed fo
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+l for local application(SOS if needed for oral ulcers)
+Thrombophobe ointment for local application (if needed for thrombophlebitis)
+
+Follow Up To review with Dr.T.Raja on 07.12.2022 with CBC and RP II reports in OPD
+with prior appointment (044-61151273).
+Email ID - drtrajaopd_ash@apollohospitals.com
+
+3rd dose of TOM1 therapy is due on 21.12.2022.
+
+To do oncology pack (CBC, urea, creatinine, SGPT, 
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+Y UHID: ASH1.0000430165 = ASH-QRF-NS-19
+
+mA
+Apollo
+
+Discharge Summary
+Dept. of MEDICAL ONCOLOGY
+
+GENERAL INFORMATION oid 3
+UHID ASH1.0000430165
+Patient Identifier CSNIP133154
+Ward/Bed No FOURTH FLOOR , 4th GENERAL WARD,Bed no:1425C.
+Name Ms. RANGANAYAKI. V
+Age 59Yr 6Mth 20Days
+Sex Female
+Address NO.3D, GOWRI CHITRA GARDEN 88/4, ARCOT ROAD,
+
+VADAPALANI,Chennai, Tamil Nadu
+
+Primary Consultant Dr. RA
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+RADE III
+
+ER, PR, HER2NEU - POSITIVE
+
+S/P RADIOTHERAPY TO SPINE
+
+S/P CHEMOTHERAPY + ANTIBODY THERAPY
+
+S/P MAINTENANCE ANTIBODY THERAPY
+
+DISEASE PROGRESSION(BRAIN METASTASES)
+
+S/P RADIOTHERAPY
+
+ON 2ND LINE TDM1 THERAPY + HORMONAL THERAPY
+
+Cycle of Chemotherapy 3rd cycle TDM1 therapy
+
+Drug Dosage / Infusion / Duration
+Inj. TDM1(Kadcyla) 200mg IV in 250mI NS over 2 hours (D1 only)
+(cycle once in 21 d
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+~
+
+a UHID: ASH1.0000430165 =) ASH-QRF-NS-19.
+Bi
+Apollo
+SPECIALITY HOSPITALS
+
+followed by Inj.Fulvestrant (Fulvetraz)500MG deepm IM once a month
+
+ADVICE ON DISCHARGE
+
+Tab. Pregabid 75mg 0-0-1 after food to continue
+
+Tab. Shelcal 500 mg 1-1-1 after food to continue
+
+Tab. Catchinil 1-0-1 after food to continue
+
+Tab. Pan D 1-0-1 x 10 days before food to continue
+
+Tab. Emeset 8 mg 1-1-1 before food to 
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+e stools)
+Syp. Duphalac 10 mi thrice daily (if needed for constipation)
+Metrogyl DG gel for local application(SOS if needed for oral ulcers)
+Thrombophobe ointment for local application (if needed for thrombophlebitis)
+
+Follow Up To do oncology pack (CBC, urea, creatinine, SGPT, bilirubin, Alkaline
+phosphatase) + Serum Sodium, Potassium on 28.12.2022 and inform
+reports to Dr.T.Raja (044-61151273).
+
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+(———_——
+UHID: ASH1.0000430165 ASH-QRF-NS-19
+
+Bs
+: q
+Apollo 2)
+
+PECIALITY HOSPITALS
+
+Discharge Summary
+Dept. of MEDICAL ONCOLOGY
+
+GENERAL INFORMATION
+
+Discharge Type None
+
+UHID ASH1.0000430165
+
+Patient Identifier CSNIP134081
+
+Ward/Bed No FIFTH FLOOR , 5th A WARD,Bed no:1502A
+
+Name Ms. RANGANAYAKI V
+
+Age 59Yr 7Mth 11Days
+
+Sex Female
+
+Address NO.3D, GOWRI CHITRA GARDEN 88/4, ARCOT ROAD,
+
+VADAPALANI,C
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+ AND
+PARAPLEGIA
+
+INVASIVE DUCTAL CARCINOMA GRADE III
+
+ER, PR, HER2NEU - POSITIVE
+
+S/P RADIOTHERAPY TO SPINE
+
+S/P CHEMOTHERAPY + ANTIBODY THERAPY
+
+S/P MAINTENANCE ANTIBODY THERAPY
+
+DISEASE PROGRESSION(BRAIN METASTASES)
+
+S/P RADIOTHERAPY
+
+ON 2ND LINE TDM1 THERAPY + HORMONAL THERAPY
+
+Cycle of Chemotherapy 4th cycle TDM1 therapy
+
+Drug Dosage / Infusion / Duration
+Inj. TDM1(Kadcyla) 200mg IV in 250mI N
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+-
+
+s UHID: ASH1,0000430165 ASH-QRF-NS-19
+
+Ba
+4) @ emercency
+Apollo
+
+SPECIALITY HOSPITALS
+
+(cycle once in 21 days)
+Inj.Fulvestrant (Fulvetraz)500MG deep IM once a month
+
+\alluvar Kota
+Chennai-600034,
+
+ADVICE ON DISCHARGE
+
+Tab. Pregabid 75mg 0-0-1 after food to continue
+
+Tab. Shelcal 500 mg 1-1-1 after food to continue
+
+Tab. Catchinil 1-0-1 after food to continue
+
+Tab. Pan D 4-0-1 before food x 10 d
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+
+### Instruction:
+Analyze this medical document excerpt:
+
+l 100mg 1 cap 1-0-0 SOS (if needed for loase stools)
+Syp. Duphalac 10 ml thrice daily (if needed for constipation)
+Metrogyl DG gel for local application(SOS if needed for oral ulcers)
+Thrombophobe ointment for local application (if needed for thrombophlebitis)
+
+Follow Up To do oncology pack (CBC, urea, creatinine, SGPT, bilirubin, Alkaline
+phosphatase) + Serum Sodium, Potassium on 19.01.2023 and i
+
+### Response:
+This document contains clinical information including patient data, diagnosis codes, procedures, and treatment notes.
+

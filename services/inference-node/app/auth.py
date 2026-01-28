@@ -185,3 +185,42 @@ def hash_password(password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password against its hash."""
     return pwd_context.verify(plain_password, hashed_password)
+
+
+# Development mode bypass
+ALLOW_INSECURE_DEV = os.getenv("ALLOW_INSECURE_DEV", "true").lower() in {"1", "true", "yes"}
+
+# Default dev user for insecure dev mode
+DEV_USER = User(
+    username="dev_user",
+    location_id="dev_location",
+    disabled=False
+)
+
+# Optional security scheme that doesn't auto-raise 401
+optional_security = HTTPBearer(auto_error=False)
+
+
+async def get_optional_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Security(optional_security),
+    db: AsyncSession = Depends(get_db)
+) -> User:
+    """
+    Optional authentication dependency.
+    In dev mode (ALLOW_INSECURE_DEV=true), returns a dev user if no token provided.
+    In production mode, requires valid authentication.
+    """
+    # If dev mode and no credentials, return dev user
+    if ALLOW_INSECURE_DEV and credentials is None:
+        return DEV_USER
+    
+    # If credentials provided, validate them
+    if credentials is not None:
+        return await get_current_user(credentials, db)
+    
+    # Production mode without credentials - reject
+    raise HTTPException(
+        status_code=401,
+        detail="Authentication required",
+        headers={"WWW-Authenticate": "Bearer"},
+    )

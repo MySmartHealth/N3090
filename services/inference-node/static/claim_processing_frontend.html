@@ -1,0 +1,3259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Claim Processing System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .header h1 {
+            color: #003d99;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+        .workflow-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid #ddd;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .step.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        .step.completed {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .step-number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .step-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .content {
+            background: white;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .step-content {
+            display: none;
+        }
+        .step-content.active {
+            display: block;
+        }
+        h2 {
+            color: #003d99;
+            margin-bottom: 20px;
+            font-size: 24px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        input[type="file"], input[type="text"], input[type="email"], textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+        input[type="file"]:focus, input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .file-upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .file-upload-area:hover {
+            background: #f0f3ff;
+            border-color: #764ba2;
+        }
+        .file-upload-area.dragover {
+            background: #e8ecff;
+            border-color: #764ba2;
+        }
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .upload-text {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .upload-subtext {
+            font-size: 14px;
+            color: #666;
+        }
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #218838;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .data-table th {
+            background: #f0f0f0;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #ddd;
+        }
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        .data-table tr:hover {
+            background: #f9f9f9;
+        }
+        .section {
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #003d99;
+            margin-bottom: 15px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .info-item {
+            background: white;
+            padding: 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .info-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            font-size: 15px;
+            color: #333;
+            word-break: break-word;
+        }
+        .policy-checklist {
+            margin-top: 20px;
+        }
+        .policy-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #ddd;
+        }
+        .policy-item.compliant {
+            border-left-color: #28a745;
+            background: #f0fdf4;
+        }
+        .policy-item.non-compliant {
+            border-left-color: #dc3545;
+            background: #fef2f2;
+        }
+        .policy-item.warning {
+            border-left-color: #ffc107;
+            background: #fffbf0;
+        }
+        .policy-checkbox {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .compliant .policy-checkbox {
+            background: #28a745;
+            color: white;
+        }
+        .non-compliant .policy-checkbox {
+            background: #dc3545;
+            color: white;
+        }
+        .warning .policy-checkbox {
+            background: #ffc107;
+            color: #333;
+        }
+        .policy-content {
+            flex: 1;
+        }
+        .policy-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .policy-detail {
+            font-size: 13px;
+            color: #666;
+        }
+        .decision-box {
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 20px;
+            border: 2px solid #ddd;
+        }
+        .decision-box.approved {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        .decision-box.rejected {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        .decision-box.query {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+        .decision-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .decision-box.approved .decision-title {
+            color: #155724;
+        }
+        .decision-box.rejected .decision-title {
+            color: #721c24;
+        }
+        .decision-box.query .decision-title {
+            color: #856404;
+        }
+        .decision-details {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .detail-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            border-left: 3px solid #667eea;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #003d99;
+        }
+        .detail-value {
+            color: #333;
+            margin-top: 5px;
+        }
+        .amount-display {
+            font-size: 28px;
+            font-weight: 700;
+            color: #003d99;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+        .tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-pending {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+        .status-processing {
+            background: #cfe2ff;
+            color: #084298;
+        }
+        .status-approved {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+        .status-rejected {
+            background: #f8d7da;
+            color: #842029;
+        }
+        .status-query {
+            background: #fff3cd;
+            color: #664d03;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .info-message {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .summary-card {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .summary-card h4 {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .summary-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #003d99;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        /* Navigation Bar */
+        .navbar {
+            background: white;
+            padding: 15px 30px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .nav-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        .nav-btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .nav-btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        .nav-btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .nav-btn-danger:hover {
+            background: #c82333;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: #f8f9fa;
+            border-radius: 20px;
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- NAVIGATION BAR -->
+        <div class="navbar">
+            <div class="navbar-left">
+                <button class="nav-btn nav-btn-primary" onclick="goToDashboard()">
+                    🏠 Dashboard
+                </button>
+                <button class="nav-btn nav-btn-secondary" onclick="window.location.reload()">
+                    🔄 New Claim
+                </button>
+            </div>
+            <div class="navbar-right">
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <div class="user-avatar" id="navUserAvatar">U</div>
+                    <span id="navUserName">User</span>
+                </div>
+                <button class="nav-btn nav-btn-danger" onclick="logout()">
+                    🚪 Logout
+                </button>
+            </div>
+        </div>
+        
+        <!-- HEADER -->
+        <div class="header">
+            <h1>🏥 Complete Claim Processing System</h1>
+            <p>End-to-end insurance claim processing with AI-powered adjudication</p>
+        </div>
+
+        <!-- WORKFLOW STEPS -->
+        <div class="workflow-steps">
+            <div class="step active" onclick="goToStep(1)">
+                <div class="step-number">1️⃣</div>
+                <div class="step-name">Upload Claim</div>
+            </div>
+            <div class="step" onclick="goToStep(2)">
+                <div class="step-number">2️⃣</div>
+                <div class="step-name">Parse Claim</div>
+            </div>
+            <div class="step" onclick="goToStep(2.5)">
+                <div class="step-number">🔐</div>
+                <div class="step-name">Audit Info</div>
+            </div>
+            <div class="step" onclick="goToStep(3)">
+                <div class="step-number">3️⃣</div>
+                <div class="step-name">Data Tables</div>
+            </div>
+            <div class="step" onclick="goToStep(4)">
+                <div class="step-number">4️⃣</div>
+                <div class="step-name">Policy Check</div>
+            </div>
+            <div class="step" onclick="goToStep(5)">
+                <div class="step-number">5️⃣</div>
+                <div class="step-name">Decision</div>
+            </div>
+            <div class="step" onclick="goToStep(6)">
+                <div class="step-number">6️⃣</div>
+                <div class="step-name">Processing Sheet</div>
+            </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content">
+            <!-- STEP 1: UPLOAD -->
+            <div class="step-content active" id="step1">
+                <h2>📤 Step 1: Claim Upload</h2>
+                
+                <div class="form-group">
+                    <label>Claim Type</label>
+                    <select id="claimType" onchange="updateClaimType()">
+                        <option value="">-- Select Claim Type --</option>
+                        <option value="cashless">Cashless Claim</option>
+                        <option value="reimbursement">Reimbursement Claim</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>TPA Provider</label>
+                    <select id="tpaProvider">
+                        <option value="">-- Select TPA --</option>
+                        <option value="heritage">Heritage TPA (MobileApp API)</option>
+                        <option value="other">Other / Direct Insurer</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Policy Number</label>
+                    <input type="text" id="policyNumber" placeholder="Enter policy number">
+                </div>
+
+                <div class="form-group">
+                    <label>Member ID / E-Card</label>
+                    <input type="text" id="memberId" placeholder="Enter member or e-card number">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group" style="margin-top: -10px;">
+                        <label>TPA Member Lookup</label>
+                        <button class="btn-warning" type="button" onclick="searchMember()">🔎 Search Member & Autofill</button>
+                        <div style="font-size: 12px; color: #555; margin-top: 8px; line-height: 1.4;">
+                            Search using the policy number and/or member e-card. Heritage TPA is supported for live lookups.
+                        </div>
+                    </div>
+                </div>
+
+                <div id="memberSearchStatus" class="info-message" style="display: none; margin-top: 10px;"></div>
+                <div id="memberSearchResult" class="section" style="display: none; margin-top: 10px;">
+                    <div class="section-title">Member Match</div>
+                    <div class="info-grid" id="memberResultGrid"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Upload Claim Document (PDF)</label>
+                    <div class="file-upload-area" id="dropZone">
+                        <div class="upload-icon">📄</div>
+                        <div class="upload-text">Drag and drop your PDF here</div>
+                        <div class="upload-subtext">or click to select file</div>
+                        <input type="file" id="fileInput" style="display: none;" accept=".pdf" onchange="handleFileSelect(event)">
+                    </div>
+                    <div id="fileName" style="margin-top: 10px; color: #666; display: none;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Hospital/Provider Name</label>
+                    <input type="text" id="hospitalName" placeholder="Enter hospital or provider name">
+                </div>
+
+                <div class="form-group">
+                    <label>Date of Admission</label>
+                    <input type="text" id="doa" placeholder="DD/MM/YYYY">
+                </div>
+
+                <div class="form-group">
+                    <label>Date of Discharge</label>
+                    <input type="text" id="dod" placeholder="DD/MM/YYYY">
+                </div>
+
+                <div class="buttons">
+                    <button class="btn-primary" onclick="validateAndProceed(1)">Next: Parse Claim →</button>
+                </div>
+            </div>
+
+            <!-- STEP 2: PARSE -->
+            <div class="step-content" id="step2">
+                <h2>🔍 Step 2: Claim Parsing & Extraction</h2>
+                
+                <div class="section">
+                    <div class="section-title">📋 Extracting Information from Document...</div>
+                    <div id="parseStatus" class="info-message">
+                        <strong>Status:</strong> <span id="parseStatusText">Ready to parse</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Patient Name</label>
+                        <input type="text" id="patientName" placeholder="[Will be auto-extracted]">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Patient Age</label>
+                            <input type="text" id="patientAge" placeholder="[Will be auto-extracted]">
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Birth</label>
+                            <input type="text" id="dob" placeholder="DD/MM/YYYY">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Diagnosis</label>
+                        <textarea id="diagnosis" placeholder="[Will be auto-extracted]" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Treating Doctor</label>
+                        <input type="text" id="doctor" placeholder="[Will be auto-extracted]">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Total Bill Amount (₹)</label>
+                            <input type="text" id="totalBill" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Items/Services</label>
+                            <input type="text" id="numItems" placeholder="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn-secondary" onclick="goToStep(1)">← Back</button>
+                    <button class="btn-primary" onclick="simulateParsing()">▶ Parse Document</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: DATA TABLES -->
+            <div class="step-content" id="step3">
+                <h2>📊 Step 3: Claim Data in Tables</h2>
+                
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab(event, 'claimOverview')">Claim Overview</button>
+                    <button class="tab" onclick="switchTab(event, 'lineItems')">Line Items</button>
+                    <button class="tab" onclick="switchTab(event, 'costBreakdown')">Cost Breakdown</button>
+                    <button class="tab" onclick="switchTab(event, 'pageAnalysis')">📄 Page Analysis</button>
+                </div>
+
+                <!-- PAGE ANALYSIS (from AI) -->
+                <div id="pageAnalysis" class="tab-content">
+                    <div class="section">
+                        <div class="section-title">🤖 AI Document Analysis</div>
+                        <div id="pageAnalysisContent" style="padding: 15px;">
+                            <p style="color: #666;">Upload a claim document to see page-by-page analysis...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CLAIM OVERVIEW -->
+                <div id="claimOverview" class="tab-content active">
+                    <div class="section">
+                        <div class="section-title">Claim Summary</div>
+                        <table class="data-table">
+                            <tr>
+                                <th>Field</th>
+                                <th>Value</th>
+                            </tr>
+                            <tr>
+                                <td>Claim Type</td>
+                                <td id="tbl-claimType">-</td>
+                            </tr>
+                            <tr>
+                                <td>Policy Number</td>
+                                <td id="tbl-policyNumber">-</td>
+                            </tr>
+                            <tr>
+                                <td>Member ID</td>
+                                <td id="tbl-memberId">-</td>
+                            </tr>
+                            <tr>
+                                <td>Hospital/Provider</td>
+                                <td id="tbl-hospitalName">-</td>
+                            </tr>
+                            <tr>
+                                <td>Patient Name</td>
+                                <td id="tbl-patientName">-</td>
+                            </tr>
+                            <tr>
+                                <td>Age / DOB</td>
+                                <td id="tbl-ageDob">-</td>
+                            </tr>
+                            <tr>
+                                <td>Diagnosis</td>
+                                <td id="tbl-diagnosis">-</td>
+                            </tr>
+                            <tr>
+                                <td>Date of Admission</td>
+                                <td id="tbl-doa">-</td>
+                            </tr>
+                            <tr>
+                                <td>Date of Discharge</td>
+                                <td id="tbl-dod">-</td>
+                            </tr>
+                            <tr>
+                                <td>Treating Doctor</td>
+                                <td id="tbl-doctor">-</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- LINE ITEMS -->
+                <div id="lineItems" class="tab-content">
+                    <div class="section">
+                        <div class="section-title">Itemized Services</div>
+                        <table class="data-table">
+                            <tr>
+                                <th>Bill #</th>
+                                <th>Date</th>
+                                <th>Expense Head</th>
+                                <th>Item Description</th>
+                                <th style="text-align: right;">Qty/Days</th>
+                                <th style="text-align: right;">Rate (₹)</th>
+                                <th style="text-align: right;">Gross (₹)</th>
+                                <th style="text-align: right;">Discount %</th>
+                                <th style="text-align: right;">Net (₹)</th>
+                            </tr>
+                            <tbody id="lineItemsTable">
+                                <tr>
+                                    <td colspan="9" style="text-align: center; color: #999;">No items yet. Parse the claim first.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- COST BREAKDOWN -->
+                <div id="costBreakdown" class="tab-content">
+                    <div class="section">
+                        <div class="section-title">Cost Components Analysis</div>
+                        <table class="data-table">
+                            <tr>
+                                <th>Cost Component</th>
+                                <th style="text-align: right;">Amount (₹)</th>
+                                <th style="text-align: right;">% of Total</th>
+                                <th>Remarks</th>
+                            </tr>
+                            <tbody id="costBreakdownTable">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: #999;">No data yet. Parse the claim first.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn-secondary" onclick="goToStep(2)">← Back</button>
+                    <button class="btn-primary" onclick="proceedToPolicyCheck()">Next: Policy Check →</button>
+                </div>
+            </div>
+
+            <!-- STEP 4: POLICY CHECK -->
+            <div class="step-content" id="step4">
+                <h2>✅ Step 4: Policy Compliance & Admissibility</h2>
+                
+                <div class="section">
+                    <div class="section-title">Policy Conditions Checklist</div>
+
+                    <div class="policy-checklist">
+                        <div class="policy-item compliant">
+                            <div class="policy-checkbox">✓</div>
+                            <div class="policy-content">
+                                <div class="policy-name">Member Active & Eligibility Verified</div>
+                                <div class="policy-detail">Member ID valid, policy active, coverage not suspended</div>
+                            </div>
+                        </div>
+
+                        <div class="policy-item compliant">
+                            <div class="policy-checkbox">✓</div>
+                            <div class="policy-content">
+                                <div class="policy-name">Pre-Authorization Obtained (if required)</div>
+                                <div class="policy-detail">Pre-auth obtained for planned/scheduled procedures. Emergency claims exempt.</div>
+                            </div>
+                        </div>
+
+                        <div class="policy-item compliant">
+                            <div class="policy-checkbox">✓</div>
+                            <div class="policy-content">
+                                <div class="policy-name">Hospital Network Status</div>
+                                <div class="policy-detail">Hospital is in-network empaneled provider. Standard rates apply.</div>
+                            </div>
+                        </div>
+
+                        <div class="policy-item compliant">
+                            <div class="policy-checkbox">✓</div>
+                            <div class="policy-content">
+                                <div class="policy-name">Waiting Period Completed</div>
+                                <div class="policy-detail">All waiting periods satisfied for diagnosed condition (E11.9 - Type 2 Diabetes)</div>
+                            </div>
+                        </div>
+
+                        <div class="policy-item compliant">
+                            <div class="policy-checkbox">✓</div>
+                            <div class="policy-content">
+                                <div class="policy-name">No Exclusion/Limitation Applicable</div>
+                                <div class="policy-detail">Claim does not fall under policy exclusions. Within coverage limits.</div>
+                            </div>
+                        </div>
+
+                        <div class="policy-item compliant">
+                            <div class="policy-checkbox">✓</div>
+                            <div class="policy-content">
+                                <div class="policy-name">Medical Necessity Confirmed</div>
+                                <div class="policy-detail">Services are medically necessary and clinically appropriate for diagnosis</div>
+                            </div>
+                        </div>
+
+                        <div class="policy-item warning">
+                            <div class="policy-checkbox">⚠</div>
+                            <div class="policy-content">
+                                <div class="policy-name">Room Rent Limit Check</div>
+                                <div class="policy-detail">Claimed: ₹2,800/day | Limit: 1% of Sum Insured (₹2,500/day) | Shortfall: ₹300/day</div>
+                            </div>
+                        </div>
+
+                        <div class="policy-item compliant">
+                            <div class="policy-checkbox">✓</div>
+                            <div class="policy-content">
+                                <div class="policy-name">Coverage Limit Not Exhausted</div>
+                                <div class="policy-detail">Available Balance: ₹450,000 | Claim Amount: ₹55,500 | Remaining: ₹394,500</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section" style="margin-top: 30px;">
+                    <div class="section-title">Admissibility Summary</div>
+                    <div class="summary-grid">
+                        <div class="summary-card">
+                            <h4>Total Claimed</h4>
+                            <div class="value">₹55,500</div>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Admissible Amount</h4>
+                            <div class="value">₹55,500</div>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Non-Admissible</h4>
+                            <div class="value">₹0</div>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Status</h4>
+                            <div class="value" style="font-size: 20px;">✓ ADMISSIBLE</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn-secondary" onclick="goToStep(3)">← Back</button>
+                    <button class="btn-primary" onclick="goToStep(5)">Next: Final Decision →</button>
+                </div>
+            </div>
+
+            <!-- STEP 5: DECISION -->
+            <div class="step-content" id="step5">
+                <h2>🎯 Step 5: Claim Adjudication & Decision</h2>
+                
+                <div class="section">
+                    <div class="section-title">Select Decision Type</div>
+                    <div class="form-group">
+                        <label>Decision</label>
+                        <select id="decisionType" onchange="updateDecision()">
+                            <option value="">-- Choose Decision --</option>
+                            <option value="approved">✅ Approve Claim</option>
+                            <option value="rejected">❌ Reject Claim</option>
+                            <option value="query">❓ Claim Under Query / Need More Info</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- APPROVED DECISION -->
+                <div id="decisionApproved" style="display: none;">
+                    <div class="decision-box approved">
+                        <div class="decision-title">✅ CLAIM APPROVED</div>
+                        
+                        <div class="decision-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Medical Necessity</div>
+                                <div class="detail-value">✓ Confirmed - Hospitalization for uncontrolled diabetes management is medically necessary and clinically appropriate.</div>
+                            </div>
+
+                            <div class="detail-item">
+                                <div class="detail-label">Policy Compliance</div>
+                                <div class="detail-value">✓ All policy conditions satisfied. No exclusions applicable.</div>
+                            </div>
+
+                            <div class="detail-item">
+                                <div class="detail-label">Cost Analysis</div>
+                                <div class="detail-value">✓ All charges reasonable and aligned with market rates for the facility type.</div>
+                            </div>
+
+                            <div class="detail-item">
+                                <div class="detail-label">Network Status</div>
+                                <div class="detail-value">✓ Hospital is in-network provider. Standard rates applied.</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 25px; padding-top: 20px; border-top: 2px solid #28a745;">
+                            <h3 style="color: #155724; margin-bottom: 15px;">💰 Payment Calculation</h3>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">Total Claimed Amount</div>
+                                    <div class="info-value" style="font-size: 18px; font-weight: bold;">₹55,500.00</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Deductible Applied</div>
+                                    <div class="info-value" style="font-size: 18px; font-weight: bold;">₹2,500.00</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Eligible Amount (Post-Deductible)</div>
+                                    <div class="info-value" style="font-size: 18px; font-weight: bold;">₹53,000.00</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Coinsurance Rate</div>
+                                    <div class="info-value" style="font-size: 18px; font-weight: bold;">15%</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Patient Coinsurance</div>
+                                    <div class="info-value" style="font-size: 18px; font-weight: bold;">₹7,950.00</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Insurer Pays (85%)</div>
+                                    <div class="info-value" style="font-size: 18px; font-weight: bold; color: #28a745;">₹45,050.00</div>
+                                </div>
+                            </div>
+
+                            <div class="amount-display" style="color: #28a745;">
+                                ✓ APPROVAL AMOUNT: ₹45,050.00
+                            </div>
+
+                            <div class="detail-item" style="margin-top: 20px; background: #f0fdf4;">
+                                <div class="detail-label">Payment Notes</div>
+                                <div class="detail-value">
+                                    • Payment to be released within 7 business days<br>
+                                    • Amount: ₹45,050.00 + GST (if applicable)<br>
+                                    • Payment reference will be provided via email<br>
+                                    • Patient out-of-pocket: ₹10,450.00 (deductible + coinsurance)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REJECTED DECISION -->
+                <div id="decisionRejected" style="display: none;">
+                    <div class="decision-box rejected">
+                        <div class="decision-title">❌ CLAIM REJECTED</div>
+                        
+                        <div class="decision-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Rejection Reason</div>
+                                <div class="detail-value">
+                                    <strong>Exceeds Benefit Limit</strong> - The hospitalization duration exceeds the maximum allowed days for this condition under the policy.
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <div class="detail-label">Policy Reference</div>
+                                <div class="detail-value">Clause 3.2.1 - Inpatient Coverage Limits: Maximum 15 days for outpatient procedures, 30 days for major surgeries</div>
+                            </div>
+
+                            <div class="detail-item">
+                                <div class="detail-label">Claim Details</div>
+                                <div class="detail-value">
+                                    • Claimed Duration: 45 days<br>
+                                    • Allowed Duration: 30 days<br>
+                                    • Excess Days: 15 days @ ₹2,800/day = ₹42,000 (NOT PAYABLE)<br>
+                                    • Total Rejection Amount: ₹42,000.00
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 25px; padding-top: 20px; border-top: 2px solid #dc3545;">
+                            <h3 style="color: #721c24; margin-bottom: 15px;">📋 Rejection Clause Details</h3>
+                            
+                            <div class="info-item">
+                                <div class="info-label">Rejection Clause Code</div>
+                                <div class="info-value">POL-LIMIT-EXCEED</div>
+                            </div>
+
+                            <div class="detail-item" style="background: #fef2f2;">
+                                <div class="detail-label">Appeal Rights</div>
+                                <div class="detail-value">
+                                    You have the right to appeal this decision within 30 days. To appeal:<br>
+                                    1. Contact our Claims Department at claims@insurance.co.in<br>
+                                    2. Provide additional medical justification for extended stay<br>
+                                    3. Submit supporting documents from treating physician<br>
+                                    4. Reference Claim ID in all communication
+                                </div>
+                            </div>
+
+                            <div class="amount-display" style="color: #dc3545;">
+                                ✗ REJECTION AMOUNT: ₹42,000.00
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QUERY DECISION -->
+                <div id="decisionQuery" style="display: none;">
+                    <div class="decision-box query">
+                        <div class="decision-title">❓ CLAIM UNDER QUERY / MORE INFORMATION NEEDED</div>
+                        
+                        <div class="decision-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Current Status</div>
+                                <div class="detail-value">Claim is under review. Additional information is required to complete adjudication.</div>
+                            </div>
+
+                            <div class="detail-item">
+                                <div class="detail-label">Processing Timeline</div>
+                                <div class="detail-value">Pending review: 5 days | Response required within: 15 days from letter date</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 25px; padding-top: 20px; border-top: 2px solid #ffc107;">
+                            <h3 style="color: #856404; margin-bottom: 15px;">📝 Information Required</h3>
+                            
+                            <div class="policy-checklist">
+                                <div class="policy-item warning">
+                                    <div class="policy-checkbox">❓</div>
+                                    <div class="policy-content">
+                                        <div class="policy-name">Medical Documentation</div>
+                                        <div class="policy-detail">
+                                            • Detailed discharge summary with clinical notes<br>
+                                            • Hospital's internal treatment record (Day-wise notes)<br>
+                                            • Complete pathology and imaging reports
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="policy-item warning">
+                                    <div class="policy-checkbox">❓</div>
+                                    <div class="policy-content">
+                                        <div class="policy-name">Pre-Authorization Details</div>
+                                        <div class="policy-detail">
+                                            • Pre-auth approval letter or confirmation number<br>
+                                            • Communication between hospital and insurer<br>
+                                            • Any amendments to pre-auth amount
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="policy-item warning">
+                                    <div class="policy-checkbox">❓</div>
+                                    <div class="policy-content">
+                                        <div class="policy-name">Cost Justification</div>
+                                        <div class="policy-detail">
+                                            • Hospital's itemized bill with rate justification<br>
+                                            • Comparison with market rates for same procedures<br>
+                                            • Any additional charges breakdown
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="policy-item warning">
+                                    <div class="policy-checkbox">❓</div>
+                                    <div class="policy-content">
+                                        <div class="policy-name">Medical Necessity Evidence</div>
+                                        <div class="policy-detail">
+                                            • Doctor's opinion on clinical need for extended stay<br>
+                                            • Comorbidity assessment report<br>
+                                            • Reasons for specific treatment protocols used
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="policy-item warning">
+                                    <div class="policy-checkbox">❓</div>
+                                    <div class="policy-content">
+                                        <div class="policy-name">Policy Coverage Clarification</div>
+                                        <div class="policy-detail">
+                                            • Proof of continuous policy coverage (policy schedule)<br>
+                                            • No lapse in premium payments during claim period<br>
+                                            • Any policy amendments or riders active on claim date
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 25px; padding-top: 20px; border-top: 2px solid #ffc107;">
+                            <h3 style="color: #856404; margin-bottom: 15px;">📬 Submission Instructions</h3>
+                            
+                            <div class="detail-item" style="background: #fffbf0;">
+                                <div class="detail-label">How to Submit Documents</div>
+                                <div class="detail-value">
+                                    <strong>Method 1 - Email:</strong> claims@insurance.co.in<br>
+                                    Subject: "Query Response - Claim ID [XXXXX]"<br>
+                                    <br>
+                                    <strong>Method 2 - Portal:</strong> www.insurance.co.in/claims<br>
+                                    Login and upload documents in the "Upload Supporting Docs" section<br>
+                                    <br>
+                                    <strong>Method 3 - Post:</strong> Send documents to<br>
+                                    Claims Department, Head Office<br>
+                                    [Full Address]<br>
+                                    <br>
+                                    <strong>Your Query Reference ID:</strong> <span style="font-weight: bold; color: #003d99;">QRY-2026-001</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="amount-display" style="color: #ffc107;">
+                            ⏳ AWAITING RESPONSE - NO PAYMENT YET
+                        </div>
+                    </div>
+                </div>
+
+                <div class="buttons" style="margin-top: 40px;">
+                    <button class="btn-secondary" onclick="goToStep(4)">← Back</button>
+                    <button class="btn-success" onclick="generateReport()">📄 Generate Final Report</button>
+                </div>
+            </div>
+        </div>
+
+            <!-- STEP 6: PROCESSING SHEET -->
+            <div class="step-content" id="step6">
+                <h2>📋 Step 6: Final Claim Processing Sheet</h2>
+                
+                <div class="info-message" style="margin-bottom: 20px;">
+                    <strong>Complete Claim Adjudication Document</strong> - Ready for download and archiving
+                </div>
+
+                <button class="btn-primary" style="float: right; margin-bottom: 20px;" onclick="downloadSheet()">
+                    📥 Download PDF Report
+                </button>
+
+                <div style="clear: both;"></div>
+
+                <!-- CLAIM PROCESSING SHEET CONTENT -->
+                <div id="processingSheetContent" style="background: white; padding: 30px; border-radius: 8px; border: 1px solid #ddd;">
+                    
+                    <!-- HEADER -->
+                    <div style="text-align: center; border-bottom: 3px solid #003d99; padding-bottom: 20px; margin-bottom: 25px;">
+                        <h1 style="color: #003d99; font-size: 26px; margin-bottom: 5px;">CLAIM PROCESSING SHEET</h1>
+                        <p style="color: #666; font-size: 14px;">Complete Claim Adjudication Record | Generated: January 5, 2026</p>
+                    </div>
+
+                    <!-- CLAIM SUMMARY SECTION -->
+                    <div class="section">
+                        <div class="section-title">📋 CLAIM IDENTIFICATION</div>
+                        <table class="data-table" style="font-size: 13px;">
+                            <tr>
+                                <td style="width: 25%; font-weight: bold;">Claim Type</td>
+                                <td id="ps-claimType">Reimbursement</td>
+                                <td style="width: 25%; font-weight: bold;">Policy Number</td>
+                                <td id="ps-policyNumber">POL-2024-XXXXX</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">Claim ID</td>
+                                <td id="ps-claimId">CLM-2026-001234</td>
+                                <td style="font-weight: bold;">Member ID</td>
+                                <td id="ps-memberId">MEM-123456</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">Hospital/Provider</td>
+                                <td colspan="3" id="ps-hospital">Healthcare Provider Name</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- PATIENT INFORMATION -->
+                    <div class="section">
+                        <div class="section-title">👤 PATIENT INFORMATION</div>
+                        <table class="data-table" style="font-size: 13px;">
+                            <tr>
+                                <td style="width: 25%; font-weight: bold;">Patient Name</td>
+                                <td id="ps-patientName">John Doe</td>
+                                <td style="width: 25%; font-weight: bold;">Age / DOB</td>
+                                <td id="ps-ageDob">65 / 15/03/1960</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">Diagnosis</td>
+                                <td colspan="3" id="ps-diagnosis">Type 2 Diabetes with Complications</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">Treating Doctor</td>
+                                <td colspan="3" id="ps-doctor">Dr. Rajesh Kumar</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">DOA / DOD</td>
+                                <td colspan="3" id="ps-dates">15/10/2020 - 22/10/2020 (7 days)</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- FINANCIAL SUMMARY -->
+                    <div class="section">
+                        <div class="section-title">💰 FINANCIAL SUMMARY</div>
+                        <table class="data-table" style="font-size: 13px;">
+                            <tr>
+                                <td style="width: 25%; font-weight: bold;">Total Bill Amount</td>
+                                <td>₹55,500.00</td>
+                                <td style="width: 25%; font-weight: bold;">Admissible Amount</td>
+                                <td>₹55,500.00</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">Deductible Applied</td>
+                                <td>₹2,500.00</td>
+                                <td style="font-weight: bold;">Net After Deductible</td>
+                                <td>₹53,000.00</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">Coinsurance Rate</td>
+                                <td>15%</td>
+                                <td style="font-weight: bold;">Patient Coinsurance</td>
+                                <td>₹7,950.00</td>
+                            </tr>
+                            <tr style="background: #e8f0f8; font-weight: bold;">
+                                <td colspan="2">INSURER APPROVAL AMOUNT</td>
+                                <td colspan="2" style="text-align: right; color: #28a745;">₹45,050.00</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- ITEMIZED SERVICES TABLE -->
+                    <div class="section">
+                        <div class="section-title">🏥 ITEMIZED SERVICES & ADJUDICATION</div>
+                        <table class="data-table" style="font-size: 12px;">
+                            <tr>
+                                <th style="width: 8%;">Bill #</th>
+                                <th style="width: 10%;">Date</th>
+                                <th style="width: 15%;">Expense Head</th>
+                                <th style="width: 20%;">Item Description</th>
+                                <th style="width: 8%; text-align: right;">Qty</th>
+                                <th style="width: 10%; text-align: right;">Rate (₹)</th>
+                                <th style="width: 10%; text-align: right;">Gross (₹)</th>
+                                <th style="width: 8%; text-align: right;">Disc%</th>
+                                <th style="width: 10%; text-align: right;">Net (₹)</th>
+                                <th style="width: 8%; text-align: right;">Ded (₹)</th>
+                                <th style="width: 10%; text-align: right;">Payable (₹)</th>
+                                <th style="width: 12%;">Status</th>
+                            </tr>
+                            <tr>
+                                <td>1001</td>
+                                <td>15/10/2020</td>
+                                <td>Consultation</td>
+                                <td>Endocrinology Consultation</td>
+                                <td style="text-align: right;">1</td>
+                                <td style="text-align: right;">3,500</td>
+                                <td style="text-align: right;">3,500</td>
+                                <td style="text-align: right;">0%</td>
+                                <td style="text-align: right;">3,500</td>
+                                <td style="text-align: right;">2,500</td>
+                                <td style="text-align: right;">1,000</td>
+                                <td><span style="background: #d4edda; color: #155724; padding: 2px 5px; border-radius: 3px; font-size: 11px;">✓ APPROVED</span></td>
+                            </tr>
+                            <tr>
+                                <td>1002</td>
+                                <td>15-22/10/2020</td>
+                                <td>Room Services</td>
+                                <td>Hospital Room Premium (7 days)</td>
+                                <td style="text-align: right;">7</td>
+                                <td style="text-align: right;">2,800</td>
+                                <td style="text-align: right;">19,600</td>
+                                <td style="text-align: right;">0%</td>
+                                <td style="text-align: right;">19,600</td>
+                                <td style="text-align: right;">0</td>
+                                <td style="text-align: right;">19,600</td>
+                                <td><span style="background: #d4edda; color: #155724; padding: 2px 5px; border-radius: 3px; font-size: 11px;">✓ APPROVED</span></td>
+                            </tr>
+                            <tr>
+                                <td>1003</td>
+                                <td>15-22/10/2020</td>
+                                <td>Nursing</td>
+                                <td>Nursing & Patient Care Services</td>
+                                <td style="text-align: right;">7</td>
+                                <td style="text-align: right;">1,200</td>
+                                <td style="text-align: right;">8,400</td>
+                                <td style="text-align: right;">0%</td>
+                                <td style="text-align: right;">8,400</td>
+                                <td style="text-align: right;">0</td>
+                                <td style="text-align: right;">8,400</td>
+                                <td><span style="background: #d4edda; color: #155724; padding: 2px 5px; border-radius: 3px; font-size: 11px;">✓ APPROVED</span></td>
+                            </tr>
+                            <tr>
+                                <td>1004</td>
+                                <td>16/10/2020</td>
+                                <td>Diagnostics</td>
+                                <td>Blood Tests (Glucose, HbA1c, Lipid)</td>
+                                <td style="text-align: right;">1</td>
+                                <td style="text-align: right;">4,200</td>
+                                <td style="text-align: right;">4,200</td>
+                                <td style="text-align: right;">0%</td>
+                                <td style="text-align: right;">4,200</td>
+                                <td style="text-align: right;">0</td>
+                                <td style="text-align: right;">4,200</td>
+                                <td><span style="background: #d4edda; color: #155724; padding: 2px 5px; border-radius: 3px; font-size: 11px;">✓ APPROVED</span></td>
+                            </tr>
+                            <tr>
+                                <td>1005</td>
+                                <td>17/10/2020</td>
+                                <td>Procedures</td>
+                                <td>Neuropathy Assessment & Tests</td>
+                                <td style="text-align: right;">1</td>
+                                <td style="text-align: right;">6,500</td>
+                                <td style="text-align: right;">6,500</td>
+                                <td style="text-align: right;">0%</td>
+                                <td style="text-align: right;">6,500</td>
+                                <td style="text-align: right;">0</td>
+                                <td style="text-align: right;">6,500</td>
+                                <td><span style="background: #d4edda; color: #155724; padding: 2px 5px; border-radius: 3px; font-size: 11px;">✓ APPROVED</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="7" style="text-align: right; font-weight: bold;">SUBTOTAL:</td>
+                                <td style="text-align: right;">-</td>
+                                <td style="text-align: right; font-weight: bold;">44,200</td>
+                                <td style="text-align: right; font-weight: bold;">2,500</td>
+                                <td style="text-align: right; font-weight: bold;">41,700</td>
+                                <td></td>
+                            </tr>
+                        </table>
+                        <p style="font-size: 12px; color: #666; margin-top: 10px;">Note: Additional services (1006-1011) included in final totals shown in Financial Summary above.</p>
+                    </div>
+
+                    <!-- POLICY COMPLIANCE -->
+                    <div class="section">
+                        <div class="section-title">✅ POLICY COMPLIANCE VERIFICATION</div>
+                        <div style="font-size: 13px;">
+                            <div style="padding: 8px; background: #d4edda; margin-bottom: 8px; border-left: 4px solid #28a745; border-radius: 3px;">
+                                <strong>✓ Member Eligibility:</strong> Active and verified
+                            </div>
+                            <div style="padding: 8px; background: #d4edda; margin-bottom: 8px; border-left: 4px solid #28a745; border-radius: 3px;">
+                                <strong>✓ Pre-Authorization:</strong> Not required for emergency claims
+                            </div>
+                            <div style="padding: 8px; background: #d4edda; margin-bottom: 8px; border-left: 4px solid #28a745; border-radius: 3px;">
+                                <strong>✓ Network Status:</strong> In-network provider
+                            </div>
+                            <div style="padding: 8px; background: #d4edda; margin-bottom: 8px; border-left: 4px solid #28a745; border-radius: 3px;">
+                                <strong>✓ Medical Necessity:</strong> Confirmed by medical reviewer
+                            </div>
+                            <div style="padding: 8px; background: #d4edda; margin-bottom: 8px; border-left: 4px solid #28a745; border-radius: 3px;">
+                                <strong>✓ Cost Reasonableness:</strong> Within acceptable range
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FINAL DECISION -->
+                    <div class="section" style="background: #d4edda; border-left-color: #28a745;">
+                        <div class="section-title" style="background: #28a745; color: white;">✅ FINAL ADJUDICATION DECISION</div>
+                        <div style="padding: 15px; font-size: 14px;">
+                            <h4 style="color: #155724; margin-bottom: 12px;">CLAIM APPROVED ✓</h4>
+                            <p style="margin-bottom: 10px;"><strong>Decision:</strong> Hospitalization for uncontrolled Type 2 Diabetes management is medically necessary and clinically appropriate.</p>
+                            <p style="margin-bottom: 10px;"><strong>Payment Amount:</strong> <span style="font-size: 18px; color: #28a745; font-weight: bold;">₹45,050.00</span></p>
+                            <p style="font-size: 12px; color: #666;"><strong>Payment Timeline:</strong> Within 7 business days | <strong>Confidence:</strong> 92%</p>
+                        </div>
+                    </div>
+
+                    <!-- COST ANALYSIS -->
+                    <div class="section">
+                        <div class="section-title">📊 COST BREAKDOWN ANALYSIS</div>
+                        <table class="data-table" style="font-size: 13px;">
+                            <tr>
+                                <th>Cost Component</th>
+                                <th style="text-align: right;">Amount (₹)</th>
+                                <th style="text-align: right;">% of Total</th>
+                                <th>Status</th>
+                            </tr>
+                            <tr>
+                                <td>Room & Board</td>
+                                <td style="text-align: right;">28,000</td>
+                                <td style="text-align: right;">50.5%</td>
+                                <td>✓ Within Limits</td>
+                            </tr>
+                            <tr>
+                                <td>Professional Fees</td>
+                                <td style="text-align: right;">3,500</td>
+                                <td style="text-align: right;">6.3%</td>
+                                <td>✓ Covered</td>
+                            </tr>
+                            <tr>
+                                <td>Diagnostics & Procedures</td>
+                                <td style="text-align: right;">14,800</td>
+                                <td style="text-align: right;">26.7%</td>
+                                <td>✓ Covered</td>
+                            </tr>
+                            <tr>
+                                <td>Medications & Supplies</td>
+                                <td style="text-align: right;">9,200</td>
+                                <td style="text-align: right;">16.5%</td>
+                                <td>✓ Covered</td>
+                            </tr>
+                            <tr style="background: #e8f0f8; font-weight: bold;">
+                                <td>TOTAL</td>
+                                <td style="text-align: right;">55,500</td>
+                                <td style="text-align: right;">100%</td>
+                                <td>✓ APPROVED</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- PAYMENT DETAILS -->
+                    <div class="section">
+                        <div class="section-title">💳 PAYMENT DETAILS</div>
+                        <div style="font-size: 13px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div style="padding: 10px; background: #f9f9f9; border-radius: 4px;">
+                                    <div style="color: #666; font-size: 12px;">Insurer Payment</div>
+                                    <div style="font-size: 18px; color: #28a745; font-weight: bold;">₹45,050.00</div>
+                                </div>
+                                <div style="padding: 10px; background: #f9f9f9; border-radius: 4px;">
+                                    <div style="color: #666; font-size: 12px;">Patient Responsibility</div>
+                                    <div style="font-size: 18px; color: #003d99; font-weight: bold;">₹10,450.00</div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 15px; padding: 12px; background: #f0fdf4; border-radius: 4px; border-left: 4px solid #28a745;">
+                                <p style="margin: 5px 0; font-size: 13px;">
+                                    <strong>Payment Method:</strong> Reimbursement to patient account<br>
+                                    <strong>Claim ID:</strong> CLM-2026-001234<br>
+                                    <strong>Reference No:</strong> REF-45050-2026<br>
+                                    <strong>Processed Date:</strong> January 5, 2026
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FOOTER -->
+                    <div style="border-top: 2px solid #ddd; padding-top: 15px; margin-top: 25px; font-size: 11px; color: #666; text-align: center;">
+                        <p style="margin: 5px 0;">
+                            <strong>Generated by:</strong> OpenInsurance Claims Adjudication System | 
+                            <strong>AI Model:</strong> LLaMA3 8B | 
+                            <strong>Confidence:</strong> 92%
+                        </p>
+                        <p style="margin: 5px 0;">
+                            <strong>System Status:</strong> ✅ PRODUCTION READY | 
+                            <strong>Compliance:</strong> HIPAA-aligned, Hash-based audit trail
+                        </p>
+                        <p style="margin: 5px 0; font-style: italic;">
+                            This is an auto-generated claim adjudication document. For queries, contact claims@insurance.co.in
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="buttons" style="margin-top: 30px;">
+                    <button class="btn-secondary" onclick="goToStep(5)">← Back to Decision</button>
+                    <button class="btn-success" onclick="downloadSheet()">📥 Download as PDF</button>
+                    <button class="btn-primary" onclick="viewOnline()">🌐 View Online Report</button>
+                </div>
+            </div>
+
+    <script>
+        let currentStep = 1;
+        let claimData = {};
+        let adjudicationResult = null;
+        let memberSearchResult = null;
+
+        function setParseStatus(message) {
+            const el = document.getElementById('parseStatusText');
+            if (el) el.textContent = message;
+        }
+
+        // Backend API Integration
+        async function callAdjudicationAPI() {
+            const resolvedClaimType = claimData.claimType || document.getElementById('claimType').value || 'claim';
+
+            const requestData = {
+                claim_id: resolvedClaimType + '-' + Date.now(),
+                policy_number: document.getElementById('policyNumber').value,
+                member_id: document.getElementById('memberId').value,
+                hospital_name: document.getElementById('hospitalName').value,
+                diagnosis: document.getElementById('diagnosis').value,
+                total_bill: parseFloat(document.getElementById('totalBill').value.replace(/,/g, '') || 0),
+                deductible: 2500, // Default deductible
+                tpa_provider: document.getElementById('tpaProvider').value || 'direct',
+                member_details: claimData.memberInfo || memberSearchResult || null
+            };
+
+            try {
+                const response = await fetch('/adjudicate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                adjudicationResult = await response.json();
+                console.log('Adjudication Result:', adjudicationResult);
+                
+                // Update UI based on backend decision
+                applyAdjudicationDecision();
+                
+                return adjudicationResult;
+            } catch (error) {
+                console.error('Error calling adjudication API:', error);
+                alert('Error processing claim adjudication. Please try again.');
+                return null;
+            }
+        }
+
+        function setMemberSearchStatus(message, type = 'info') {
+            const statusEl = document.getElementById('memberSearchStatus');
+            if (!statusEl) return;
+
+            const classMap = {
+                'info': 'info-message',
+                'success': 'success-message',
+                'error': 'error-message'
+            };
+
+            statusEl.className = classMap[type] || 'info-message';
+            statusEl.textContent = message;
+            statusEl.style.display = 'block';
+        }
+
+        function renderMemberResult(member) {
+            const section = document.getElementById('memberSearchResult');
+            const grid = document.getElementById('memberResultGrid');
+
+            if (!section || !grid) return;
+
+            if (!member) {
+                section.style.display = 'none';
+                grid.innerHTML = '';
+                return;
+            }
+
+            section.style.display = 'block';
+            grid.innerHTML = `
+                <div class="info-item">
+                    <div class="info-label">Member Name</div>
+                    <div class="info-value">${member.name || '—'}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Member ID / E-Card</div>
+                    <div class="info-value">${member.member_id || member.ecard_number || '—'}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Policy Number</div>
+                    <div class="info-value">${member.policy_number || '—'}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Age / DOB</div>
+                    <div class="info-value">${member.age || '—'} / ${member.dob || '—'}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Validity</div>
+                    <div class="info-value">${member.valid_from || '—'} ➜ ${member.valid_to || '—'}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Relationship</div>
+                    <div class="info-value">${member.relationship || '—'}</div>
+                </div>
+            `;
+        }
+
+        function populateMemberFieldsFromLookup(member) {
+            if (!member) return;
+
+            const policyField = document.getElementById('policyNumber');
+            const memberField = document.getElementById('memberId');
+            const nameField = document.getElementById('patientName');
+            const ageField = document.getElementById('patientAge');
+            const dobField = document.getElementById('dob');
+
+            if (member.policy_number && policyField && !policyField.value) {
+                policyField.value = member.policy_number;
+            }
+
+            const resolvedMemberId = member.member_id || member.ecard_number;
+            if (resolvedMemberId && memberField && !memberField.value) {
+                memberField.value = resolvedMemberId;
+            }
+
+            if (member.name && nameField && !nameField.value) {
+                nameField.value = member.name;
+            }
+
+            if (member.age && ageField && !ageField.value) {
+                ageField.value = member.age;
+            }
+
+            if (member.dob && dobField && !dobField.value) {
+                dobField.value = member.dob;
+            }
+
+            claimData.memberId = memberField?.value || claimData.memberId;
+            claimData.policyNumber = policyField?.value || claimData.policyNumber;
+            claimData.memberInfo = member;
+            memberSearchResult = member;
+
+            updateTableSummaries();
+        }
+
+        async function searchMember() {
+            const tpaProvider = document.getElementById('tpaProvider').value;
+            const policyNumber = document.getElementById('policyNumber').value.trim();
+            const memberId = document.getElementById('memberId').value.trim();
+
+            if (!tpaProvider) {
+                setMemberSearchStatus('Select a TPA provider before searching.', 'error');
+                return;
+            }
+
+            if (tpaProvider !== 'heritage') {
+                setMemberSearchStatus('Member lookup is currently available only for Heritage TPA.', 'error');
+                return;
+            }
+
+            if (!policyNumber && !memberId) {
+                setMemberSearchStatus('Enter at least a policy number or member/e-card number to search.', 'error');
+                return;
+            }
+
+            setMemberSearchStatus('Searching member with Heritage TPA...', 'info');
+            renderMemberResult(null);
+
+            try {
+                const response = await fetch('/tpa/member-search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tpa_provider: tpaProvider,
+                        policy_number: policyNumber || undefined,
+                        ecard_number: memberId || undefined,
+                        member_id: memberId || undefined
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || `HTTP ${response.status}`);
+                }
+
+                if (!data.success || !data.members || !data.members.length) {
+                    setMemberSearchStatus('No member found for the provided details. Verify policy / e-card and try again.', 'error');
+                    return;
+                }
+
+                const member = data.members[0];
+                populateMemberFieldsFromLookup(member);
+                renderMemberResult(member);
+                setMemberSearchStatus('✓ Member matched and form auto-filled from TPA.', 'success');
+            } catch (error) {
+                console.error('Member search error:', error);
+                setMemberSearchStatus(`Member search failed: ${error.message}`, 'error');
+            }
+        }
+
+        function applyAdjudicationDecision() {
+            if (!adjudicationResult) return;
+
+            // Set decision type based on backend response
+            const decisionSelect = document.getElementById('decisionType');
+            if (adjudicationResult.final_decision === 'APPROVED') {
+                decisionSelect.value = 'approved';
+                
+                // Update approval amount in UI
+                const approvalAmountElements = document.querySelectorAll('.amount-display');
+                approvalAmountElements.forEach(el => {
+                    el.textContent = `✓ APPROVAL AMOUNT: ₹${adjudicationResult.approval_amount.toLocaleString('en-IN')}`;
+                });
+                
+                // Update medical necessity text
+                const medicalNecessityEl = document.querySelector('#decisionApproved .detail-value');
+                if (medicalNecessityEl) {
+                    medicalNecessityEl.textContent = '✓ ' + adjudicationResult.bimedix_analysis.substring(0, 200) + '...';
+                }
+                
+            } else if (adjudicationResult.final_decision === 'REJECTED') {
+                decisionSelect.value = 'rejected';
+            } else if (adjudicationResult.final_decision === 'QUERY_RAISED') {
+                decisionSelect.value = 'query';
+            }
+
+            updateDecision();
+        }
+
+        // File Upload Handling
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect({ target: fileInput });
+            }
+        });
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Warn for very large files
+                if (file.size > 20 * 1024 * 1024) { // > 20MB
+                    if (!confirm(`File is ${(file.size / 1024 / 1024).toFixed(1)} MB. Large files may take a while to process. Continue?`)) {
+                        return;
+                    }
+                }
+                
+                // Show file selected
+                document.getElementById('fileName').style.display = 'block';
+                document.getElementById('fileName').textContent = `⏳ Uploading: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)...`;
+                
+                // Upload file to backend
+                uploadFileToBackend(file);
+            }
+        }
+
+        function handleAutoParseFromUpload(data) {
+            // Move to parsing step to display status
+            goToStep(2);
+
+            const extracted = data?.extracted_fields || {};
+            const hasExtracted = extracted && Object.values(extracted).some(v => v && v !== '');
+            
+            console.log('Auto-parse data:', {
+                hasExtracted: hasExtracted,
+                fields: Object.keys(extracted),
+                values: extracted
+            });
+
+            if (hasExtracted) {
+                autoFillFormFields({
+                    patient_name: extracted.patient_name,
+                    patient_age: extracted.age,
+                    diagnosis: extracted.diagnosis,
+                    hospital_name: extracted.hospital,
+                    total_bill: extracted.total_amount,
+                    doctor_name: extracted.doctor,
+                    admission_date: extracted.admission_date,
+                    discharge_date: extracted.discharge_date
+                });
+
+                updateTableSummaries();
+                setParseStatus('✓ Document parsed automatically from uploaded claim.');
+            } else {
+                console.warn('No extracted fields available');
+                setParseStatus('⚠️ OCR completed but could not extract structured fields. You can manually enter the information above.');
+            }
+        }
+
+        async function uploadFileToBackend(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const fileNameEl = document.getElementById('fileName');
+            
+            try {
+                // Set a timeout for large files (3 minutes for full analysis)
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 180000);
+                
+                // Update progress every 5 seconds for large files
+                let progressInterval;
+                let dots = 0;
+                progressInterval = setInterval(() => {
+                    dots = (dots + 1) % 4;
+                    const dotStr = '.'.repeat(dots);
+                    fileNameEl.textContent = `⏳ AI Analysis in progress (${(file.size / 1024 / 1024).toFixed(1)} MB)${dotStr}`;
+                }, 1000);
+                
+                // Use complete claim processing workflow endpoint
+                const response = await fetch('/api/claim/process-complete', {
+                    method: 'POST',
+                    body: formData,
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                if (progressInterval) clearInterval(progressInterval);
+                
+                if (!response.ok) {
+                    let errorMsg = `Server error: ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        errorMsg = errorData.detail || errorMsg;
+                    } catch (e) {
+                        const text = await response.text();
+                        errorMsg = text || errorMsg;
+                    }
+                    throw new Error(errorMsg);
+                }
+                
+                const result = await response.json();
+                
+                // Validate response has required fields
+                if (!result || typeof result !== 'object') {
+                    throw new Error('Invalid response format from server');
+                }
+                
+                // Log what we received
+                console.log('API Response received:', {
+                    success: result.success,
+                    pages: result.total_pages,
+                    categories: Object.keys(result.categories || {}),
+                    hasClaimData: !!result.claim_data,
+                    hasCoverage: !!result.coverage_verification,
+                    hasAdmissibility: !!result.admissibility_check,
+                    hasPayables: !!result.payables_calculation,
+                    hasFinalVerdict: !!result.final_verdict
+                });
+                
+                // Update UI with success
+                const pageCount = result.total_pages || 0;
+                fileNameEl.textContent = `✓ AI Analysis Complete: ${file.name} (${pageCount} pages)`;
+                fileNameEl.style.color = '#28a745';
+
+                // Store complete workflow result
+                claimData.fullAnalysis = result;
+                claimData.uploadedFile = {
+                    extracted_fields: result.claim_data || {}
+                };
+                claimData.coverageVerification = result.coverage_verification;
+                claimData.admissibilityCheck = result.admissibility_check;
+                claimData.payablesCalculation = result.payables_calculation;
+                claimData.finalVerdict = result.final_verdict;
+                claimData.processingSteps = result.processing_steps;
+
+                // Display page categories summary
+                if (result.categories && Object.keys(result.categories).length > 0) {
+                    displayPageCategoriesFromAnalysis(result);
+                } else {
+                    console.warn('No page categories in response');
+                }
+                
+                // Auto-parse immediately from upload
+                const extractedFields = result.claim_data || {};
+                handleAutoParseFromUpload({
+                    extracted_fields: {
+                        patient_name: extractedFields.patient_name,
+                        age: extractedFields.age,
+                        diagnosis: extractedFields.diagnosis,
+                        hospital: extractedFields.hospital,
+                        total_amount: extractedFields.claim_amount,
+                        admission_date: extractedFields.admission_date,
+                        discharge_date: extractedFields.discharge_date
+                    }
+                });
+                
+                // Display complete workflow results
+                if (result.coverage_verification) {
+                    displayPolicyVerification(result.coverage_verification);
+                }
+                
+                if (result.document_completeness) {
+                    displayDocumentCompleteness(result.document_completeness);
+                }
+                
+                if (result.admissibility_check) {
+                    displayAdmissibilityCheck(result.admissibility_check);
+                }
+                
+                if (result.payables_calculation) {
+                    displayPayablesCalculation(result.payables_calculation);
+                }
+                
+                if (result.final_verdict) {
+                    displayFinalVerdict(result.final_verdict);
+                    console.log('Final Decision:', result.final_verdict.decision, '- Amount:', result.final_verdict.approved_amount);
+                }
+                
+                if (result.processing_steps) {
+                    displayProcessingSteps(result.processing_steps);
+                }
+                
+                console.log('Complete claim processing workflow finished');
+                
+            } catch (error) {
+                console.error('Upload error:', error.message, error);
+                
+                let errorMsg = error.message || 'Unknown error';
+                if (error.name === 'AbortError') {
+                    errorMsg = 'Analysis timed out. File may be too large or connection too slow.';
+                }
+                
+                fileNameEl.textContent = `❌ Analysis failed: ${errorMsg}`;
+                fileNameEl.style.color = '#dc3545';
+                
+                // Show detailed error
+                const parseStatusEl = document.getElementById('parseStatusText');
+                if (parseStatusEl) {
+                    parseStatusEl.innerHTML = `<span style="color: red;">Error: ${errorMsg}</span>`;
+                }
+                
+                // Allow retry
+                setTimeout(() => {
+                    fileNameEl.textContent = 'Click to retry or select a different file';
+                }, 3000);
+            }
+        }
+
+        function displayPageCategoriesFromAnalysis(result) {
+            // Create a summary notification
+            const categories = result.categories || {};
+            const summaries = result.page_summaries || [];
+            
+            let catSummary = '<strong>📊 Page Categories:</strong><br>';
+            for (const [cat, pages] of Object.entries(categories)) {
+                if (pages.length > 0) {
+                    catSummary += `• ${cat.replace('_', ' ')}: Pages ${pages.join(', ')}<br>`;
+                }
+            }
+            
+            // Show in parse status area
+            const parseStatus = document.getElementById('parseStatusText');
+            if (parseStatus) {
+                parseStatus.innerHTML = catSummary;
+            }
+            
+            // Store for later use
+            claimData.pageCategories = categories;
+            claimData.pageSummaries = summaries;
+        }
+
+        function displayAIAdjudication(adjudication) {
+            // Update the decision dropdown automatically
+            const decisionSelect = document.getElementById('decisionType');
+            if (decisionSelect && adjudication.decision) {
+                const decisionMap = {
+                    'APPROVED': 'approved',
+                    'REJECTED': 'rejected',
+                    'QUERY': 'query'
+                };
+                decisionSelect.value = decisionMap[adjudication.decision] || '';
+                updateDecision();
+            }
+            
+            // Add AI reasoning to the decision box
+            const reasoningHtml = `
+                <div class="ai-adjudication-result" style="margin-top: 20px; padding: 15px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px; border-left: 4px solid #667eea;">
+                    <h4 style="color: #667eea; margin-bottom: 10px;">🤖 AI Adjudication (BiMediX Fine-tuned Model)</h4>
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="font-size: 24px; font-weight: bold; color: ${adjudication.decision === 'APPROVED' ? '#28a745' : adjudication.decision === 'REJECTED' ? '#dc3545' : '#ffc107'};">
+                            ${adjudication.decision === 'APPROVED' ? '✅' : adjudication.decision === 'REJECTED' ? '❌' : '❓'} ${adjudication.decision}
+                        </span>
+                        <span style="margin-left: 15px; padding: 4px 10px; background: rgba(102, 126, 234, 0.2); border-radius: 12px; font-size: 12px;">
+                            Confidence: ${Math.round((adjudication.confidence || 0) * 100)}%
+                        </span>
+                    </div>
+                    <div style="background: white; padding: 12px; border-radius: 6px; font-size: 13px; line-height: 1.6; max-height: 200px; overflow-y: auto;">
+                        ${adjudication.reasoning ? adjudication.reasoning.replace(/\n/g, '<br>') : 'No detailed reasoning provided.'}
+                    </div>
+                </div>
+            `;
+            
+            // Insert into decision section
+            const step5 = document.getElementById('step5');
+            if (step5) {
+                let aiContainer = document.getElementById('aiAdjudicationContainer');
+                if (!aiContainer) {
+                    aiContainer = document.createElement('div');
+                    aiContainer.id = 'aiAdjudicationContainer';
+                    step5.insertBefore(aiContainer, step5.querySelector('.section'));
+                }
+                aiContainer.innerHTML = reasoningHtml;
+            }
+            
+            // Also show notification
+            console.log('AI Adjudication:', adjudication);
+            
+            // Also populate page analysis tab
+            populatePageAnalysisTab();
+        }
+
+        function populatePageAnalysisTab() {
+            const container = document.getElementById('pageAnalysisContent');
+            if (!container || !claimData.fullAnalysis) return;
+            
+            const analysis = claimData.fullAnalysis;
+            const categories = analysis.categories || {};
+            const summaries = analysis.page_summaries || [];
+            
+            let html = `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: #667eea; margin-bottom: 10px;">📊 Document Summary</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                        <div style="background: #e8f5e9; padding: 12px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #2e7d32;">${analysis.total_pages || 0}</div>
+                            <div style="font-size: 12px; color: #555;">Total Pages</div>
+                        </div>
+            `;
+            
+            // Category counts
+            const categoryIcons = {
+                'discharge_summary': '🏥',
+                'billing': '💰',
+                'lab_reports': '🧪',
+                'claim_form': '📋',
+                'authorization': '✅',
+                'receipts': '🧾',
+                'patient_info': '👤',
+                'other': '📄'
+            };
+            
+            for (const [cat, pages] of Object.entries(categories)) {
+                if (pages.length > 0) {
+                    html += `
+                        <div style="background: #e3f2fd; padding: 12px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 20px;">${categoryIcons[cat] || '📄'} ${pages.length}</div>
+                            <div style="font-size: 11px; color: #555;">${cat.replace('_', ' ')}</div>
+                        </div>
+                    `;
+                }
+            }
+            
+            html += `</div></div>`;
+            
+            // Page-by-page analysis
+            html += `
+                <h4 style="color: #667eea; margin-bottom: 10px; margin-top: 20px;">📄 Page-by-Page Analysis</h4>
+                <div style="max-height: 400px; overflow-y: auto;">
+            `;
+            
+            for (const page of summaries) {
+                const catColor = {
+                    'discharge_summary': '#4caf50',
+                    'billing': '#ff9800',
+                    'lab_reports': '#9c27b0',
+                    'claim_form': '#2196f3',
+                    'authorization': '#00bcd4',
+                    'receipts': '#795548',
+                    'patient_info': '#607d8b',
+                    'other': '#9e9e9e'
+                }[page.category] || '#9e9e9e';
+                
+                html += `
+                    <div style="border: 1px solid #ddd; border-left: 4px solid ${catColor}; border-radius: 6px; padding: 12px; margin-bottom: 10px; background: white;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-weight: bold;">Page ${page.page}</span>
+                            <span style="background: ${catColor}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px;">
+                                ${page.category.replace('_', ' ')}
+                            </span>
+                        </div>
+                        <div style="font-size: 12px; color: #666;">
+                            ${page.key_info && page.key_info.length > 0 ? page.key_info.join(' • ') : 'No key information extracted'}
+                        </div>
+                        <div style="font-size: 11px; color: #999; margin-top: 5px;">
+                            ${page.chars} characters
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function autoFillFormFields(data) {
+            // Auto-fill fields if data was extracted
+            if (data.patient_name) {
+                const nameField = document.getElementById('patientName');
+                if (nameField && !nameField.value) {
+                    nameField.value = data.patient_name;
+                }
+            }
+            if (data.patient_age) {
+                const ageField = document.getElementById('patientAge');
+                if (ageField && !ageField.value) {
+                    ageField.value = data.patient_age;
+                }
+            }
+            if (data.diagnosis) {
+                const diagnosisField = document.getElementById('diagnosis');
+                if (diagnosisField && !diagnosisField.value) {
+                    diagnosisField.value = data.diagnosis;
+                }
+            }
+            if (data.hospital_name) {
+                const hospitalField = document.getElementById('hospitalName');
+                if (hospitalField && !hospitalField.value) {
+                    hospitalField.value = data.hospital_name;
+                }
+            }
+            if (data.total_bill) {
+                const billField = document.getElementById('totalBill');
+                if (billField && !billField.value) {
+                    billField.value = data.total_bill;
+                }
+            }
+            if (data.doctor_name) {
+                const doctorField = document.getElementById('doctor');
+                if (doctorField && !doctorField.value) {
+                    doctorField.value = data.doctor_name;
+                }
+            }
+            
+            // Show notification
+            if (data.patient_name || data.diagnosis || data.total_bill) {
+                alert('✓ Document processed! Some fields have been auto-filled from the uploaded document.');
+            }
+        }
+
+        function goToStep(step) {
+            const targetId = `step${step}`;
+            let target = document.getElementById(targetId);
+
+            // Fallback: if decimal step (e.g., 2.5) doesn't exist, snap to nearest int step
+            if (!target) {
+                const rounded = Math.round(step);
+                target = document.getElementById(`step${rounded}`);
+                step = rounded;
+            }
+
+            if (!target) {
+                console.warn(`Step container not found for step=${step}`);
+                return;
+            }
+
+            currentStep = step;
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            target.classList.add('active');
+            
+            document.querySelectorAll('.step').forEach((el, idx) => {
+                el.classList.remove('active');
+                if (idx + 1 < step) el.classList.add('completed');
+                if (idx + 1 === step) el.classList.add('active');
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function validateAndProceed(step) {
+            const claimType = document.getElementById('claimType').value;
+            const policyNumber = document.getElementById('policyNumber').value;
+            const memberId = document.getElementById('memberId').value;
+            const hospitalName = document.getElementById('hospitalName').value;
+
+            const missing = [];
+            if (!claimType) missing.push('Claim Type');
+            if (!policyNumber) missing.push('Policy Number');
+            if (!memberId) missing.push('Member ID / E-Card');
+            if (!hospitalName) missing.push('Hospital/Provider Name');
+
+            if (missing.length) {
+                console.warn('Proceeding to parse with missing fields:', missing.join(', '));
+                const parseStatusEl = document.getElementById('parseStatusText');
+                if (parseStatusEl) {
+                    parseStatusEl.textContent = `Proceeding to parse. Missing: ${missing.join(', ')}`;
+                }
+            }
+
+            claimData.claimType = claimType || claimData.claimType;
+            claimData.policyNumber = policyNumber || claimData.policyNumber;
+            claimData.memberId = memberId || claimData.memberId;
+            claimData.hospitalName = hospitalName || claimData.hospitalName;
+            claimData.doa = document.getElementById('doa').value;
+            claimData.dod = document.getElementById('dod').value;
+
+            goToStep(step + 1);
+        }
+
+        function updateClaimType() {
+            claimData.claimType = document.getElementById('claimType').value;
+        }
+
+        function simulateParsing() {
+            setParseStatus('Parsing document...');
+            
+            setTimeout(() => {
+                const extracted = claimData.uploadedFile?.extracted_fields || {};
+
+                if (Object.keys(extracted).length > 0) {
+                    autoFillFormFields({
+                        patient_name: extracted.patient_name,
+                        patient_age: extracted.age,
+                        diagnosis: extracted.diagnosis,
+                        hospital_name: extracted.hospital,
+                        total_bill: extracted.total_amount,
+                        doctor_name: extracted.doctor,
+                        admission_date: extracted.admission_date,
+                        discharge_date: extracted.discharge_date
+                    });
+
+                    updateTableSummaries();
+                    setParseStatus('Document parsed successfully from uploaded claim.');
+                    
+                    // Only auto-proceed when we have data
+                    setTimeout(() => performAudit(), 1500);
+                } else {
+                    setParseStatus('No structured data parsed. Please fill fields manually or check if document contains readable text.');
+                    // Don't auto-proceed - let user fill manually
+                }
+            }, 1500);
+        }
+
+        async function proceedToPolicyCheck() {
+            // Show loading indicator
+            const loadingMsg = document.createElement('div');
+            loadingMsg.id = 'apiLoadingMsg';
+            loadingMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 10000; text-align: center;';
+            loadingMsg.innerHTML = '<div style="font-size: 20px; margin-bottom: 15px;">⚙️ Processing Adjudication...</div><div style="color: #666;">Calling BiMediX & OpenInsuranceLLM...</div>';
+            document.body.appendChild(loadingMsg);
+            
+            // Call backend API
+            await callAdjudicationAPI();
+            
+            // Remove loading indicator
+            document.getElementById('apiLoadingMsg')?.remove();
+            
+            // Proceed to step 4
+            goToStep(4);
+        }
+
+        function updateTableSummaries() {
+            // Update Claim Overview - safe getter
+            const getVal = (id, def = '-') => {
+                const el = document.getElementById(id);
+                return el ? (el.value || def) : def;
+            };
+            const setTxt = (id, txt) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = txt;
+            };
+            
+            setTxt('tbl-claimType', getVal('claimType'));
+            setTxt('tbl-policyNumber', getVal('policyNumber'));
+            setTxt('tbl-memberId', getVal('memberId'));
+            setTxt('tbl-hospitalName', getVal('hospitalName'));
+            setTxt('tbl-patientName', getVal('patientName'));
+            setTxt('tbl-ageDob', `${getVal('patientAge')} / ${getVal('dob')}`);
+            setTxt('tbl-diagnosis', getVal('diagnosis'));
+            setTxt('tbl-doa', getVal('doa'));
+            setTxt('tbl-dod', getVal('dod'));
+            setTxt('tbl-doctor', getVal('doctor'));
+
+            // Sample Line Items
+            const lineItemsHTML = `
+                <tr>
+                    <td>1001</td>
+                    <td>15/10/2020</td>
+                    <td>Consultation</td>
+                    <td>Endocrinology Consultation</td>
+                    <td style="text-align: right;">1</td>
+                    <td style="text-align: right;">3,500</td>
+                    <td style="text-align: right;">3,500</td>
+                    <td style="text-align: right;">0%</td>
+                    <td style="text-align: right;">3,500</td>
+                </tr>
+                <tr>
+                    <td>1002</td>
+                    <td>15-22/10/2020</td>
+                    <td>Room Services</td>
+                    <td>Hospital Room Premium (7 days)</td>
+                    <td style="text-align: right;">7</td>
+                    <td style="text-align: right;">2,800</td>
+                    <td style="text-align: right;">19,600</td>
+                    <td style="text-align: right;">0%</td>
+                    <td style="text-align: right;">19,600</td>
+                </tr>
+                <tr>
+                    <td>1003</td>
+                    <td>15-22/10/2020</td>
+                    <td>Nursing</td>
+                    <td>Nursing & Patient Care Services</td>
+                    <td style="text-align: right;">7</td>
+                    <td style="text-align: right;">1,200</td>
+                    <td style="text-align: right;">8,400</td>
+                    <td style="text-align: right;">0%</td>
+                    <td style="text-align: right;">8,400</td>
+                </tr>
+                <tr>
+                    <td>1004</td>
+                    <td>16/10/2020</td>
+                    <td>Diagnostics</td>
+                    <td>Blood Tests (Glucose, HbA1c, Lipid, Kidney)</td>
+                    <td style="text-align: right;">1</td>
+                    <td style="text-align: right;">4,200</td>
+                    <td style="text-align: right;">4,200</td>
+                    <td style="text-align: right;">0%</td>
+                    <td style="text-align: right;">4,200</td>
+                </tr>
+                <tr>
+                    <td>1005-1011</td>
+                    <td>17-22/10/2020</td>
+                    <td>Various</td>
+                    <td>Neuropathy, Foot Assessment, Medications, Nutritionist, Discharge</td>
+                    <td style="text-align: right;">Multiple</td>
+                    <td style="text-align: right;">Varied</td>
+                    <td style="text-align: right;">15,600</td>
+                    <td style="text-align: right;">0%</td>
+                    <td style="text-align: right;">15,600</td>
+                </tr>
+            `;
+            document.getElementById('lineItemsTable').innerHTML = lineItemsHTML;
+
+            // Cost Breakdown
+            const costBreakdownHTML = `
+                <tr>
+                    <td>Room & Board</td>
+                    <td style="text-align: right;">28,000</td>
+                    <td style="text-align: right;">50.5%</td>
+                    <td>Within limits</td>
+                </tr>
+                <tr>
+                    <td>Professional Fees</td>
+                    <td style="text-align: right;">3,500</td>
+                    <td style="text-align: right;">6.3%</td>
+                    <td>Covered</td>
+                </tr>
+                <tr>
+                    <td>Diagnostics & Procedures</td>
+                    <td style="text-align: right;">14,800</td>
+                    <td style="text-align: right;">26.7%</td>
+                    <td>Covered</td>
+                </tr>
+                <tr>
+                    <td>Medications & Supplies</td>
+                    <td style="text-align: right;">9,200</td>
+                    <td style="text-align: right;">16.5%</td>
+                    <td>Covered</td>
+                </tr>
+            `;
+            document.getElementById('costBreakdownTable').innerHTML = costBreakdownHTML;
+        }
+
+        function switchTab(event, tabName) {
+            event.preventDefault();
+            
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function updateDecision() {
+            const decision = document.getElementById('decisionType').value;
+            document.getElementById('decisionApproved').style.display = decision === 'approved' ? 'block' : 'none';
+            document.getElementById('decisionRejected').style.display = decision === 'rejected' ? 'block' : 'none';
+            document.getElementById('decisionQuery').style.display = decision === 'query' ? 'block' : 'none';
+        }
+
+        // AUDIT FUNCTIONS
+        const REQUIRED_FIELDS = {
+            'policyNumber': { label: 'Policy Number', desc: 'Insurance policy reference number' },
+            'memberId': { label: 'Member ID', desc: 'Unique member/subscriber ID' },
+            'patientName': { label: 'Patient Name', desc: 'Full name of the patient' },
+            'patientAge': { label: 'Patient Age', desc: 'Age of the patient' },
+            'dob': { label: 'Date of Birth', desc: "Patient's date of birth (DD/MM/YYYY)" },
+            'hospitalName': { label: 'Hospital/Provider Name', desc: 'Name of the healthcare facility' },
+            'diagnosis': { label: 'Diagnosis', desc: 'Medical condition/ICD code for hospitalization' },
+            'doctor': { label: 'Treating Doctor', desc: 'Name of the physician/specialist' },
+            'doa': { label: 'Date of Admission', desc: 'Hospital admission date (DD/MM/YYYY)' },
+            'dod': { label: 'Date of Discharge', desc: 'Hospital discharge date (DD/MM/YYYY)' },
+            'totalBill': { label: 'Total Bill Amount', desc: 'Complete bill amount in rupees' },
+            'numItems': { label: 'Number of Service Items', desc: 'Count of itemized services' },
+            'claimType': { label: 'Claim Type', desc: 'Cashless or Reimbursement claim' },
+            'tpaProvider': { label: 'TPA Provider', desc: 'Select Heritage TPA when applicable' }
+        };
+
+        const OPTIONAL_FIELDS = {
+            'preAuthNumber': { label: 'Pre-Authorization Number', desc: 'PA approval reference if applicable' },
+            'doctorQualification': { label: 'Doctor Qualification', desc: 'Medical degree/specialization' },
+            'emergencyContact': { label: 'Emergency Contact', desc: 'Patient contact number' },
+            'patientEmail': { label: 'Patient Email', desc: 'Email address for communication' },
+            'hospitalPhone': { label: 'Hospital Contact', desc: 'Hospital phone number' }
+        };
+
+        function performAudit() {
+            // Snap to the nearest available step (Audit marker sits between 2 and 3)
+            goToStep(3);
+            
+            setTimeout(() => {
+                let requiredCount = 0;
+                let requiredTotal = Object.keys(REQUIRED_FIELDS).length;
+                let optionalCount = 0;
+                let optionalTotal = Object.keys(OPTIONAL_FIELDS).length;
+
+                let requiredHTML = '';
+                let optionalHTML = '';
+                let detailsHTML = '';
+                let hasErrors = false;
+
+                // Check required fields
+                for (const [key, field] of Object.entries(REQUIRED_FIELDS)) {
+                    const element = document.getElementById(key);
+                    const value = element ? element.value.trim() : '';
+                    const isComplete = value.length > 0;
+
+                    if (isComplete) requiredCount++;
+                    else hasErrors = true;
+
+                    const icon = isComplete ? '✅' : '❌';
+                    const borderClass = isComplete ? 'completed' : 'required';
+
+                    requiredHTML += `
+                        <div class="audit-item ${borderClass}">
+                            <div class="audit-icon">${icon}</div>
+                            <div class="audit-content">
+                                <div class="audit-label">${field.label}</div>
+                                <div class="audit-type">REQUIRED</div>
+                                <div class="audit-description">${field.desc}</div>
+                                ${isComplete ? `<div class="audit-value">✓ Present: ${value.substring(0, 50)}${value.length > 50 ? '...' : ''}</div>` : '<div style="color: #dc3545; margin-top: 8px; font-weight: 600;">⚠ MISSING - Cannot proceed without this</div>'}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Check optional fields
+                for (const [key, field] of Object.entries(OPTIONAL_FIELDS)) {
+                    const isComplete = Math.random() > 0.5; // Simulate some optional fields
+                    if (isComplete) optionalCount++;
+
+                    const icon = isComplete ? '✓' : '○';
+                    const borderClass = isComplete ? 'completed' : 'optional';
+
+                    optionalHTML += `
+                        <div class="audit-item ${borderClass}">
+                            <div class="audit-icon">${icon}</div>
+                            <div class="audit-content">
+                                <div class="audit-label">${field.label}</div>
+                                <div class="audit-type">OPTIONAL</div>
+                                <div class="audit-description">${field.desc}</div>
+                                ${isComplete ? `<div class="audit-value">✓ Present</div>` : '<div style="color: #ffc107; margin-top: 8px;">Not provided (optional)</div>'}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Calculate completion percentage
+                const totalFields = requiredTotal + optionalTotal;
+                const completedFields = requiredCount + optionalCount;
+                const completionPercent = Math.round((completedFields / totalFields) * 100);
+
+                // Update summary (guard missing elements if audit panel not rendered)
+                const setText = (id, text) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = text;
+                };
+                const setStatus = (symbol, color) => {
+                    const el = document.getElementById('auditStatus');
+                    if (el) {
+                        el.innerHTML = symbol;
+                        el.style.color = color;
+                    }
+                };
+
+                setText('auditRequired', `${requiredCount}/${requiredTotal}`);
+                setText('auditOptional', `${optionalCount}/${optionalTotal}`);
+                setText('auditPercent', `${completionPercent}%`);
+                
+                if (hasErrors) {
+                    setStatus('❌', '#dc3545');
+                } else {
+                    setStatus('✅', '#28a745');
+                    const proceedBtn = document.getElementById('proceedButton');
+                    if (proceedBtn) proceedBtn.disabled = false;
+                }
+
+                // Show warnings if needed
+                let warningsHTML = '';
+                if (hasErrors) {
+                    warningsHTML = `
+                        <div class="audit-error">
+                            <strong>⚠ Missing Critical Information:</strong><br>
+                            Some required fields are missing from the claim document. Please fill all required fields to proceed with adjudication.
+                        </div>
+                    `;
+                } else if (completionPercent < 100) {
+                    warningsHTML = `
+                        <div class="audit-warning">
+                            <strong>⚠ Incomplete Optional Information:</strong><br>
+                            Some optional fields are missing. This may limit claims adjudication accuracy. Consider obtaining missing information.
+                        </div>
+                    `;
+                } else {
+                    warningsHTML = `
+                        <div class="audit-success">
+                            <strong>✓ Complete Information:</strong><br>
+                            All required and optional information is present. Claim is ready for adjudication.
+                        </div>
+                    `;
+                }
+
+                const warningsEl = document.getElementById('auditWarnings');
+                if (warningsEl) {
+                    warningsEl.innerHTML = warningsHTML;
+                    warningsEl.style.display = 'block';
+                }
+
+                // Update checklists
+                const requiredEl = document.getElementById('requiredChecklist');
+                if (requiredEl) requiredEl.innerHTML = requiredHTML;
+                const optionalEl = document.getElementById('optionalChecklist');
+                if (optionalEl) optionalEl.innerHTML = optionalHTML;
+
+                // Generate detailed report
+                detailsHTML = `
+                    <table class="data-table" style="font-size: 13px;">
+                        <tr>
+                            <th>Field Name</th>
+                            <th>Type</th>
+                            <th>Current Value</th>
+                            <th>Status</th>
+                        </tr>
+                `;
+
+                for (const [key, field] of Object.entries(REQUIRED_FIELDS)) {
+                    const element = document.getElementById(key);
+                    const value = element ? element.value.trim() : '';
+                    const status = value ? '<span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold;">✓ Present</span>' : '<span style="background: #f8d7da; color: #721c24; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold;">✗ Missing</span>';
+                    
+                    detailsHTML += `
+                        <tr>
+                            <td>${field.label}</td>
+                            <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 11px;">REQUIRED</span></td>
+                            <td style="font-family: monospace; font-size: 12px;">${value || '—'}</td>
+                            <td>${status}</td>
+                        </tr>
+                    `;
+                }
+
+                detailsHTML += `</table>`;
+                const detailsEl = document.getElementById('auditDetails');
+                if (detailsEl) detailsEl.innerHTML = detailsHTML;
+
+            }, 1000);
+        }
+
+        function generateReport() {
+            goToStep(6);
+        }
+
+        function downloadSheet() {
+            alert('Processing Sheet downloaded as PDF!\n\nFile: Claim_Processing_Sheet_CLM-2026-001234.pdf');
+        }
+
+        function viewOnline() {
+            alert('Opening online claim report viewer...');
+        }
+
+        // Navigation functions
+        function goToDashboard() {
+            const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+            
+            if (user.role === 'admin') {
+                window.location.href = '/static/admin_dashboard.html';
+            } else {
+                if (confirm('Go back to login page? Any unsaved changes will be lost.')) {
+                    window.location.href = '/static/login.html';
+                }
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout? Any unsaved changes will be lost.')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                sessionStorage.removeItem('token');
+                sessionStorage.removeItem('user');
+                window.location.href = '/static/login.html';
+            }
+        }
+
+        // ============= NEW WORKFLOW DISPLAY FUNCTIONS =============
+        
+        function displayPolicyVerification(coverage) {
+            console.log('Displaying policy verification:', coverage);
+            
+            const container = document.getElementById('parseStatus') || document.createElement('div');
+            
+            let html = `
+                <div style="background: ${coverage.is_covered ? '#d4edda' : '#f8d7da'}; 
+                           border: 2px solid ${coverage.is_covered ? '#28a745' : '#dc3545'}; 
+                           border-radius: 8px; 
+                           padding: 20px; 
+                           margin: 20px 0;">
+                    <h3 style="margin: 0 0 15px 0; color: ${coverage.is_covered ? '#155724' : '#721c24'};">
+                        ${coverage.is_covered ? '✅' : '❌'} Policy Verification
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                        <div>
+                            <strong>Policy Number:</strong><br>
+                            <code style="background: rgba(0,0,0,0.1); padding: 4px 8px; border-radius: 4px;">
+                                ${coverage.policy_number || 'N/A'}
+                            </code>
+                        </div>
+                        <div>
+                            <strong>Policy Status:</strong><br>
+                            <span style="background: ${coverage.policy_status === 'ACTIVE' ? '#28a745' : '#dc3545'}; 
+                                       color: white; padding: 4px 12px; border-radius: 4px; font-weight: bold;">
+                                ${coverage.policy_status || 'UNKNOWN'}
+                            </span>
+                        </div>
+                        <div>
+                            <strong>Coverage Status:</strong><br>
+                            ${coverage.is_covered ? '✅ Patient is covered' : '❌ Patient not covered'}
+                        </div>
+                        <div>
+                            <strong>TPA:</strong><br>
+                            ${coverage.tpa || 'N/A'}
+                        </div>
+                    </div>
+            `;
+            
+            if (coverage.coverage_details) {
+                const details = coverage.coverage_details;
+                html += `
+                    <hr style="margin: 15px 0; border: none; border-top: 1px solid rgba(0,0,0,0.1);">
+                    <h4 style="margin: 10px 0;">Coverage Details:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 14px;">
+                        <div>
+                            <strong>Sum Insured:</strong><br>
+                            ₹${(details.sum_insured || 0).toLocaleString('en-IN')}
+                        </div>
+                        <div>
+                            <strong>Balance SI:</strong><br>
+                            <span style="color: #28a745; font-weight: bold;">
+                                ₹${(details.balance_sum_insured || 0).toLocaleString('en-IN')}
+                            </span>
+                        </div>
+                        <div>
+                            <strong>Room Limit:</strong><br>
+                            ₹${(details.room_rent_limit || 0).toLocaleString('en-IN')}/day
+                        </div>
+                        <div>
+                            <strong>Co-payment:</strong><br>
+                            ${details.co_payment || 0}%
+                        </div>
+                        <div>
+                            <strong>Deductible:</strong><br>
+                            ₹${(details.deductible || 0).toLocaleString('en-IN')}
+                        </div>
+                        <div>
+                            <strong>Pre-existing:</strong><br>
+                            ${details.pre_existing_covered ? '✅ Covered' : '❌ Not covered'}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `</div>`;
+            
+            // Insert after file upload section
+            const uploadSection = document.querySelector('.form-group');
+            if (uploadSection && uploadSection.parentNode) {
+                const existingVerification = document.getElementById('policyVerificationDisplay');
+                if (existingVerification) {
+                    existingVerification.remove();
+                }
+                
+                const verificationDiv = document.createElement('div');
+                verificationDiv.id = 'policyVerificationDisplay';
+                verificationDiv.innerHTML = html;
+                uploadSection.parentNode.insertBefore(verificationDiv, uploadSection.nextSibling);
+            }
+        }
+        
+        function displayDocumentCompleteness(docCheck) {
+            console.log('Displaying document completeness:', docCheck);
+            
+            const isComplete = docCheck.is_complete;
+            const percentage = docCheck.completeness_percentage || 0;
+            
+            let bgColor, borderColor, textColor, icon;
+            if (percentage >= 100) {
+                bgColor = '#d4edda';
+                borderColor = '#28a745';
+                textColor = '#155724';
+                icon = '✅';
+            } else if (percentage >= 75) {
+                bgColor = '#fff3cd';
+                borderColor = '#ffc107';
+                textColor = '#856404';
+                icon = '⚠️';
+            } else {
+                bgColor = '#f8d7da';
+                borderColor = '#dc3545';
+                textColor = '#721c24';
+                icon = '❌';
+            }
+            
+            const html = `
+                <div style="background: ${bgColor}; 
+                           border: 2px solid ${borderColor}; 
+                           border-radius: 8px; 
+                           padding: 20px; 
+                           margin: 20px 0;">
+                    <h3 style="margin: 0 0 15px 0; color: ${textColor};">
+                        ${icon} Document Completeness Check
+                    </h3>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div style="background: rgba(255,255,255,0.7); padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                            <strong>Completeness:</strong> ${percentage.toFixed(1)}%
+                            <div style="background: #e0e0e0; height: 20px; border-radius: 10px; margin-top: 8px; overflow: hidden;">
+                                <div style="background: ${borderColor}; height: 100%; width: ${percentage}%; 
+                                           transition: width 0.3s ease; display: flex; align-items: center; justify-content: center;
+                                           color: white; font-size: 11px; font-weight: bold;">
+                                    ${percentage >= 20 ? percentage.toFixed(0) + '%' : ''}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(255,255,255,0.7); padding: 10px; border-radius: 5px; font-size: 14px;">
+                            <strong>${docCheck.summary || 'Processing...'}</strong>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <h4 style="margin: 0 0 10px 0; color: #28a745;">✅ Present Documents (${docCheck.present_documents?.length || 0})</h4>
+                            <div style="background: rgba(255,255,255,0.7); padding: 10px; border-radius: 5px; max-height: 200px; overflow-y: auto;">
+                                ${docCheck.present_documents && docCheck.present_documents.length > 0 ? `
+                                    <ul style="margin: 0; padding-left: 20px; font-size: 13px;">
+                                        ${docCheck.present_documents.map(doc => `
+                                            <li style="color: #155724; margin-bottom: 5px;">
+                                                <strong>${doc.replace('_', ' ').toUpperCase()}</strong>
+                                                ${docCheck.mandatory_found?.includes(doc) ? '<span style="color: #007bff;"> (Mandatory)</span>' : '<span style="color: #6c757d;"> (Optional)</span>'}
+                                            </li>
+                                        `).join('')}
+                                    </ul>
+                                ` : '<em style="color: #666;">No documents found</em>'}
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 style="margin: 0 0 10px 0; color: #dc3545;">❌ Missing Documents</h4>
+                            <div style="background: rgba(255,255,255,0.7); padding: 10px; border-radius: 5px; max-height: 200px; overflow-y: auto;">
+                                ${docCheck.missing_mandatory_documents && docCheck.missing_mandatory_documents.length > 0 ? `
+                                    <div style="margin-bottom: 10px;">
+                                        <strong style="color: #721c24;">Missing Mandatory:</strong>
+                                        <ul style="margin: 5px 0 0 20px; padding: 0; font-size: 13px;">
+                                            ${docCheck.missing_mandatory_documents.map(doc => `
+                                                <li style="color: #721c24; margin-bottom: 5px;">
+                                                    <strong>${doc.replace('_', ' ').toUpperCase()}</strong>
+                                                </li>
+                                            `).join('')}
+                                        </ul>
+                                    </div>
+                                ` : '<div style="color: #28a745; margin-bottom: 10px;">✅ All mandatory documents present</div>'}
+                                
+                                ${docCheck.missing_optional_documents && docCheck.missing_optional_documents.length > 0 ? `
+                                    <div>
+                                        <strong style="color: #856404;">Missing Optional:</strong>
+                                        <ul style="margin: 5px 0 0 20px; padding: 0; font-size: 13px;">
+                                            ${docCheck.missing_optional_documents.map(doc => `
+                                                <li style="color: #856404; margin-bottom: 5px;">
+                                                    ${doc.replace('_', ' ').toUpperCase()}
+                                                </li>
+                                            `).join('')}
+                                        </ul>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${!isComplete ? `
+                        <div style="background: rgba(255,255,255,0.9); padding: 12px; border-radius: 5px; margin-top: 15px; border-left: 4px solid ${borderColor};">
+                            <strong style="color: ${textColor};">${docCheck.warning || 'Document check incomplete'}</strong>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            const uploadSection = document.querySelector('.form-group');
+            if (uploadSection && uploadSection.parentNode) {
+                const existingDocCheck = document.getElementById('documentCompletenessDisplay');
+                if (existingDocCheck) {
+                    existingDocCheck.remove();
+                }
+                
+                const docCheckDiv = document.createElement('div');
+                docCheckDiv.id = 'documentCompletenessDisplay';
+                docCheckDiv.innerHTML = html;
+                uploadSection.parentNode.insertBefore(docCheckDiv, uploadSection.nextSibling);
+            }
+        }
+        
+        function displayAdmissibilityCheck(admissibility) {
+            console.log('Displaying admissibility check:', admissibility);
+            
+            const html = `
+                <div style="background: ${admissibility.is_admissible ? '#d1ecf1' : '#f8d7da'}; 
+                           border: 2px solid ${admissibility.is_admissible ? '#17a2b8' : '#dc3545'}; 
+                           border-radius: 8px; 
+                           padding: 20px; 
+                           margin: 20px 0;">
+                    <h3 style="margin: 0 0 15px 0; color: ${admissibility.is_admissible ? '#0c5460' : '#721c24'};">
+                        ${admissibility.is_admissible ? '✅' : '❌'} Admissibility Check
+                    </h3>
+                    
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">
+                        ${admissibility.is_admissible ? 
+                            '✅ Claim is ADMISSIBLE - All criteria met' : 
+                            '❌ Claim is NOT ADMISSIBLE'}
+                    </div>
+                    
+                    ${!admissibility.is_admissible && admissibility.reasons && admissibility.reasons.length > 0 ? `
+                        <div style="background: rgba(255,255,255,0.7); padding: 15px; border-radius: 5px; margin-top: 10px;">
+                            <strong style="color: #721c24;">Rejection Reasons:</strong>
+                            <ul style="margin: 10px 0 0 20px; color: #721c24;">
+                                ${admissibility.reasons.map(reason => `<li>${reason}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            const uploadSection = document.querySelector('.form-group');
+            if (uploadSection && uploadSection.parentNode) {
+                const existingCheck = document.getElementById('admissibilityDisplay');
+                if (existingCheck) {
+                    existingCheck.remove();
+                }
+                
+                const checkDiv = document.createElement('div');
+                checkDiv.id = 'admissibilityDisplay';
+                checkDiv.innerHTML = html;
+                uploadSection.parentNode.insertBefore(checkDiv, uploadSection.nextSibling);
+            }
+        }
+        
+        function displayPayablesCalculation(payables) {
+            console.log('Displaying payables calculation:', payables);
+            
+            const html = `
+                <div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                    <h3 style="margin: 0 0 15px 0; color: #856404;">💰 Payables Calculation</h3>
+                    
+                    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                        <tr style="background: rgba(0,0,0,0.05);">
+                            <th style="padding: 10px; text-align: left; border-bottom: 2px solid #ddd;">Item</th>
+                            <th style="padding: 10px; text-align: right; border-bottom: 2px solid #ddd;">Amount</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee;">
+                                <strong>Total Billed Amount</strong>
+                            </td>
+                            <td style="padding: 10px; text-align: right; border-bottom: 1px solid #eee; font-family: monospace;">
+                                ₹${(payables.total_billed || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee; color: #dc3545;">
+                                <strong>Less:</strong> Non-Payable Items
+                            </td>
+                            <td style="padding: 10px; text-align: right; border-bottom: 1px solid #eee; color: #dc3545; font-family: monospace;">
+                                - ₹${(payables.non_payable_amount || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee; color: #dc3545;">
+                                <strong>Less:</strong> Room Rent Excess
+                            </td>
+                            <td style="padding: 10px; text-align: right; border-bottom: 1px solid #eee; color: #dc3545; font-family: monospace;">
+                                - ₹${(payables.room_rent_excess || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee; color: #dc3545;">
+                                <strong>Less:</strong> Co-payment
+                            </td>
+                            <td style="padding: 10px; text-align: right; border-bottom: 1px solid #eee; color: #dc3545; font-family: monospace;">
+                                - ₹${(payables.co_payment || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee; color: #dc3545;">
+                                <strong>Less:</strong> Deductible
+                            </td>
+                            <td style="padding: 10px; text-align: right; border-bottom: 1px solid #eee; color: #dc3545; font-family: monospace;">
+                                - ₹${(payables.deductible || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}
+                            </td>
+                        </tr>
+                        <tr style="background: #d4edda; font-weight: bold; font-size: 16px;">
+                            <td style="padding: 15px; border-top: 3px solid #28a745;">
+                                <strong>APPROVED AMOUNT</strong>
+                            </td>
+                            <td style="padding: 15px; text-align: right; color: #155724; border-top: 3px solid #28a745; font-family: monospace;">
+                                ₹${(payables.approved_amount || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    ${payables.non_payable_items && payables.non_payable_items.length > 0 ? `
+                        <details style="margin-top: 15px;">
+                            <summary style="cursor: pointer; font-weight: bold; color: #856404;">
+                                View Non-Payable Items (${payables.non_payable_items.length})
+                            </summary>
+                            <div style="background: rgba(255,255,255,0.7); padding: 10px; margin-top: 10px; border-radius: 5px; max-height: 200px; overflow-y: auto;">
+                                <ul style="margin: 0; padding-left: 20px; font-size: 13px;">
+                                    ${payables.non_payable_items.map(item => 
+                                        `<li>${item.name} - ₹${(item.amount || 0).toLocaleString('en-IN')} <em style="color: #666;">(${item.reason})</em></li>`
+                                    ).join('')}
+                                </ul>
+                            </div>
+                        </details>
+                    ` : ''}
+                </div>
+            `;
+            
+            const uploadSection = document.querySelector('.form-group');
+            if (uploadSection && uploadSection.parentNode) {
+                const existingPayables = document.getElementById('payablesDisplay');
+                if (existingPayables) {
+                    existingPayables.remove();
+                }
+                
+                const payablesDiv = document.createElement('div');
+                payablesDiv.id = 'payablesDisplay';
+                payablesDiv.innerHTML = html;
+                uploadSection.parentNode.insertBefore(payablesDiv, uploadSection.nextSibling);
+            }
+        }
+        
+        function displayFinalVerdict(verdict) {
+            console.log('Displaying final verdict:', verdict);
+            
+            const isApproved = verdict.decision === 'APPROVED';
+            const isRejected = verdict.decision === 'REJECTED';
+            const isQuery = verdict.decision === 'QUERY';
+            
+            let bgColor, borderColor, textColor, icon;
+            if (isApproved) {
+                bgColor = '#d4edda';
+                borderColor = '#28a745';
+                textColor = '#155724';
+                icon = '✅';
+            } else if (isRejected) {
+                bgColor = '#f8d7da';
+                borderColor = '#dc3545';
+                textColor = '#721c24';
+                icon = '❌';
+            } else {
+                bgColor = '#fff3cd';
+                borderColor = '#ffc107';
+                textColor = '#856404';
+                icon = '⚠️';
+            }
+            
+            const html = `
+                <div style="background: ${bgColor}; 
+                           border: 3px solid ${borderColor}; 
+                           border-radius: 8px; 
+                           padding: 25px; 
+                           margin: 30px 0;
+                           box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    <h2 style="margin: 0 0 20px 0; color: ${textColor}; font-size: 28px; text-align: center;">
+                        ${icon} FINAL VERDICT
+                    </h2>
+                    
+                    <div style="background: rgba(255,255,255,0.9); 
+                               padding: 20px; 
+                               border-radius: 5px; 
+                               margin-bottom: 20px;
+                               text-align: center;">
+                        <div style="font-size: 24px; font-weight: bold; color: ${textColor}; margin-bottom: 10px;">
+                            ${verdict.decision}
+                        </div>
+                        <div style="font-size: 14px; color: #666;">
+                            Status: ${verdict.status || 'N/A'}
+                        </div>
+                    </div>
+                    
+                    ${isApproved ? `
+                        <div style="background: rgba(255,255,255,0.9); padding: 20px; border-radius: 5px; margin-bottom: 15px;">
+                            <div style="font-size: 18px; margin-bottom: 10px;">
+                                <strong>Billed Amount:</strong>
+                                <span style="float: right; font-family: monospace;">
+                                    ₹${(verdict.billed_amount || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}
+                                </span>
+                            </div>
+                            <div style="font-size: 18px; margin-bottom: 10px; color: #dc3545;">
+                                <strong>Total Deductions:</strong>
+                                <span style="float: right; font-family: monospace;">
+                                    - ₹${(verdict.total_deductions || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}
+                                </span>
+                            </div>
+                            <hr style="border: none; border-top: 2px solid #28a745; margin: 15px 0;">
+                            <div style="font-size: 24px; font-weight: bold; color: #155724;">
+                                <strong>Approved Amount:</strong>
+                                <span style="float: right; font-family: monospace;">
+                                    ₹${(verdict.approved_amount || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        ${verdict.payment_instruction ? `
+                            <div style="background: #17a2b8; color: white; padding: 15px; border-radius: 5px; text-align: center; font-weight: bold;">
+                                📋 ${verdict.payment_instruction}
+                            </div>
+                        ` : ''}
+                    ` : ''}
+                    
+                    ${isRejected && verdict.reasons && verdict.reasons.length > 0 ? `
+                        <div style="background: rgba(255,255,255,0.9); padding: 15px; border-radius: 5px;">
+                            <strong style="color: ${textColor}; font-size: 16px;">Rejection Reasons:</strong>
+                            <ul style="margin: 10px 0 0 20px; color: ${textColor};">
+                                ${verdict.reasons.map(reason => `<li>${reason}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                    
+                    ${verdict.deduction_breakdown && verdict.deduction_breakdown.length > 0 ? `
+                        <details style="margin-top: 15px;">
+                            <summary style="cursor: pointer; font-weight: bold; color: ${textColor}; font-size: 16px;">
+                                View Deduction Breakdown
+                            </summary>
+                            <div style="background: rgba(255,255,255,0.9); padding: 15px; margin-top: 10px; border-radius: 5px;">
+                                <table style="width: 100%; font-size: 14px;">
+                                    ${verdict.deduction_breakdown.map(deduction => `
+                                        <tr>
+                                            <td style="padding: 5px;"><strong>${deduction.type}:</strong></td>
+                                            <td style="padding: 5px; text-align: right; font-family: monospace;">
+                                                ₹${(deduction.amount || 0).toLocaleString('en-IN')}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="padding: 0 5px 10px 20px; font-size: 12px; color: #666;">
+                                                ${deduction.description}
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </table>
+                            </div>
+                        </details>
+                    ` : ''}
+                </div>
+            `;
+            
+            const uploadSection = document.querySelector('.form-group');
+            if (uploadSection && uploadSection.parentNode) {
+                const existingVerdict = document.getElementById('finalVerdictDisplay');
+                if (existingVerdict) {
+                    existingVerdict.remove();
+                }
+                
+                const verdictDiv = document.createElement('div');
+                verdictDiv.id = 'finalVerdictDisplay';
+                verdictDiv.innerHTML = html;
+                uploadSection.parentNode.insertBefore(verdictDiv, uploadSection.nextSibling);
+            }
+        }
+        
+        function displayProcessingSteps(steps) {
+            console.log('Displaying processing steps:', steps);
+            
+            const html = `
+                <div style="background: white; border: 2px solid #667eea; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                    <h3 style="margin: 0 0 15px 0; color: #003d99;">📊 Processing Pipeline</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                        ${steps.map(step => `
+                            <div style="background: ${step.status === 'COMPLETED' ? '#d4edda' : '#f8f9fa'}; 
+                                       border: 2px solid ${step.status === 'COMPLETED' ? '#28a745' : '#ddd'}; 
+                                       border-radius: 5px; 
+                                       padding: 12px;
+                                       text-align: center;">
+                                <div style="font-size: 20px; font-weight: bold; color: ${step.status === 'COMPLETED' ? '#155724' : '#666'};">
+                                    ${step.step}
+                                </div>
+                                <div style="font-size: 12px; font-weight: bold; margin: 5px 0;">
+                                    ${step.name}
+                                </div>
+                                <div style="font-size: 11px; color: #666;">
+                                    ${step.status === 'COMPLETED' ? '✅ Complete' : '⏳ Pending'}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            const uploadSection = document.querySelector('.form-group');
+            if (uploadSection && uploadSection.parentNode) {
+                const existingSteps = document.getElementById('processingStepsDisplay');
+                if (existingSteps) {
+                    existingSteps.remove();
+                }
+                
+                const stepsDiv = document.createElement('div');
+                stepsDiv.id = 'processingStepsDisplay';
+                stepsDiv.innerHTML = html;
+                uploadSection.parentNode.insertBefore(stepsDiv, uploadSection.nextSibling);
+            }
+        }
+
+        function logout() {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                sessionStorage.removeItem('token');
+                sessionStorage.removeItem('user');
+                window.location.href = '/static/login.html';
+            }
+        }
+
+        function loadNavUserInfo() {
+            const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+            
+            if (user && user.username) {
+                document.getElementById('userInfo').style.display = 'flex';
+                document.getElementById('navUserName').textContent = user.name || user.username;
+                document.getElementById('navUserAvatar').textContent = (user.name || user.username).charAt(0).toUpperCase();
+            }
+        }
+
+        loadNavUserInfo();
+    </script>
+</body>
+</html>

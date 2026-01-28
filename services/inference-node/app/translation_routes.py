@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from loguru import logger
 
 from .indictrans2_engine import get_indictrans_engine, IndianLanguage, TranslationResult
-from .auth import get_current_user, User
+from .auth import get_current_user, get_optional_user, User
 
 router = APIRouter(prefix="/v1/translate", tags=["Multilingual Translation"])
 
@@ -264,7 +264,7 @@ async def transliterate_text(
 
 @router.get("/languages", response_model=LanguagesResponse)
 async def get_languages(
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_optional_user)
 ):
     """
     Get list of supported languages.

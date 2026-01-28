@@ -22,6 +22,7 @@ from loguru import logger
 import time
 
 from .model_router import ModelRouter
+from .persona import get_system_prompt
 
 
 class WorkflowType(str, Enum):
@@ -229,9 +230,9 @@ class LLMOrchestrator:
                 ])
                 prompt = f"{dependency_results}\n\n{prompt}"
             
-            # Create messages
+            # Create messages with Dr. iSHA persona
             messages = [
-                {"role": "system", "content": f"You are a specialized {task.agent_type} agent in a healthcare AI system."},
+                {"role": "system", "content": get_system_prompt(task.agent_type)},
                 {"role": "user", "content": prompt}
             ]
             

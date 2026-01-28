@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claims Processing - Simple & Functional</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+        input[type="text"], input[type="file"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-primary:hover { background: #2980b9; }
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-success:hover { background: #229954; }
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        .btn-secondary:hover { background: #7f8c8d; }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .status-info { background: #d1ecf1; color: #0c5460; }
+        .status-success { background: #d4edda; color: #155724; }
+        .status-error { background: #f8d7da; color: #721c24; }
+        .status-warning { background: #fff3cd; color: #856404; }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .result-box {
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .result-box.approved {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        .result-box.rejected {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        .hidden { display: none; }
+        .doc-item {
+            padding: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .doc-item.mandatory { border-left: 4px solid #27ae60; }
+        .doc-item.optional { border-left: 4px solid #95a5a6; }
+        .doc-item.missing { border-left: 4px solid #e74c3c; }
+        .doc-badge {
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-discharge { background: #3498db; color: white; }
+        .badge-bill { background: #27ae60; color: white; }
+        .badge-report { background: #9b59b6; color: white; }
+        .badge-id { background: #e67e22; color: white; }
+        .badge-auth { background: #16a085; color: white; }
+        .badge-form { background: #34495e; color: white; }
+        .badge-other { background: #95a5a6; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Claims Processing System</h1>
+
+        <!-- STEP 1: Upload Multiple Documents -->
+        <div class="section">
+            <h2>1. Upload Claim Documents</h2>
+            <div class="form-group">
+                <label>Select Documents (PDF/JPG/PNG - Multiple files)</label>
+                <input type="file" id="documentFiles" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                <small style="color: #666;">Tip: Hold Ctrl/Cmd to select multiple files</small>
+            </div>
+            <div id="uploadStatus" class="hidden"></div>
+            <button class="btn-primary" onclick="uploadDocuments()">Upload & Classify Documents</button>
+            
+            <!-- Document Checklist -->
+            <div id="documentChecklist" class="hidden" style="margin-top: 20px;">
+                <h3>📋 Documents Uploaded:</h3>
+                <div id="uploadedDocsList"></div>
+                <h3 style="margin-top: 15px; color: #d35400;">⚠️ Missing Mandatory Documents:</h3>
+                <div id="missingDocsList"></div>
+            </div>
+        </div>
+
+        <!-- STEP 2: Member Search (Optional) -->
+        <div class="section">
+            <h2>2. Member Lookup (Optional - Heritage TPA)</h2>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Policy Number</label>
+                    <input type="text" id="searchPolicy" placeholder="Enter policy number">
+                </div>
+                <div class="form-group">
+                    <label>E-Card / Member ID</label>
+                    <input type="text" id="searchMember" placeholder="Enter member ID">
+                </div>
+            </div>
+            <div id="memberStatus" class="hidden"></div>
+            <button class="btn-secondary" onclick="searchMember()">Search Member</button>
+        </div>
+
+        <!-- STEP 3: Claim Details -->
+        <div class="section">
+            <h2>3. Claim Details</h2>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Policy Number *</label>
+                    <input type="text" id="policyNumber" required>
+                </div>
+                <div class="form-group">
+                    <label>Member ID *</label>
+                    <input type="text" id="memberId" required>
+                </div>
+                <div class="form-group">
+                    <label>Patient Name *</label>
+                    <input type="text" id="patientName" required>
+                </div>
+                <div class="form-group">
+                    <label>Patient Age</label>
+                    <input type="text" id="patientAge">
+                </div>
+                <div class="form-group">
+                    <label>Hospital Name *</label>
+                    <input type="text" id="hospitalName" required>
+                </div>
+                <div class="form-group">
+                    <label>Total Bill Amount (₹) *</label>
+                    <input type="text" id="totalBill" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <labeocuments = [];
+        let memberData = null;
+
+        const MANDATORY_DOCS = [
+            { type: 'discharge_summary', label: 'Discharge Summary', mandatory: true },
+            { type: 'main_bill', label: 'Hospital Main Bill', mandatory: true },
+            { type: 'breakup_bill', label: 'Hospital Break-up Bill', mandatory: true },
+            { type: 'id_proof', label: 'Photo ID Card', mandatory: true },
+            { type: 'claim_form', label: 'Claim Form', mandatory: false },
+            { type: 'pre_auth', label: 'Pre-authorization Letter', mandatory: false },
+            { type: 'ot_notes', label: 'Operation Theatre Notes', mandatory: false },
+            { type: 'investigation', label: 'Investigation Reports', mandatory: false },
+            { type: 'pharmacy_bill', label: 'Pharmacy Bills', mandatory: false }
+        ];
+
+        async function uploadDocuments() {
+            const fileInput = document.getElementById('documentFiles');
+            const files = fileInput.files;
+            
+            if (!files || files.length === 0) {
+                showStatus('uploadStatus', 'Please select at least one document', 'error');
+                return;
+            }
+
+            showStatus('uploadStatus', `Uploading ${files.length} file(s)...`, 'info');
+            uploadedDocuments = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const response = await fetch('/upload/claim-document', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        console.error(`Failed to upload ${file.name}`);
+                        continue;
+                    }
+
+                    const result = await response.json();
+                    
+                    // Classify document
+                    const docType = classifyDocument(file.name, result.data.raw_text || '');
+                    
+                    uploadedDocuments.push({
+                        filename: file.name,
+                        type: docType,
+                        size: file.size,
+                        extracted_fields: result.data.extracted_fields || {}
+                    });
+
+                    // Auto-fill from first discharge summary or bill
+                    if (docType === 'discharge_summary' || docType === 'main_bill') {
+                        autoFillFields(result.data.extracted_fields || {});
+                    }
+
+                } catch (error) {
+                    console.error(`Error uploading ${file.name}:`, error);
+                }
+            }
+
+            showStatus('uploadStatus', `✓ ${uploadedDocuments.length} of ${files.length} documents uploaded and classified`, 'success');
+            displayDocumentChecklist();
+        }
+
+        function classifyDocument(filename, text) {
+            const lower = (filename + ' ' + text).toLowerCase();
+            
+            if (lower.includes('discharge') || lower.includes('discharge summary')) {
+                return 'discharge_summary';
+            }
+            if (lower.includes('main bill') || lower.includes('hospital bill') || (lower.includes('bill') && !lower.includes('pharmacy'))) {
+                return 'main_bill';
+            }
+            if (lower.includes('breakup') || lower.includes('break-up') || lower.includes('itemized')) {
+                return 'breakup_bill';
+            }
+            if (lower.includes('id') || lower.includes('identity') || lower.includes('aadhar') || lower.includes('card')) {
+                return 'id_proof';
+            }
+            if (lower.includes('claim form') || lower.includes('claimform')) {
+                return 'claim_form';
+            }
+            if (lower.includes('pre-auth') || lower.includes('authorization') || lower.includes('approval')) {
+                return 'pre_auth';
+            }
+            if (lower.includes('operation') || lower.includes('ot notes') || lower.includes('surgery')) {
+                return 'ot_notes';
+            }
+            if (lower.includes('lab') || lower.includes('test') || lower.includes('investigation') || lower.includes('report')) {
+                return 'investigation';
+            }
+            if (lower.includes('pharmacy') || lower.includes('medicine') || lower.includes('drug')) {
+                return 'pharmacy_bill';
+            }
+            
+            return 'other';
+        }
+
+        function displayDocumentChecklist() {
+            const checklistDiv = document.getElementById('documentChecklist');
+            const uploadedList = document.getElementById('uploadedDocsList');
+            const missingList = document.getElementById('missingDocsList');
+            
+            checklistDiv.classList.remove('hidden');
+
+            // Show uploaded documents
+            const uploadedTypes = uploadedDocuments.map(d => d.type);
+            uploadedList.innerHTML = uploadedDocuments.map(doc => {
+                const docDef = MANDATORY_DOCS.find(d => d.type === doc.type);
+                const label = docDef ? docDef.label : doc.type;
+                const badgeClass = getBadgeClass(doc.type);
+                
+                return `
+                    <div class="doc-item ${docDef?.mandatory ? 'mandatory' : 'optional'}">
+                        <div>
+                            <span class="doc-badge ${badgeClass}">${label}</span>
+                            <span style="margin-left: 10px; color: #666;">${doc.filename}</span>
+                        </div>
+                        <span style="color: #27ae60;">✓</span>
+               Check mandatory documents
+            const uploadedTypes = uploadedDocuments.map(d => d.type);
+            const missingMandatory = MANDATORY_DOCS
+                .filter(d => d.mandatory && !uploadedTypes.includes(d.type))
+                .map(d => d.label);
+
+            if (missingMandatory.length > 0) {
+                showStatus('adjudicationStatus', `Missing mandatory documents: ${missingMandatory.join(', ')}`, 'error');
+                return;
+            }
+
+            //      </div>
+                `;
+            }).join('');
+
+            // Show missing mandatory documents
+            const missing = MANDATORY_DOCS.filter(d => d.mandatory && !uploadedTypes.includes(d.type));
+            if (missing.length > 0) {
+                missingList.innerHTML = missing.map(doc => `
+                    <div class="doc-item missing">
+                        <span class="doc-badge ${getBadgeClass(doc.type)}">${doc.label}</span>
+                        <span style="color: #e74c3c;">✗ Required</span>
+                    </div>
+                `).join('');
+            } else {
+                missingList.innerHTML = '<p style="color: #27ae60;">✓ All mandatory documents uploaded</p>';
+            }
+        }
+
+        function getBadgeClass(type) {
+            if (type === 'discharge_summary') return 'badge-discharge';
+            if (type.includes('bill')) return 'badge-bill';
+            if (type === 'investigation') return 'badge-report';
+            if (type === 'id_proof') return 'badge-id';
+            if (type === 'pre_auth') return 'badge-auth';
+            if (type === 'claim_form') return 'badge-form';
+            return 'badge-other';
+        }
+
+        function autoFillFields(fields) {
+            if (fields.patient_name && !document.getElementById('patientName').value) {
+                document.getElementById('patientName').value = fields.patient_name;
+            }
+            if (fields.age && !document.getElementById('patientAge').value) {
+                document.getElementById('patientAge').value = fields.age;
+            }
+            if (fields.hospital && !document.getElementById('hospitalName').value) {
+                document.getElementById('hospitalName').value = fields.hospital;
+            }
+            if (fields.total_amount && !document.getElementById('totalBill').value) {
+                document.getElementById('totalBill').value = fields.total_amount;
+            }
+            if (fields.diagnosis && !document.getElementById('diagnosis').value) {
+                document.getElementById('diagnosis').value = fields.diagnosis;
+            }
+            if (fields.doctor && !document.getElementById('doctorName').value) {
+                document.getElementById('doctorName').value = fields.doctor
+
+                if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
+
+                const result = await response.json();
+                uploadedData = result.data;
+
+                showStatus('uploadStatus', '✓ File uploaded and processed', 'success');
+
+                // Auto-fill fields from extracted data
+                const fields = result.data.extracted_fields || {};
+                if (fields.patient_name) document.getElementById('patientName').value = fields.patient_name;
+                if (fields.age) document.getElementById('patientAge').value = fields.age;
+                if (fields.hospital) document.getElementById('hospitalName').value = fields.hospital;
+                if (fields.total_amount) document.getElementById('totalBill').value = fields.total_amount;
+                if (fields.diagnosis) document.getElementById('diagnosis').value = fields.diagnosis;
+                if (fields.doctor) document.getElementById('doctorName').value = fields.doctor;
+
+                const fieldCount = Object.keys(fields).filter(k => fields[k]).length;
+                if (fieldCount > 0) {
+                    showStatus('uploadStatus', `✓ Extracted ${fieldCount} fields. Review and fill missing data below.`, 'success');
+                } else {
+                    showStatus('uploadStatus', '✓ Upload complete. No fields extracted - please fill manually.', 'warning');
+                }
+
+            } catch (error) {
+                showStatus('uploadStatus', `✗ Upload failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function searchMember() {
+            const policy = document.getElementById('searchPolicy').value.trim();
+            const member = document.getElementById('searchMember').value.trim();
+
+            if (!policy && !member) {
+                showStatus('memberStatus', 'Enter policy or member ID to search', 'error');
+                return;
+            }
+
+            showStatus('memberStatus', 'Searching Heritage TPA...', 'info');
+
+            try {
+                const response = await fetch('/tpa/member-search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tpa_provider: 'heritage',
+                        policy_number: policy || undefined,
+                        ecard_number: member || undefined,
+                        member_id: member || undefined
+                    })
+                });
+
+                if (!response.ok) throw new Error(`Search failed: ${response.status}`);
+
+                const result = await response.json();
+
+                if (result.success && result.members && result.members.length > 0) {
+                    memberData = result.members[0];
+                    
+                    // Auto-fill from member data
+                    if (memberData.policy_number) document.getElementById('policyNumber').value = memberData.policy_number;
+                    if (memberData.member_id) document.getElementById('memberId').value = memberData.member_id;
+                    if (memberData.name) document.getElementById('patientName').value = memberData.name;
+                    if (memberData.age) document.getElementById('patientAge').value = memberData.age;
+
+                    showStatus('memberStatus', `✓ Member found: ${memberData.name}. Details filled below.`, 'success');
+                } else {
+                    showStatus('memberStatus', 'No member found. Check policy/member ID.', 'warning');
+                }
+
+            } catch (error) {
+                showStatus('memberStatus', `✗ Search failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function submitClaim() {
+            // Validate required fields
+            const required = ['policyNumber', 'memberId', 'patientName', 'hospitalName', 'totalBill', 'diagnosis'];
+            const missing = required.filter(id => !document.getElementById(id).value.trim());
+
+            if (missing.length > 0) {
+                showStatus('adjudicationStatus', `Missing required fields: ${missing.join(', ')}`, 'error');
+                return;
+            }
+
+            showStatus('adjudicationStatus', 'Processing claim adjudication...', 'info');
+
+            const claimData = {
+                claim_id: 'CLM-' + Date.no,
+                documents: uploadedDocumentsw(),
+                policy_number: document.getElementById('policyNumber').value,
+                member_id: document.getElementById('memberId').value,
+                hospital_name: document.getElementById('hospitalName').value,
+                diagnosis: document.getElementById('diagnosis').value,
+                total_bill: parseFloat(document.getElementById('totalBill').value.replace(/,/g, '') || 0),
+                deductible: 2500,
+                patient_name: document.getElementById('patientName').value,
+                patient_age: document.getElementById('patientAge').value,
+                doctor_name: document.getElementById('doctorName').value,
+                tpa_provider: 'heritage',
+                member_details: memberData
+            };
+
+            try {
+                const response = await fetch('/adjudicate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(claimData)
+                });
+
+                if (!response.ok) throw new Error(`Adjudication failed: ${response.status}`);
+
+                const result = await response.json();
+
+                showStatus('adjudicationStatus', '✓ Claim processed successfully', 'success');
+                displayResults(result);
+
+            } catch (error) {
+                showStatus('adjudicationStatus', `✗ Processing failed: ${error.message}`, 'error');
+            }
+        }
+
+        function displayResults(result) {
+            const resultsDiv = document.getElementById('results');
+            const contentDiv = document.getElementById('resultContent');
+            
+            resultsDiv.classList.remove('hidden');
+
+            const decision = result.final_decision || 'PENDING';
+            const cssClass = decision === 'APPROVED' ? 'approved' : 'rejected';
+
+            contentDiv.innerHTML = `
+                <div class="result-box ${cssClass}">
+                    <h3>Decision: ${decision}</h3>
+                    <p><strong>Claim ID:</strong> ${result.claim_id}</p>
+                    ${result.approval_amount ? `<p><strong>Approved Amount:</strong> ₹${result.approval_amount.toLocaleString()}</p>` : ''}
+                    ${result.rejection_reason ? `<p><strong>Reason:</strong> ${result.rejection_reason}</p>` : ''}
+                    
+                    <hr style="margin: 15px 0;">
+                    
+                    <h4>Medical Analysis:</h4>
+                    <p>${result.bimedix_analysis || 'Not available'}</p>
+                    
+                    <h4>Policy Analysis:</h4>
+                    <p>${result.insurance_analysis || 'Not available'}</p>
+                </div>
+            `;
+
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showStatus(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            el.className = `status status-${type}`;
+            el.textContent = message;
+            el.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

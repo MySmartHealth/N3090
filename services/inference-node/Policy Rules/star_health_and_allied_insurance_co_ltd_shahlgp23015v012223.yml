@@ -1,0 +1,70 @@
+company: Star Health And Allied Insurance Co. Ltd
+product: SHAHLGP23015V012223
+version: scraped
+effective_from: null
+policy_type: health
+meta:
+  uin: null
+  type: Add on
+  year: 2022-2023
+  pdf_url: null
+admissibility:
+  min_hospitalization_hours: 24
+  first_year_waiting_days: 30
+  daycare_procedures_allowed: true
+  pre_hospitalization_days: 30
+  post_hospitalization_days: 60
+  pre_existing_waiting_years: 4
+  maternity_waiting_years: 2
+  newborn_coverage_day: 1
+  opd_covered: false
+  psychiatry_covered: false
+  infertility_covered: false
+  internal_congenital_covered: true
+  external_congenital_covered: false
+  domiciliary_hospitalization: false
+  cashless_allowed: true
+  job_loss_continuity_cover: false
+  suicide_coverage_after_years: 1
+exclusions:
+  diseases:
+  - cosmetic surgery
+  - fertility treatment
+  - congenital external diseases
+  - HIV/AIDS
+  - obesity treatment
+  items:
+  - diapers
+  - toiletries
+  - sanitary napkins
+  - registration charges
+  - dental treatment
+  - orthodontic treatment
+  special: []
+limits:
+  room_rent_limit_per_day:
+    GENERAL_WARD: 1500
+    TWIN_SHARING: 3000
+    SINGLE_PRIVATE: 5000
+    ICU: 8000
+    ICCU: 7000
+  sub_limits:
+    cataract_per_eye: 25000
+    ambulance_charges: 2000
+    air_ambulance: 200000
+    lasik_eye_surgery: 50000
+  maternity_benefit_cap: 200000
+  newborn_benefit_cap: 100000
+  pre_post_natal_expenses: 50000
+  organ_donor_expenses_cap: 500000
+  organ_receiver_expenses_cap: 500000
+  non_medical_expenses_cap: 10000
+  package_treatment_caps: {}
+payables_rules:
+  co_payment_percent: 0
+  copay_ceiling_annual: 100000
+  deductible_amount: 0
+  aggregate_deductible_annual: 0
+  first_30_days_discount: 0
+  disease_caps: {}
+  si_reload_mechanism: false

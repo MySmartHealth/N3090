@@ -265,17 +265,20 @@
             
             <div class="controls">
                 <select id="modelSelect" onchange="updateStatus()">
-                    <option value="Qwen">⚡ Qwen (0.6B - Fast)</option>
-                    <option value="BiMediX2">🏥 BiMediX2 (8B)</option>
-                    <option value="BioMistral" selected>🧬 BioMistral (7B)</option>
+                    <option value="BiMediX2" selected>🏥 BiMediX2 (8B - Primary)</option>
+                    <option value="MedPalm2">🧬 MedPalm2 (8B - Expert)</option>
                     <option value="OpenInsurance">💰 OpenInsurance (8B)</option>
+                    <option value="Qwen">⚡ Qwen (0.6B - Fast)</option>
                 </select>
                 
                 <select id="agentSelect">
-                    <option value="">None</option>
-                    <option value="MedicalQA">Medical QA</option>
-                    <option value="Claims">Claims</option>
-                    <option value="Documentation">Docs</option>
+                    <option value="Chat" selected>💬 Chat</option>
+                    <option value="MedicalQA">🏥 Medical Q&A</option>
+                    <option value="Clinical">🩺 Clinical</option>
+                    <option value="AIDoctor">👨‍⚕️ AI Doctor</option>
+                    <option value="Scribe">📝 Scribe</option>
+                    <option value="Claims">💰 Claims</option>
+                    <option value="Billing">📋 Billing</option>
                 </select>
             </div>
             

@@ -24,6 +24,7 @@ requests==2.32.3
 python-multipart==0.0.18  # For file uploads
 aiohttp==3.11.11  # For async web scraping
 PyPDF2==3.0.1  # PDF parsing for web scraping
+PyYAML==6.0.1  # YAML parsing
 
 # Fine-tuning & Training (optional)
 # Uncomment to enable model fine-tuning capabilities:

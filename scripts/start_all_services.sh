@@ -16,13 +16,18 @@ echo "🚀 Starting Medical AI Inference System..."
 echo "=========================================="
 
 # Model configurations: name, model_file, port, context_size, gpu_layers
+# ═══════════════════════════════════════════════════════════════════════════════
+# TANDEM MODEL ARCHITECTURE:
+#   Port 8080: BiMediX2-8B      (PRIMARY - All medical tasks)
+#   Port 8081: MedPalm2-8B      (BACKUP - Fallback only)
+#   Port 8082: Qwen-0.6B        (TANDEM - Quick responses)
+#   Port 8084: OpenInsurance-8B (TANDEM - Insurance domain)
+# ═══════════════════════════════════════════════════════════════════════════════
 declare -a MODELS=(
-    "Tiny-LLaMA|tiny-llama-1.1b-chat-medical.fp16.gguf|8080|2048|99"
-    "BiMediX2|BiMediX2-8B-hf.i1-Q6_K.gguf|8081|8192|99"
+    "BiMediX2|BiMediX2-8B-hf.i1-Q6_K.gguf|8080|4096|99"
+    "MedPalm2|Llama-3.1-MedPalm2-imitate-8B-Instruct.Q6_K.gguf|8081|4096|99"
     "Qwen-0.6B|qwen-0.6b-medicaldataset-f16.gguf|8082|4096|99"
-    "Tiny-LLaMA-2|tiny-llama-1.1b-chat-medical.fp16.gguf|8083|4096|99"
-    "OpenInsurance|openinsurancellm-llama3-8b.Q5_K_M.gguf|8084|8192|99"
-    "BioMistral|BioMistral-Clinical-7B.Q8_0.gguf|8085|4096|35"
+    "OpenInsurance|openinsurancellm-llama3-8b.Q5_K_M.gguf|8084|4096|99"
 )
 
 # Start each model server
@@ -64,9 +69,14 @@ sleep 15
 echo ""
 echo "📊 Model Server Status:"
 echo "======================"
-for port in 8080 8081 8082 8083 8084 8085; do
+for port in 8080 8081 8082 8084; do
     if timeout 2 curl -s http://localhost:$port/health > /dev/null 2>&1; then
-        echo "✓ Port $port: OK"
+        case $port in
+            8080) echo "✓ Port $port: BiMediX2 (PRIMARY) - OK" ;;
+            8081) echo "✓ Port $port: MedPalm2 (BACKUP) - OK" ;;
+            8082) echo "✓ Port $port: Qwen-0.6B (TANDEM) - OK" ;;
+            8084) echo "✓ Port $port: OpenInsurance (TANDEM) - OK" ;;
+        esac
     else
         echo "✗ Port $port: FAILED"
     fi

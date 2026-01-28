@@ -267,11 +267,14 @@
                 <div id="errorMessage"></div>
                 
                 <div class="input-group">
-                    <select id="modelSelect" onchange="updateStatus()">
-                        <option value="Qwen">⚡ Qwen (Fast)</option>
-                        <option value="BiMediX2">🏥 BiMediX2 (Medical)</option>
-                        <option value="BioMistral">🧬 BioMistral (Expert)</option>
-                        <option value="OpenInsurance">💰 Insurance</option>
+                    <select id="agentSelect" onchange="updateStatus()">
+                        <option value="Chat" selected>💬 Chat</option>
+                        <option value="MedicalQA">🏥 Medical Q&A</option>
+                        <option value="Clinical">🩺 Clinical</option>
+                        <option value="AIDoctor">👨‍⚕️ AI Doctor</option>
+                        <option value="Scribe">📝 Scribe</option>
+                        <option value="Claims">💰 Claims</option>
+                        <option value="Billing">📋 Billing</option>
                     </select>
                     
                     <input 
@@ -293,7 +296,7 @@
         const chatArea = document.getElementById('chatArea');
         const messageInput = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendBtn');
-        const modelSelect = document.getElementById('modelSelect');
+        const agentSelect = document.getElementById('agentSelect');
         const statusDiv = document.getElementById('status');
         const errorDiv = document.getElementById('errorMessage');
         
@@ -352,7 +355,7 @@
             errorDiv.innerHTML = '';
             
             try {
-                const model = modelSelect.value;
+                const agent = agentSelect.value;
                 const startTime = Date.now();
                 
                 const response = await fetch('http://localhost:8000/v1/chat/completions', {
@@ -367,7 +370,7 @@
                         })).concat([
                             { role: 'user', content: message }
                         ]),
-                        model: model,
+                        model: agent,
                         temperature: 0.7,
                         max_tokens: 500,
                         stream: false
@@ -389,7 +392,7 @@
                 const assistantMessage = data.choices[0].message.content;
                 removeLoadingIndicator();
                 addMessage('assistant', assistantMessage);
-                updateStatus(`Responded in ${elapsed}ms • Model: ${model}`);
+                updateStatus(`Responded in ${elapsed}ms • Agent: ${agent}`);
                 
             } catch (error) {
                 console.error('Error:', error);
@@ -419,8 +422,8 @@
             if (text) {
                 statusDiv.textContent = text;
             } else {
-                const model = modelSelect.value;
-                statusDiv.textContent = `Ready • Model: ${model}`;
+                const agent = agentSelect.value;
+                statusDiv.textContent = `Ready • Agent: ${agent}`;
             }
         }
         
