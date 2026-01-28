@@ -146,8 +146,22 @@ class DocumentProcessor:
         else:
             raise RuntimeError("No OCR backend available. Install pytesseract or configure Azure.")
     
-    async def _tesseract_ocr(self, file_data: bytes, file_type: str) -> OCRResult:
-        """Tesseract OCR (open-source, local)"""
+    async def _tesseract_ocr(self, file_data: bytes, file_type: str, lang: str = "eng+hin+tam+tel+kan+mal+ben+mar+guj+pan") -> OCRResult:
+        """
+        Tesseract OCR with multilingual support (Indian languages).
+        
+        Supported languages:
+        - eng: English
+        - hin: Hindi
+        - tam: Tamil
+        - tel: Telugu
+        - kan: Kannada
+        - mal: Malayalam
+        - ben: Bengali
+        - mar: Marathi
+        - guj: Gujarati
+        - pan: Punjabi
+        """
         if not OCR_AVAILABLE:
             raise RuntimeError("Tesseract not available")
         
@@ -157,26 +171,85 @@ class DocumentProcessor:
                 images = convert_from_bytes(file_data)
                 texts = []
                 for img in images:
-                    text = pytesseract.image_to_string(img)
+                    text = pytesseract.image_to_string(img, lang=lang)
                     texts.append(text)
                 full_text = "\n\n--- PAGE BREAK ---\n\n".join(texts)
                 page_count = len(images)
             else:
                 # Direct image OCR
                 image = Image.open(io.BytesIO(file_data))
-                full_text = pytesseract.image_to_string(image)
+                full_text = pytesseract.image_to_string(image, lang=lang)
                 page_count = 1
+            
+            # Detect primary language from extracted text
+            detected_lang = self._detect_language(full_text)
             
             return OCRResult(
                 text=full_text,
                 confidence=0.85,  # Tesseract doesn't provide confidence
                 page_count=page_count,
-                metadata={"ocr_engine": "tesseract"}
+                language=detected_lang,
+                metadata={"ocr_engine": "tesseract", "ocr_langs": lang}
             )
         
         except Exception as e:
             logger.error(f"Tesseract OCR failed: {e}")
             raise
+    
+    def _detect_language(self, text: str) -> str:
+        """
+        Simple language detection based on Unicode character ranges.
+        """
+        if not text:
+            return "en"
+        
+        # Count characters by script
+        devanagari = 0  # Hindi, Marathi, Sanskrit
+        tamil = 0
+        telugu = 0
+        kannada = 0
+        malayalam = 0
+        bengali = 0
+        gujarati = 0
+        gurmukhi = 0  # Punjabi
+        latin = 0
+        
+        for char in text:
+            code = ord(char)
+            if 0x0900 <= code <= 0x097F:
+                devanagari += 1
+            elif 0x0B80 <= code <= 0x0BFF:
+                tamil += 1
+            elif 0x0C00 <= code <= 0x0C7F:
+                telugu += 1
+            elif 0x0C80 <= code <= 0x0CFF:
+                kannada += 1
+            elif 0x0D00 <= code <= 0x0D7F:
+                malayalam += 1
+            elif 0x0980 <= code <= 0x09FF:
+                bengali += 1
+            elif 0x0A80 <= code <= 0x0AFF:
+                gujarati += 1
+            elif 0x0A00 <= code <= 0x0A7F:
+                gurmukhi += 1
+            elif 0x0041 <= code <= 0x007A:
+                latin += 1
+        
+        # Find dominant script
+        scripts = {
+            "hi": devanagari,
+            "ta": tamil,
+            "te": telugu,
+            "kn": kannada,
+            "ml": malayalam,
+            "bn": bengali,
+            "gu": gujarati,
+            "pa": gurmukhi,
+            "en": latin
+        }
+        
+        detected = max(scripts, key=scripts.get)
+        return detected if scripts[detected] > 0 else "en"
     
     async def _azure_ocr(self, file_data: bytes) -> OCRResult:
         """Azure Form Recognizer OCR (production-grade)"""
